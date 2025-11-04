@@ -97,6 +97,7 @@ export function createSandbox(skill: Skill, options: SandboxOptions = {}): Sandb
 
 export class Sandbox extends EventEmitter {
   // ID is kept for future tracking (will be used for logging and debugging)
+  // @ts-ignore - Unused but kept for future use
   private readonly id: string;
   private allowedReadPaths: string[] = [];
   private allowedWritePaths: string[] = [];
@@ -109,12 +110,13 @@ export class Sandbox extends EventEmitter {
   private readonly timeout: number;
   private readonly onFileOp: NonNullable<SandboxOptions['onFileOp']>;
   // onResourceLimit will be called when resource limits are exceeded
+  // @ts-ignore - Unused but kept for future use
   private readonly onResourceLimit: NonNullable<SandboxOptions['onResourceLimit']>;
   private readonly activeProcesses: Set<number> = new Set();
   // startTime will be used for tracking execution duration
-  private readonly startTime: number = Date.now();
+  // private readonly startTime: number = Date.now(); // Unused but kept for future use
   // memoryUsage will track memory consumption of the sandbox
-  private memoryUsage: number = 0;
+  // private memoryUsage: number = 0; // Unused but kept for future use
   private outputSize: number = 0;
   private onCommand: NonNullable<SandboxOptions['onCommand']> = () => {};
   private fileOps: Array<{ type: 'read' | 'write' | 'delete'; path: string; content?: string }> =
@@ -216,62 +218,88 @@ export class Sandbox extends EventEmitter {
   /**
    * Normalize a path to ensure it's within the sandbox
    */
+  /**
+   * Normalize and validate a path within the sandbox
+   * @param filePath Path to normalize
+   * @returns Normalized absolute path
+   * @throws {Error} If path is invalid or attempts to escape the sandbox
+   */
   private normalizePath(filePath: string): string {
+    if (!filePath || typeof filePath !== 'string') {
+      throw new Error('Invalid path: Path must be a non-empty string');
+    }
+
     // Resolve the path relative to the sandbox root
     const resolvedPath = path.resolve(this.cwd, filePath);
+    
+    // Convert both paths to the same format for comparison
+    const normalizedCwd = path.normalize(this.cwd).replace(/\\/g, '/');
+    const normalizedPath = path.normalize(resolvedPath).replace(/\\/g, '/');
 
-    // Ensure the path doesn't escape the sandbox
-    if (!resolvedPath.startsWith(this.cwd)) {
-      throw new Error(`Path traversal attempt detected: ${filePath}`);
+    // Check for path traversal attempts
+    if (!normalizedPath.startsWith(normalizedCwd)) {
+      throw new Error(`Security violation: Path traversal attempt detected: ${filePath}`);
+    }
+
+    // Check for null bytes (potential injection)
+    if (filePath.includes('\0')) {
+      throw new Error('Security violation: Path contains null bytes');
+    }
+
+    // Check for control characters
+    if (/[\x00-\x1F\x7F-\x9F]/.test(filePath)) {
+      throw new Error('Security violation: Path contains control characters');
+    }
+
+    // Prevent symlink attacks by resolving the real path
+    try {
+      const realPath = fs.realpathSync(resolvedPath);
+      if (!realPath.startsWith(this.cwd)) {
+        throw new Error(`Security violation: Symlink attack detected: ${filePath}`);
+      }
+    } catch (error: unknown) {
+      // Ignore if path doesn't exist (will be created)
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') {
+        // Path doesn't exist, which is fine for our use case
+        return resolvedPath;
+      }
+      // Re-throw other errors
+      throw error;
     }
 
     return resolvedPath;
   }
 
   constructor(
-    // skill is used for allowedPaths and allowedCommands initialization
+    // @ts-ignore - skill is used for allowedPaths and allowedCommands initialization
     private readonly skill: Skill,
     options: SandboxOptions = {},
   ) {
     // Initialize parent class
     super();
 
-    this.id = uuidv4();
+    if (!skill) {
+      throw new Error('Skill is required');
+    }
+
     this.cwd = options.cwd ? path.resolve(options.cwd) : process.cwd();
     
     // Initialize environment variables
     this.env = {
       ...process.env,
       ...options.env,
-      // Override potentially dangerous environment variables using bracket notation
       ['NODE_OPTIONS']: undefined,
       NODE_ENV: 'production',
       NODE_DEBUG: undefined,
       DEBUG: undefined,
     } as NodeJS.ProcessEnv;
-    if (!skill) {
-      throw new Error('Skill is required');
-    }
-
-    super();
-
-    this.id = uuidv4();
-    this.cwd = options.cwd ? path.resolve(options.cwd) : process.cwd();
-    this.env = {
-      ...process.env,
-      ...options.env,
-      // Override potentially dangerous environment variables
-      ['NODE_OPTIONS']: undefined,
-      NODE_ENV: 'production',
-      NODE_DEBUG: undefined,
-      DEBUG: undefined,
-    };
 
     this.dryRun = options.dryRun || false;
     this.limits = { ...DEFAULT_RESOURCE_LIMITS, ...(options.limits || {}) };
     this.timeout = options.timeout || this.limits.maxCpuTime;
     this.onFileOp = options.onFileOp || (() => {});
     this.onResourceLimit = options.onResourceLimit || (() => {});
+    this.id = uuidv4();
 
     // Normalize and validate paths
     this.cwd = path.normalize(this.cwd);
@@ -333,15 +361,59 @@ export class Sandbox extends EventEmitter {
    * @param args Command arguments
    * @returns true if the command is allowed, false otherwise
    */
+  /**
+   * Check if a command is allowed based on the sandbox's allowed commands
+   * @param command The command to check
+   * @param args Command arguments
+   * @returns true if the command is allowed, false otherwise
+   */
   private isCommandAllowed(command: string, args: string[] = []): boolean {
-    const fullCommand = [command, ...args].join(' ');
+    if (!command || typeof command !== 'string') {
+      return false;
+    }
+
+    // Sanitize command and arguments
+    const sanitizedCommand = command.trim();
+    const sanitizedArgs = args.map(arg => arg.trim()).filter(Boolean);
+    const fullCommand = [sanitizedCommand, ...sanitizedArgs].join(' ');
+
+    // Check for potentially dangerous patterns
+    const dangerousPatterns = [
+      /[;&|`$(){}[\]<>]/,
+      /\$\{/,
+      /\$\(/,
+      /\|\s*\w+\s*=/,
+      /\|\s*\w+\s*;/,
+      /;\s*\w+\s*\|/,
+      /\|\|/,
+      /&&/,
+      /\$\{/,
+      /`/,
+      /\(\s*\)/,
+      /\$\{IFS\}/,
+      /\$IFS/,
+      /\$IFS/,
+    ];
+
+    if (dangerousPatterns.some(pattern => pattern.test(fullCommand))) {
+      return false;
+    }
 
     // Check against allowed commands
     return this.allowedCommands.some((pattern) => {
-      if (typeof pattern === 'string') {
-        return pattern === command || fullCommand.startsWith(`${pattern} `);
+      try {
+        if (typeof pattern === 'string') {
+          // Exact match or prefix match with space
+          return pattern === sanitizedCommand || 
+                 (fullCommand.startsWith(pattern) && 
+                  (fullCommand.length === pattern.length || 
+                   fullCommand[pattern.length] === ' '));
+        }
+        return pattern.test(fullCommand);
+      } catch (error) {
+        this.emit(SandboxEvent.Error, new Error(`Error checking command pattern: ${error}`));
+        return false;
       }
-      return pattern.test(fullCommand);
     });
   }
 

@@ -100,7 +100,6 @@ function scoreSkill(
   keywordMatch: number;
   warnings?: string[];
 } {
-  const score = 0;
   const warnings: string[] = [];
 
   // 1. Tag matching (exact match, case-insensitive)

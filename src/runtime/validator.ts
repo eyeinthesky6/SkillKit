@@ -1,6 +1,6 @@
 import type { JSONSchema7 } from 'json-schema';
 import { z } from 'zod';
-import type { ZodError, ZodSchema, ZodString, ZodNumber, ZodType, ZodArray } from 'zod';
+import type { ZodError, ZodSchema, ZodString, ZodNumber, ZodType } from 'zod';
 import { zodToJsonSchema as zodToJsonSchemaLib } from 'zod-to-json-schema';
 
 import type { Skill } from '../types';
