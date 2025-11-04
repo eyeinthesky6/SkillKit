@@ -5,6 +5,7 @@
 [![npm version](https://badge.fury.io/js/%40trinity-os%2Fskillkit.svg)](https://badge.fury.io/js/%40trinity-os%2Fskillkit)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![GitHub Discussions](https://img.shields.io/github/discussions/trinity-os/skillkit)](https://github.com/trinity-os/skillkit/discussions)
+[![Docs](https://img.shields.io/badge/docs-docusaurus-blue)](https://eyeinthesky6.github.io/SkillKit/)
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/0000/badge)](https://bestpractices.coreinfrastructure.org/projects/0000)
 
 A router-first, sandboxed skill runner with strong typing and audit trails. SkillKit enables developers to build, share, and run modular skills in a secure and scalable way.
@@ -48,7 +49,7 @@ console.log(result);
 
 ## Documentation
 
-For full documentation, please visit [our documentation site](https://trinity-os.github.io/skillkit).
+For full documentation, please visit [our documentation site](https://eyeinthesky6.github.io/SkillKit/).
 
 - [Getting Started](docs/getting-started.md)
 - [API Reference](docs/api.md)
