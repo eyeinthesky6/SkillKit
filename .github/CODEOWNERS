@@ -1,0 +1,32 @@
+# This is a CODEOWNERS file.
+# It defines individuals or teams that are responsible for code in the repository.
+# See: https://help.github.com/articles/about-codeowners/
+
+# Default owners for everything in the repo
+*       @trinity-os/maintainers
+
+# Core team owns the core functionality
+/src/runtime/     @trinity-os/core-team
+/src/types/       @trinity-os/core-team
+/src/utils/       @trinity-os/core-team
+
+# Documentation
+/docs/            @trinity-os/documentation
+README.md         @trinity-os/documentation
+
+# GitHub specific files
+.github/          @trinity-os/maintainers
+
+# Configuration files
+*.json            @trinity-os/core-team
+*.yaml            @trinity-os/core-team
+*.yml             @trinity-os/core-team
+
+# Tests
+/__tests__/       @trinity-os/contributors
+
+# Examples
+/examples/        @trinity-os/contributors
+
+# Note: You'll need to create these teams in your GitHub organization
+# and add the appropriate members to them.

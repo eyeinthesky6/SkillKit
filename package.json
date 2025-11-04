@@ -1,0 +1,67 @@
+{
+  "name": "@trinity-os/skillkit",
+  "version": "0.1.0",
+  "description": "A router-first, sandboxed skill runner with strong typing and audit trails",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "tsk": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/cli.ts",
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write \"**/*.{ts,json,md}\"",
+    "prepare": "husky install",
+    "release": "standard-version"
+  },
+  "keywords": [
+    "skills",
+    "automation",
+    "workflow",
+    "sandbox",
+    "typescript"
+  ],
+  "author": "Trinity OS Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@types/picomatch": "^4.0.2",
+    "chalk": "^5.6.2",
+    "commander": "^14.0.2",
+    "date-fns": "^4.1.0",
+    "js-yaml": "^4.1.0",
+    "minimatch": "^10.1.1",
+    "picomatch": "^4.0.3",
+    "uuid": "^13.0.0",
+    "zod": "^3.24.1",
+    "zod-to-json-schema": "^3.24.6"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/json-schema": "^7.0.15",
+    "@types/node": "^24.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.3",
+    "@typescript-eslint/parser": "^8.46.3",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.4",
+    "husky": "^9.1.7",
+    "prettier": "^3.6.2",
+    "standard-version": "^9.5.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^4.0.6"
+  },
+  "packageManager": "pnpm@8.15.3"
+}

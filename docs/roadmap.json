@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SkillKit Roadmap",
+  "description": "Project roadmap and feature planning",
+  "milestones": [
+    {
+      "title": "v1.0.0 - Core Functionality",
+      "description": "Initial stable release with core features",
+      "dueDate": "2023-12-31",
+      "items": [
+        {
+          "title": "Implement Core Skill Execution Engine",
+          "description": "Build the core engine that will execute skills in a sandboxed environment.",
+          "priority": "High",
+          "effort": "Large",
+          "acceptanceCriteria": [
+            "Skills can be loaded from the filesystem",
+            "Skills execute in an isolated environment",
+            "Basic input/output handling works",
+            "Error handling and reporting is in place"
+          ],
+          "labels": ["core", "engine"]
+        },
+        {
+          "title": "Create Basic CLI Interface",
+          "description": "Implement a command-line interface for interacting with SkillKit.",
+          "priority": "High",
+          "effort": "Medium",
+          "acceptanceCriteria": [
+            "Can list available skills",
+            "Can execute skills with parameters",
+            "Help system is comprehensive",
+            "Supports common CLI patterns"
+          ],
+          "labels": ["cli", "ux"]
+        },
+        {
+          "title": "Documentation Setup",
+          "description": "Create comprehensive documentation for users and contributors.",
+          "priority": "High",
+          "effort": "Medium",
+          "acceptanceCriteria": [
+            "Getting started guide",
+            "API documentation",
+            "Contributing guidelines",
+            "Examples and tutorials"
+          ],
+          "labels": ["documentation"]
+        }
+      ]
+    },
+    {
+      "title": "v1.1.0 - Developer Experience",
+      "description": "Improvements for developers building skills",
+      "dueDate": "2024-02-28",
+      "items": [
+        {
+          "title": "Skill Development Kit",
+          "description": "Tools and templates for creating new skills",
+          "priority": "High",
+          "effort": "Medium",
+          "labels": ["devx", "tools"]
+        },
+        {
+          "title": "Testing Framework",
+          "description": "Framework for testing skills",
+          "priority": "Medium",
+          "effort": "Medium",
+          "labels": ["testing", "devx"]
+        }
+      ]
+    },
+    {
+      "title": "v1.2.0 - Advanced Features",
+      "description": "Advanced functionality for power users",
+      "dueDate": "2024-04-30",
+      "items": [
+        {
+          "title": "Plugin System",
+          "description": "Extend functionality with plugins",
+          "priority": "Medium",
+          "effort": "Large",
+          "labels": ["extensibility", "plugins"]
+        },
+        {
+          "title": "Performance Optimizations",
+          "description": "Improve performance for large-scale use",
+          "priority": "Medium",
+          "effort": "Large",
+          "labels": ["performance"]
+        }
+      ]
+    }
+  ]
+}
