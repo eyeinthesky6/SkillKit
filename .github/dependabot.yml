@@ -1,0 +1,100 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for all configuration options:
+# https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates
+
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    # Look for a package.json in the `root` directory
+    directory: "/"
+    # Check the npm registry for updates once a week (weekdays only to reduce load)
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    # Create pull requests for version updates
+    open-pull-requests-limit: 10
+    # Apply labels to pull requests for version updates
+    labels:
+      - "dependencies"
+      - "automated"
+    # Group updates by dependency name
+    versioning-strategy: increase
+    # Ignore major version updates for packages with breaking changes
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    # Look for GitHub Actions in the `.github/workflows` directory
+    directory: "/.github/workflows"
+    # Check for updates once a month
+    schedule:
+      interval: "monthly"
+    # Apply labels to pull requests for version updates
+    labels:
+      - "github-actions"
+      - "dependencies"
+      - "automated"
+
+# Configuration for security updates
+security-updates:
+  # Enable security updates
+  enabled: true
+  # Apply security updates as soon as they are available
+  schedule:
+    interval: "daily"
+  # Apply labels to security update pull requests
+  labels:
+    - "security"
+    - "dependencies"
+    - "automated"
+  # Auto-merge security updates that pass CI
+  auto-merge:
+    # Enable auto-merge for security updates
+    enabled: true
+    # Only auto-merge patch and minor updates
+    update-types: ["patch", "minor"]
+
+# Configuration for pull requests
+pull-request:
+  # Rebase pull requests to keep a clean commit history
+  rebase-strategy: "auto"
+  # Set up commit message format
+  commit-message:
+    prefix: "chore(deps)"
+    include: "scope"
+    prefix-development: "chore(dev-deps)"
+    include-scope: true
+
+# Configuration for dependency groups
+dependency-groups:
+  # Group all development dependencies together
+  - name: "development dependencies"
+    patterns: ["*:devDependencies"]
+    labels: ["dev-dependencies"]
+  # Group all production dependencies together
+  - name: "production dependencies"
+    patterns: ["*:dependencies"]
+    labels: ["dependencies"]
+
+# Configuration for version updates
+version-updates:
+  # Enable version updates for all dependencies
+  enabled: true
+  # Check for updates once a week
+  schedule:
+    interval: "weekly"
+  # Apply labels to version update pull requests
+  labels:
+    - "dependencies"
+    - "version-update"
+    - "automated"
+  # Group updates by dependency name
+  versioning-strategy: increase
+  # Ignore major version updates for packages with breaking changes
+  ignore:
+    - dependency-name: "*"
+      update-types: ["version-update:semver-major"]

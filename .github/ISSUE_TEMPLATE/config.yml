@@ -1,0 +1,23 @@
+# Configuration for GitHub issue templates
+# https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository
+
+blank_issues_enabled: false
+contact_links:
+  - name: ❓ Ask a Question
+    url: https://github.com/trinity-os/skillkit/discussions/new?category=q-a
+    about: Ask a question about using SkillKit
+  - name: 💬 Discussion
+    url: https://github.com/trinity-os/skillkit/discussions/new?category=general
+    about: Start a general discussion about SkillKit
+  - name: 📝 Feature Request
+    url: https://github.com/trinity-os/skillkit/issues/new?template=feature_request.md
+    about: Suggest a new feature or enhancement
+  - name: 🐛 Bug Report
+    url: https://github.com/trinity-os/skillkit/issues/new?template=bug_report.md
+    about: Report a bug or unexpected behavior
+  - name: 📚 Documentation
+    url: https://github.com/trinity-os/skillkit/discussions/new?category=documentation
+    about: Report documentation issues or suggest improvements
+  - name: 🛠️ Development Help
+    url: https://github.com/trinity-os/skillkit/discussions/new?category=development
+    about: Get help with contributing to the project

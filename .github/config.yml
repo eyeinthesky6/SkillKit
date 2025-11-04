@@ -1,0 +1,84 @@
+# Configuration for GitHub repository features
+
+# Enable GitHub Discussions
+discussions:
+  # Enable or disable discussions
+  enabled: true
+  # Set the default discussion category for new discussions
+  category: "General"
+
+# Repository settings
+repository:
+  # Default branch name
+  default_branch: "main"
+  # Allow auto-merge
+  allow_auto_merge: true
+  # Allow merge commits
+  allow_merge_commit: true
+  # Allow squash merging
+  allow_squash_merge: true
+  # Allow rebase merging
+  allow_rebase_merge: true
+  # Delete head branches when PRs are merged
+  delete_branch_on_merge: true
+  # Allow forking
+  allow_forking: true
+  # Allow issues
+  has_issues: true
+  # Allow projects
+  has_projects: true
+  # Allow wiki
+  has_wiki: false
+  # Allow downloads
+  has_downloads: true
+  # Allow discussions
+  has_discussions: true
+
+# Issue and Pull Request templates
+# This section is used by GitHub to configure the issue and PR templates
+template:
+  # The default issue template
+  issue: .github/ISSUE_TEMPLATE/bug_report.md
+  # The default pull request template
+  pull_request: .github/PULL_REQUEST_TEMPLATE.md
+
+# Code scanning
+# This section is used to configure code scanning
+code_scanning:
+  # Enable code scanning
+  enabled: true
+  # Enable Dependabot security updates
+  dependabot_security_updates: true
+
+# Dependabot configuration
+dependabot:
+  # Enable version updates for GitHub Actions
+  github-actions:
+    directory: "/"
+    schedule:
+      interval: "weekly"
+  # Enable version updates for npm dependencies
+  npm:
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+# Security settings
+security:
+  # Enable secret scanning
+  secret_scanning:
+    enabled: true
+  # Enable push protection
+  push_protection:
+    enabled: true
+
+# Community health files
+# These files will be used by GitHub to display community health information
+files:
+  - CODE_OF_CONDUCT.md
+  - CONTRIBUTING.md
+  - SECURITY.md
+  - SUPPORT.md
+  - CHANGELOG.md
+  - GOVERNANCE.md
+  - MAINTAINERS.md
