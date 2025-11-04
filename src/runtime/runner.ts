@@ -303,6 +303,14 @@ export class SkillRunner {
     }: { applied?: boolean; audit?: boolean; output?: unknown } = {},
   ): ExecutionResult<any> {
     const errorMessage = error instanceof Error ? error.message : error || 'Unknown error';
+    const duration = Date.now() - startTime;
+    const fileOps = this.sandbox?.getFileOperations() || [];
+    const commands = (this.sandbox?.getCommandHistory() || []).map((cmd) => ({
+      ...(cmd.result || { exitCode: null, stdout: '', stderr: '', duration: 0 }),
+      command: cmd.command,
+      args: cmd.args,
+      cwd: cmd.cwd,
+    }));
 
     const result: ExecutionResult<any> = {
       success: false,

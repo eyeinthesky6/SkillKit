@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
 import YAML from 'js-yaml';
 
@@ -87,7 +86,7 @@ export class InMemorySkillRegistry implements SkillRegistry {
     const ext = path.extname(filePath).toLowerCase();
 
     let metadata: any;
-    let description = '';
+    // Description is intentionally left empty as it's not currently used
 
     if (ext === '.md') {
       // Parse markdown with YAML frontmatter
@@ -97,7 +96,8 @@ export class InMemorySkillRegistry implements SkillRegistry {
       }
 
       const yamlContent = match[1];
-      description = match[2].trim();
+      // Description is intentionally unused but kept for future reference
+      const _description = match[2].trim();
 
       try {
         metadata = YAML.load(yamlContent);

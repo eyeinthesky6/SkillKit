@@ -27,7 +27,7 @@ const DEFAULT_AUDIT_OPTIONS: Required<AuditOptions> = {
   logDir: path.join(process.cwd(), 'logs', 'audit'),
   enabled: true,
   logger: defaultLogger,
-  pretty: process.env.NODE_ENV !== 'production',
+  pretty: process.env['NODE_ENV'] !== 'production',
 };
 
 /**
