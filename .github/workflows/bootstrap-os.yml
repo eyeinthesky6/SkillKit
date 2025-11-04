@@ -1,0 +1,112 @@
+name: bootstrap-open-source
+
+on:
+  workflow_dispatch:
+    inputs:
+      create_pr:
+        description: "Create PR for docs/community-foundation -> main"
+        required: true
+        default: "true"
+        type: choice
+        options: ["true", "false"]
+      create_issues:
+        description: "Seed 12 backlog issues"
+        required: true
+        default: "true"
+        type: choice
+        options: ["true", "false"]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create PR and issues via Octokit
+        if: ${{ github.event.inputs.create_pr == 'true' || github.event.inputs.create_issues == 'true' }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            // Helper: ensure labels
+            async function ensureLabels(labels) {
+              for (const l of labels) {
+                try {
+                  await github.rest.issues.createLabel({ owner, repo, ...l });
+                } catch (e) {
+                  // ignore if exists
+                }
+              }
+            }
+
+            // Create PR if requested
+            if (core.getInput('create_pr') === 'true') {
+              const head = 'docs/community-foundation';
+              const base = 'main';
+
+              // Check if PR already exists
+              const prs = await github.rest.pulls.list({ owner, repo, state: 'open', head: `${owner}:${head}`, base });
+              if (prs.data.length === 0) {
+                try {
+                  const body = `## Summary\n- Scaffold Docusaurus (docs-site/) with TS\n- Configure url/baseUrl for eyeinthesky6/SkillKit\n- Seed core docs: overview, getting-started, skills, agents, audits, security, roadmap, skills-gallery\n- Add GH Actions workflow to deploy to gh-pages on branch pushes\n\n## Notes\n- After merge, Pages will serve from gh-pages. Ensure Pages source is set to GitHub Actions.`;
+                  const pr = await github.rest.pulls.create({ owner, repo, head, base, title: 'docs(site): add Docusaurus site and GH Pages deploy', body });
+                  core.summary.addRaw(`PR created: ${pr.data.html_url}`);
+                } catch (e) {
+                  core.setFailed(`Failed to create PR: ${e.message}`);
+                }
+              } else {
+                core.summary.addRaw(`PR already exists: ${prs.data[0].html_url}`);
+              }
+            }
+
+            // Create issues if requested
+            if (core.getInput('create_issues') === 'true') {
+              const labelDefs = [
+                { name: 'enhancement', color: 'a2eeef', description: 'New feature request' },
+                { name: 'documentation', color: '0075ca', description: 'Docs work' },
+                { name: 'infra', color: '5319e7', description: 'CI/CD and infrastructure' },
+                { name: 'security', color: 'b60205', description: 'Security related' },
+              ];
+              await ensureLabels(labelDefs);
+
+              const issues = [
+                { title: '[Feature] skill scaffolder', labels: ['enhancement'], body: 'Implement `tsk gen-skill <name>` with SKILL.md template, schema.json, tests, and validation.' },
+                { title: '[Feature] registry + install', labels: ['enhancement'], body: 'Registry MVP (`/registry/skills.json`); CLI: `tsk search`, `tsk install-skill <github|file>`.' },
+                { title: '[Feature] stats', labels: ['enhancement'], body: 'Emit & summarize run stats; CLI: `tsk stats`.' },
+                { title: '[Feature] RPC', labels: ['enhancement'], body: 'JSON-RPC server: listSkills, planSkill, runSkill, fetchLogs; CLI: `tsk rpc`.' },
+                { title: '[Feature] VS Code stub', labels: ['enhancement'], body: 'Extension commands: Plan Skill, Run Skill, View Audit Logs via RPC.' },
+                { title: '[Feature] audit dashboard', labels: ['enhancement'], body: 'Basic UI to browse JSONL audits; link from docs.' },
+                { title: '[Feature] verify-skill', labels: ['enhancement'], body: 'Trust metadata: verified/signature; CLI verifies and prints status.' },
+                { title: '[Docs] skills gallery', labels: ['documentation'], body: 'Autogenerate skills-gallery from registry/community folders.' },
+                { title: '[Docs] tutorial', labels: ['documentation'], body: 'End-to-end tutorial: install, run, add a skill, view audits.' },
+                { title: '[Infra] release workflow', labels: ['infra'], body: 'On tag: lint+test+build → npm publish → changelog → deploy docs.' },
+                { title: '[Infra] CI matrix', labels: ['infra'], body: 'Vitest Windows+Ubuntu; CLI mocked exec; RPC smoke tests.' },
+                { title: '[Security] community skills validation', labels: ['security'], body: 'CI validates SKILL.md for community/skills; block unsigned unless override.' },
+              ];
+
+              for (const i of issues) {
+                try {
+                  const res = await github.rest.issues.create({ owner, repo, title: i.title, body: i.body, labels: i.labels });
+                  core.summary.addRaw(`Issue created: ${res.data.html_url}\n`);
+                } catch (e) {
+                  if (e.status === 422) {
+                    core.summary.addRaw(`Issue already exists: ${i.title}\n`);
+                  } else {
+                    core.setFailed(`Failed to create issue '${i.title}': ${e.message}`);
+                  }
+                }
+              }
+            }
+
+            await core.summary.write();
