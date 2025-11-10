@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "test-python-app"
+version = "0.1.0"
+description = "Test Python project for SkillKit"
+authors = ["Test <test@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+requests = "^2.31.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.4.0"
+flake8 = "^6.1.0"
+black = "^23.7.0"
+mypy = "^1.5.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+target-version = ['py39']
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+

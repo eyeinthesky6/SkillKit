@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["executed", "results"],
+  "properties": {
+    "executed": {
+      "type": "boolean",
+      "description": "Whether plan was executed (false for dry run)"
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step": { "type": "number" },
+          "action": { "type": "string" },
+          "command": { "type": "string" },
+          "status": { "type": "string", "enum": ["success", "failed", "skipped"] },
+          "output": { "type": "string" },
+          "error": { "type": "string" },
+          "duration": { "type": "number" }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "totalSteps": { "type": "number" },
+        "successful": { "type": "number" },
+        "failed": { "type": "number" },
+        "skipped": { "type": "number" },
+        "remainingErrors": { "type": "number" }
+      }
+    },
+    "logFile": {
+      "type": "string",
+      "description": "Path to execution log file"
+    }
+  }
+}
+

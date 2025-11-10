@@ -1,0 +1,247 @@
+# Core Agent Rules (Consolidated)
+
+**🏭 PRODUCTION HARDENING:** ❌ NO mocks/stubs/TODOs ✅ ONLY production-grade implementations
+
+**⚡ TL;DR:** Diagnostics first → Contracts before code → Production-ready only → No cross-doc hops
+
+**🚨 DATE USAGE:** Examples show "04-11-2025" for illustration. ALWAYS use current date: `$(date +"%d-%m-%Y")`
+
+---
+
+## 🚨 **MANDATORY FIRST STEPS**
+
+```bash
+# 0. DEDUP (non-blocking - warns only)
+bash .cursor/commands/DEDUP.md check "feature"
+
+# 1. DIAGNOSTICS
+pnpm run lint 2>&1 | tee lint-errors.log
+pnpm run type-check 2>&1 | tee type-errors.log
+node scripts/validation/todo-tracker.cjs > todos.txt
+pnpm exec madge --circular packages/shared/src
+pnpm run build
+
+# 2. Report findings to user → Wait for approval
+```
+
+## 🚨 **BEFORE CHANGING CONTRACTS (CRITICAL)**
+
+**NEVER modify existing contracts without checking consumers!**
+
+```bash
+# 1. Find ALL consumers of the schema/type you want to change
+grep -r "OrderRequestSchema\|OrderRequest" packages/ apps/ --include="*.ts" --include="*.tsx"
+
+# 2. Review EVERY file found (check imports and usage)
+# 3. If > 3 consumers → STOP, discuss with user
+# 4. If changing → Update ALL consumers in SAME commit
+# 5. Run type-check after EACH consumer update
+
+# NEVER change contracts and assume "type-check will catch it"
+```
+
+---
+
+## 🏭 **Production Standards (ZERO TOLERANCE)**
+
+| Rule | Enforcement |
+|------|-------------|
+| **No Mocks** | NO mocks, stubs, placeholders, fake data |
+| **No TODOs** | NO TODO, FIXME, HACK, "not implemented" |
+| **Real Logic** | ALL methods MUST have real business logic |
+| **Real Data** | Test with REAL broker APIs, REAL market data |
+| **Zero Errors** | Target: 0 type errors, 0 lint errors, 0 build errors |
+
+---
+
+## 📋 **Workflow Order (MANDATORY)**
+
+1. **Check Collision** - `find docs/audit/ -name "*[FEATURE-ID]*" -mmin -240`   
+2. **Run Diagnostics** - Commands above (don't skip!)
+3. **Define Contracts** - Schemas/interfaces BEFORE implementation
+4. **Implement** - Services/adapters with real logic
+5. **Validate** - Type-check + lint + build after each phase
+6. **Document** - Update contracts/INDEX.md + AITracking
+
+**🚨 CRITICAL: Document Naming (Use EXACT Feature ID)**
+
+```bash
+# Get Feature ID from ONE of these sources:
+cat docs/Product/feature_registry.csv | grep -i "feature_name"
+cat docs/tech/service-catalog.csv | grep -i "service_name"
+grep -A 5 "feature_name" docs/Product/Product\ Plan/Product_Plan.md
+
+# Then use EXACT ID in filenames (with current date):
+TODAY=$(date +"%d-%m-%Y")
+docs/audit/Feature_Fix_Execution_<EXACT-FEATURE-ID>_${TODAY}.md
+docs/AITracking/AIAction_${TODAY}_<EXACT-FEATURE-ID>-implementation.md
+
+# ✅ CORRECT: Feature_Fix_Execution_FEE-001_$(date +"%d-%m-%Y").md
+# ❌ WRONG: Feature_Fix_Execution_fees_<any-date>.md (impossible to trace!)
+```
+
+---
+
+## 🏗️ **Architecture (5-Layer Flow)**
+
+```
+External API → Adapter (.parse()) → dataNormaliser → transformer → Domain (z.infer<>)
+```
+
+**Rules:**
+- `.parse()` ONLY at IO boundaries (adapters, routes, forms)
+- `z.infer<>` types in services, transformers
+- NO `z.any()`, `z.unknown()`, `.catchall()`
+- Barrel imports ONLY (NO direct file imports)
+- Explicit named exports (NO `export * from`)
+
+---
+
+## 📦 **Package Locations**
+
+| Type | Location |
+|------|----------|
+| **Contracts** | `packages/shared/src/contracts/{domain,integration,platform,shared}` |
+| **Platform Services** | `packages/shared/src/services/platform/` (logger, httpClient, supabase) |
+| **Trading Services** | `packages/shared/src/services/trading/` (order, position, strategy) |
+| **Utilities** | `packages/shared/src/utilities/` (pure functions, NO deps) |
+| **Adapters** | `packages/shared/src/adapters/brokers/` (Zerodha, Upstox, etc.) |
+
+---
+
+## ✅ **Auth Pattern (2 Lines)**
+
+```typescript
+const user = extractUserFromToken(req);
+if (!user) throw new Error('Unauthorized');
+```
+
+**All routes MUST have this** - ESLint enforces.
+
+---
+
+## 🚫 **Banned Patterns**
+
+- ❌ Suggestions without diagnostics
+- ❌ Implementation before contracts
+- ❌ `.parse()` in services/transformers
+- ❌ Wildcard exports (`export * from`)
+- ❌ Hardcoded user IDs ('system', 'default-user')
+- ❌ npm commands (use pnpm@10.15.1 ONLY)
+- ❌ git reset/hard reset/force push to main
+- ❌ Mass edits (sed, git replace, scripts)
+
+---
+
+## 🎓 **Quick Patterns (Copy-Paste)**
+
+### Contract
+```typescript
+export const FeatureSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+});
+export type Feature = z.infer<typeof FeatureSchema>;
+```
+
+### Interface
+```typescript
+export interface IFeatureService {
+  getFeature(id: string): Promise<Feature>;
+}
+```
+
+### Service
+```typescript
+export class FeatureService implements IFeatureService {
+  async getFeature(id: string): Promise<Feature> {
+    // Real implementation (no mocks/stubs)
+  }
+}
+```
+
+### Adapter (with .parse())
+```typescript
+export class FeatureAdapter {
+  async fetchFromAPI(id: string): Promise<Feature> {
+    const raw = await httpClient.get(`/api/feature/${id}`);
+    return FeatureSchema.parse(raw.data); // .parse() at IO boundary
+  }
+}
+```
+
+### Barrel Export
+```typescript
+// ✅ CORRECT: Explicit named exports
+export { FeatureSchema, type Feature } from './feature.contract';
+
+// ❌ FORBIDDEN: Wildcard exports
+// export * from './feature.contract';
+```
+
+---
+
+## 📊 **Validation Commands**
+
+```bash
+# Type check
+pnpm run type-check
+
+# Lint
+pnpm run lint
+
+# Build
+pnpm run build
+
+# TODO tracker
+node scripts/validation/todo-tracker.cjs
+
+# Circular deps
+pnpm exec madge --circular packages/shared/src
+
+# Anti-patterns (should return 0)
+grep -r "export \* from" packages/shared/src/contracts/
+grep -r "\.parse(" packages/shared/src/services/
+```
+
+---
+
+## 🔧 **Git Workflow**
+
+- Atomic commits only
+- Brief commit messages
+- NO command chaining
+- Push after each feature completion
+- Update Sprint Status after push
+
+---
+
+## 🎯 **Key Principles**
+
+1. **Diagnostics BEFORE suggestions** (data-driven decisions)
+2. **Contracts BEFORE implementation** (schema → interface → code)
+3. **Production-ready from day 1** (no mocks/stubs/TODOs)
+4. **One file at a time** (fix → validate → next)
+5. **Zero tolerance** for incomplete work
+6. **Explicit > implicit** (no wildcards)
+7. **Fail fast** (validation at boundaries)
+
+---
+
+## 🏭 **PRODUCTION STANDARDS (ENFORCED)**
+
+**Every code change MUST:**
+- ✅ Be production-ready (no mocks/stubs)
+- ✅ Have real business logic (no TODOs)
+- ✅ Match/exceed Product Plan
+- ❌ NEVER leave placeholders
+
+**If can't complete:**
+- 🔴 STOP and report
+- 🔴 NO partial implementation
+- 🔴 NO TODO comments
+
+---
+
+**Last Updated:** 04-11-2025  
+**Status:** Consolidated from 13 files → 1 core reference

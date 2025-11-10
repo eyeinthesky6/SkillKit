@@ -1,0 +1,27 @@
+name: analyze-errors
+version: 1.0.0
+description: Analyze error logs, diagnostics output, and create actionable fix plan
+tags:
+  - debugging
+  - analysis
+  - workflow
+  - fix-planning
+inputs: ./input.schema.json
+outputs: ./output.schema.json
+allowedPaths:
+  read:
+    - "./**"
+    - "../**"
+  write:
+    - "./fix-plan.json"
+allowedCommands: []
+steps:
+  - Parse error messages from logs or command output
+  - Categorize errors (lint, typecheck, test, runtime)
+  - Detect error patterns and root causes
+  - Generate prioritized fix plan with actionable steps
+  - Save fix plan to file for execution
+retries: 1
+dryRunSupported: false
+dependencies: []
+

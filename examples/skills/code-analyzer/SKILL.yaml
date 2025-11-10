@@ -1,0 +1,30 @@
+name: code-analyzer
+version: 1.0.0
+description: Analyze code complexity, patterns, and quality metrics
+tags:
+  - analysis
+  - code-quality
+  - complexity
+  - metrics
+inputs: ./input.schema.json
+outputs: ./output.schema.json
+allowedPaths:
+  read:
+    - "./**"
+    - "../**"
+    - "../../**"
+  write:
+    - "./reports/**"
+allowedCommands: []
+steps:
+  - Parse source files from specified path
+  - Calculate cyclomatic complexity for functions
+  - Detect code patterns and anti-patterns
+  - Count lines of code, comments, and blank lines
+  - Identify potential issues and code smells
+  - Generate comprehensive analysis report
+retries: 1
+dryRunSupported: true
+dependencies: []
+
+

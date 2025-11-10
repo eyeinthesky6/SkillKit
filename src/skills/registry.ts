@@ -1,7 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 
+import matter from 'gray-matter';
 import YAML from 'js-yaml';
+import type { JSONSchema7 } from 'json-schema';
 
 import { Skill, SkillRegistry, skillMetadataSchema } from '../types';
 
@@ -85,29 +87,31 @@ export class InMemorySkillRegistry implements SkillRegistry {
     const content = fs.readFileSync(filePath, 'utf8');
     const ext = path.extname(filePath).toLowerCase();
 
-    let metadata: any;
-    // Description is intentionally left empty as it's not currently used
+    let metadata: Record<string, unknown>;
+    let markdownContent: string | undefined;
 
     if (ext === '.md') {
-      // Parse markdown with YAML frontmatter
-      const match = content.match(/^---\n([\s\S]+?)\n---\n([\s\S]*)$/);
-      if (!match) {
-        throw new Error('Invalid skill file: missing YAML frontmatter');
+      // Parse markdown with YAML frontmatter using gray-matter
+      try {
+        const parsed = matter(content);
+        metadata = parsed.data;
+        markdownContent = parsed.content.trim();
+      } catch (error) {
+        throw new Error(`Failed to parse SKILL.md: ${error}`);
       }
 
-      const yamlContent = match[1];
-      // Description is intentionally unused but kept for future reference
-      const _description = match[2].trim();
-
-      try {
-        metadata = YAML.load(yamlContent);
-      } catch (error) {
-        throw new Error(`Failed to parse YAML frontmatter: ${error}`);
+      // If no frontmatter found, try to treat entire content as YAML for backwards compat
+      if (!metadata || Object.keys(metadata).length === 0) {
+        try {
+          metadata = YAML.load(content) as Record<string, unknown>;
+        } catch {
+          throw new Error('Invalid SKILL.md: missing YAML frontmatter');
+        }
       }
     } else if (ext === '.yaml' || ext === '.yml') {
       // Parse YAML file
       try {
-        metadata = YAML.load(content);
+        metadata = YAML.load(content) as Record<string, unknown>;
       } catch (error) {
         throw new Error(`Failed to parse YAML: ${error}`);
       }
@@ -124,7 +128,7 @@ export class InMemorySkillRegistry implements SkillRegistry {
     const skillDir = path.dirname(filePath);
 
     // Load input/output schemas if they're file references
-    const loadSchema = (schema: any, type: 'input' | 'output'): any => {
+    const loadSchema = (schema: unknown, type: 'input' | 'output'): unknown => {
       if (typeof schema === 'string') {
         const schemaPath = path.isAbsolute(schema) ? schema : path.join(skillDir, schema);
 
@@ -141,11 +145,19 @@ export class InMemorySkillRegistry implements SkillRegistry {
       return schema;
     };
 
+    const inputsSchema = loadSchema(result.data.inputs, 'input');
+    const outputsSchema = loadSchema(result.data.outputs, 'output');
+    
+    // Default empty schemas if not provided
+    const defaultSchema: JSONSchema7 = { type: 'object', properties: {} };
+    
     const skill: Skill = {
       ...result.data,
-      inputs: loadSchema(result.data.inputs, 'input'),
-      outputs: loadSchema(result.data.outputs, 'output'),
+      inputs: (inputsSchema as JSONSchema7) || defaultSchema,
+      outputs: (outputsSchema as JSONSchema7) || defaultSchema,
       sourcePath: skillDir,
+      // Store markdown instructions if available (for instructional/hybrid modes)
+      instructions: markdownContent,
     };
 
     return skill;

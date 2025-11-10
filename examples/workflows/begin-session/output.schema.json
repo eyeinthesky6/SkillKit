@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "diagnostics": {
+      "type": "object",
+      "properties": {
+        "lintErrors": {
+          "type": "number",
+          "description": "Number of lint errors found"
+        },
+        "typeErrors": {
+          "type": "number",
+          "description": "Number of type errors found"
+        },
+        "todoCount": {
+          "type": "number",
+          "description": "Number of TODO/FIXME/HACK comments"
+        },
+        "circularDeps": {
+          "type": "number",
+          "description": "Number of circular dependencies"
+        },
+        "buildStatus": {
+          "type": "string",
+          "enum": ["pass", "fail"],
+          "description": "Build status"
+        }
+      },
+      "required": ["lintErrors", "typeErrors", "todoCount", "circularDeps", "buildStatus"]
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "todaysWork": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Files worked on today"
+        },
+        "recentCommits": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Recent commit messages"
+        },
+        "unfinishedWork": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Incomplete work items"
+        }
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "task": {
+            "type": "string",
+            "description": "Recommended workflow name"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "normal", "low"],
+            "description": "Priority level"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why this task is recommended"
+          }
+        },
+        "required": ["task", "priority", "reason"]
+      }
+    },
+    "menu": {
+      "type": "object",
+      "properties": {
+        "development": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "fixing": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "quality": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "planning": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  },
+  "required": ["diagnostics", "context", "recommendations", "menu"]
+}
+

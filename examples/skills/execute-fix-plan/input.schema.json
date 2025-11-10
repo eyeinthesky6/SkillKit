@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "planFile": {
+      "type": "string",
+      "description": "Path to fix-plan.json file",
+      "default": "./fix-plan.json"
+    },
+    "dryRun": {
+      "type": "boolean",
+      "description": "If true, show what would be executed without running",
+      "default": false
+    },
+    "autoFix": {
+      "type": "boolean",
+      "description": "Attempt automatic fixes where possible (e.g., eslint --fix)",
+      "default": true
+    },
+    "stopOnError": {
+      "type": "boolean",
+      "description": "Stop execution if a step fails",
+      "default": false
+    }
+  }
+}
+

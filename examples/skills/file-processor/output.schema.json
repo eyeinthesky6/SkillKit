@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "filesProcessed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "totalLines": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "totalWords": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "reportPath": {
+      "type": "string"
+    },
+    "fileDetails": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string" },
+          "lines": { "type": "integer" },
+          "words": { "type": "integer" }
+        },
+        "required": ["path", "lines", "words"]
+      }
+    }
+  },
+  "required": ["filesProcessed", "totalLines", "totalWords", "reportPath", "fileDetails"],
+  "additionalProperties": false
+}

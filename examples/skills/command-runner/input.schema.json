@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "command": {
+      "type": "string",
+      "description": "Command to execute",
+      "minLength": 1
+    },
+    "args": {
+      "type": "array",
+      "description": "Command arguments",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "cwd": {
+      "type": "string",
+      "description": "Working directory for command execution",
+      "default": "."
+    },
+    "timeout": {
+      "type": "integer",
+      "description": "Timeout in milliseconds",
+      "minimum": 1000,
+      "maximum": 60000,
+      "default": 30000
+    }
+  },
+  "required": ["command"],
+  "additionalProperties": false
+}

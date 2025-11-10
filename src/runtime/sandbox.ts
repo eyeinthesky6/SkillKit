@@ -97,8 +97,7 @@ export function createSandbox(skill: Skill, options: SandboxOptions = {}): Sandb
 
 export class Sandbox extends EventEmitter {
   // ID is kept for future tracking (will be used for logging and debugging)
-  // @ts-ignore - Unused but kept for future use
-  private readonly id: string;
+  private readonly _id: string;
   private allowedReadPaths: string[] = [];
   private allowedWritePaths: string[] = [];
   private allowedCommands: Array<string | RegExp> = [];
@@ -110,8 +109,7 @@ export class Sandbox extends EventEmitter {
   private readonly timeout: number;
   private readonly onFileOp: NonNullable<SandboxOptions['onFileOp']>;
   // onResourceLimit will be called when resource limits are exceeded
-  // @ts-ignore - Unused but kept for future use
-  private readonly onResourceLimit: NonNullable<SandboxOptions['onResourceLimit']>;
+  private readonly _onResourceLimit: NonNullable<SandboxOptions['onResourceLimit']>;
   private readonly activeProcesses: Set<number> = new Set();
   // startTime will be used for tracking execution duration
   // private readonly startTime: number = Date.now(); // Unused but kept for future use
@@ -202,12 +200,12 @@ export class Sandbox extends EventEmitter {
         if (pid) {
           process.kill(pid, 'SIGTERM');
         }
-      } catch (error) {
+      } catch {
         // Process might have already terminated
       }
     });
     this.activeProcesses.clear();
-    
+
     // Clear any pending timeouts
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
@@ -231,7 +229,7 @@ export class Sandbox extends EventEmitter {
 
     // Resolve the path relative to the sandbox root
     const resolvedPath = path.resolve(this.cwd, filePath);
-    
+
     // Convert both paths to the same format for comparison
     const normalizedCwd = path.normalize(this.cwd).replace(/\\/g, '/');
     const normalizedPath = path.normalize(resolvedPath).replace(/\\/g, '/');
@@ -271,8 +269,7 @@ export class Sandbox extends EventEmitter {
   }
 
   constructor(
-    // @ts-ignore - skill is used for allowedPaths and allowedCommands initialization
-    private readonly skill: Skill,
+    skill: Skill,
     options: SandboxOptions = {},
   ) {
     // Initialize parent class
@@ -283,7 +280,7 @@ export class Sandbox extends EventEmitter {
     }
 
     this.cwd = options.cwd ? path.resolve(options.cwd) : process.cwd();
-    
+
     // Initialize environment variables
     this.env = {
       ...process.env,
@@ -298,8 +295,12 @@ export class Sandbox extends EventEmitter {
     this.limits = { ...DEFAULT_RESOURCE_LIMITS, ...(options.limits || {}) };
     this.timeout = options.timeout || this.limits.maxCpuTime;
     this.onFileOp = options.onFileOp || (() => {});
-    this.onResourceLimit = options.onResourceLimit || (() => {});
-    this.id = uuidv4();
+    this._onResourceLimit = options.onResourceLimit || (() => {});
+    this._id = uuidv4();
+    
+    // Mark as intentionally used (kept for future logging/debugging)
+    void this._id;
+    void this._onResourceLimit;
 
     // Normalize and validate paths
     this.cwd = path.normalize(this.cwd);
@@ -331,12 +332,12 @@ export class Sandbox extends EventEmitter {
     }
 
     // Normalize and set allowed paths
-    this.allowedReadPaths = Array.isArray(skill.allowedPaths?.read) 
-      ? skill.allowedPaths.read.map(p => path.resolve(this.cwd, p))
+    this.allowedReadPaths = Array.isArray(skill.allowedPaths?.read)
+      ? skill.allowedPaths.read.map((p) => path.resolve(this.cwd, p))
       : [];
-    
+
     this.allowedWritePaths = Array.isArray(skill.allowedPaths?.write)
-      ? skill.allowedPaths.write.map(p => path.resolve(this.cwd, p))
+      ? skill.allowedPaths.write.map((p) => path.resolve(this.cwd, p))
       : [];
 
     // Compile allowed command patterns
@@ -374,7 +375,7 @@ export class Sandbox extends EventEmitter {
 
     // Sanitize command and arguments
     const sanitizedCommand = command.trim();
-    const sanitizedArgs = args.map(arg => arg.trim()).filter(Boolean);
+    const sanitizedArgs = args.map((arg) => arg.trim()).filter(Boolean);
     const fullCommand = [sanitizedCommand, ...sanitizedArgs].join(' ');
 
     // Check for potentially dangerous patterns
@@ -395,7 +396,7 @@ export class Sandbox extends EventEmitter {
       /\$IFS/,
     ];
 
-    if (dangerousPatterns.some(pattern => pattern.test(fullCommand))) {
+    if (dangerousPatterns.some((pattern) => pattern.test(fullCommand))) {
       return false;
     }
 
@@ -404,10 +405,11 @@ export class Sandbox extends EventEmitter {
       try {
         if (typeof pattern === 'string') {
           // Exact match or prefix match with space
-          return pattern === sanitizedCommand || 
-                 (fullCommand.startsWith(pattern) && 
-                  (fullCommand.length === pattern.length || 
-                   fullCommand[pattern.length] === ' '));
+          return (
+            pattern === sanitizedCommand ||
+            (fullCommand.startsWith(pattern) &&
+              (fullCommand.length === pattern.length || fullCommand[pattern.length] === ' '))
+          );
         }
         return pattern.test(fullCommand);
       } catch (error) {
@@ -426,7 +428,7 @@ export class Sandbox extends EventEmitter {
     try {
       const normalizedPath = this.normalizePath(filePath);
       return this.allowedReadPaths.some((pattern) =>
-        isMatch(normalizedPath, pattern, { dot: true })
+        isMatch(normalizedPath, pattern, { dot: true }),
       );
     } catch (error) {
       this.emit(SandboxEvent.Error, error instanceof Error ? error : new Error(String(error)));
@@ -443,7 +445,7 @@ export class Sandbox extends EventEmitter {
     try {
       const normalizedPath = this.normalizePath(filePath);
       return this.allowedWritePaths.some((pattern) =>
-        isMatch(normalizedPath, pattern, { dot: true })
+        isMatch(normalizedPath, pattern, { dot: true }),
       );
     } catch (error) {
       this.emit(SandboxEvent.Error, error instanceof Error ? error : new Error(String(error)));
@@ -617,7 +619,7 @@ export class Sandbox extends EventEmitter {
     if (!this.isPathAllowedForRead(normalizedPath)) {
       throw new Error(`Read access to ${normalizedPath} is not allowed`);
     }
-    
+
     const content = fs.readFileSync(normalizedPath, { encoding });
     this.recordFileOp('read', normalizedPath, typeof content === 'string' ? content : undefined);
     return content;
@@ -634,7 +636,7 @@ export class Sandbox extends EventEmitter {
     if (!this.isPathAllowedForWrite(normalizedPath)) {
       throw new Error(`Write access to ${normalizedPath} is not allowed`);
     }
-    
+
     if (!this.dryRun) {
       fs.writeFileSync(normalizedPath, content, { encoding });
     }
@@ -650,7 +652,7 @@ export class Sandbox extends EventEmitter {
     if (!this.isPathAllowedForWrite(normalizedPath)) {
       throw new Error(`Delete access to ${normalizedPath} is not allowed`);
     }
-    
+
     if (!this.dryRun) {
       if (fs.existsSync(normalizedPath)) {
         fs.rmSync(normalizedPath, { recursive: true, force: true });
@@ -678,7 +680,7 @@ export class Sandbox extends EventEmitter {
       op,
     );
   }
-  
+
   /**
    * Clean up resources when the sandbox is no longer needed
    */

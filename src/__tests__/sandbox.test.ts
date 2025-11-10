@@ -21,15 +21,15 @@ describe('Sandbox', () => {
       },
       allowedPaths: {
         read: [],
-        write: []
+        write: [],
       },
       allowedCommands: [],
       steps: ['Step 1: Initialize test'],
       retries: 3,
       dryRunSupported: true,
-      dependencies: []
+      dependencies: [],
     };
-    
+
     const sandbox = new Sandbox(skill);
     expect(sandbox).toBeDefined();
   });

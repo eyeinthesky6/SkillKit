@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "array",
+      "description": "Array of objects to transform",
+      "items": {
+        "type": "object"
+      }
+    },
+    "operations": {
+      "type": "object",
+      "properties": {
+        "filter": {
+          "type": "object",
+          "description": "Filter criteria (key-value pairs)",
+          "additionalProperties": true
+        },
+        "map": {
+          "type": "object",
+          "description": "Field mappings (oldName: newName)",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "select": {
+          "type": "array",
+          "description": "Fields to include in output",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sort": {
+          "type": "object",
+          "properties": {
+            "field": {
+              "type": "string"
+            },
+            "order": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": ["data"],
+  "additionalProperties": false
+}

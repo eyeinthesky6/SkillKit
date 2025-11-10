@@ -1,0 +1,25 @@
+name: file-processor
+version: 1.0.0
+description: Reads files, counts lines and words, and generates a summary report
+tags:
+  - files
+  - text-processing
+  - reporting
+inputs: ./input.schema.json
+outputs: ./output.schema.json
+allowedPaths:
+  read:
+    - "./**"
+    - "../**"
+  write:
+    - "./output/**"
+allowedCommands: []
+steps:
+  - Read specified files from the filesystem
+  - Count lines and words in each file
+  - Calculate total statistics
+  - Generate summary report and write to output file
+retries: 1
+dryRunSupported: true
+dependencies: []
+

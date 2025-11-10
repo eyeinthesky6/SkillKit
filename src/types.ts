@@ -34,6 +34,8 @@ export interface Skill {
   dependencies: string[];
   /** Optional path to the skill's source directory */
   sourcePath?: string;
+  /** Markdown instructions (for SKILL.md format, instructional/hybrid modes) */
+  instructions?: string;
 }
 
 /** Registry of available skills */

@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "files": {
+      "type": "array",
+      "description": "Array of file paths to process",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "outputFile": {
+      "type": "string",
+      "description": "Path to the output report file",
+      "default": "./output/report.txt"
+    }
+  },
+  "required": ["files"],
+  "additionalProperties": false
+}

@@ -1,0 +1,27 @@
+name: data-transformer
+version: 1.0.0
+description: Transforms JSON data by filtering, mapping, and aggregating properties
+tags:
+  - data
+  - json
+  - transformation
+  - etl
+inputs: ./input.schema.json
+outputs: ./output.schema.json
+allowedPaths:
+  read:
+    - "./**"
+    - "../**"
+  write:
+    - "./output/**"
+allowedCommands: []
+steps:
+  - Parse input data and transformation rules
+  - Apply filtering based on specified criteria
+  - Map and transform fields according to rules
+  - Aggregate data if grouping is specified
+  - Return transformed dataset
+retries: 1
+dryRunSupported: true
+dependencies: []
+

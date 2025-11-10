@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["errors"],
+  "properties": {
+    "errors": {
+      "type": "string",
+      "description": "Error output from diagnostics, lint, test, or build commands"
+    },
+    "context": {
+      "type": "object",
+      "description": "Additional context about the project",
+      "properties": {
+        "projectType": {
+          "type": "string",
+          "enum": ["typescript", "javascript", "python", "java", "go", "php", "unknown"]
+        },
+        "framework": {
+          "type": "string"
+        },
+        "workingDir": {
+          "type": "string"
+        }
+      }
+    },
+    "priority": {
+      "type": "string",
+      "description": "Priority level for fixes",
+      "enum": ["critical", "high", "medium", "low"],
+      "default": "high"
+    }
+  }
+}
+

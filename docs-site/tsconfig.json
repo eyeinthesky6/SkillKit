@@ -1,0 +1,7 @@
+{
+  "extends": "@docusaurus/typescript-config",
+  "compilerOptions": {
+    "baseUrl": "."
+  }
+}
+

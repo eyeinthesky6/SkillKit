@@ -1,0 +1,33 @@
+name: test-generator
+version: 1.0.0
+description: Generate test files and test cases based on source code analysis
+tags:
+  - testing
+  - generation
+  - tdd
+  - automation
+inputs: ./input.schema.json
+outputs: ./output.schema.json
+allowedPaths:
+  read:
+    - "./**"
+    - "../**"
+    - "../../**"
+  write:
+    - "./**/__tests__/**"
+    - "./**/*.test.*"
+    - "./**/*.spec.*"
+allowedCommands: []
+steps:
+  - Parse source file and extract functions/classes
+  - Analyze function signatures and parameters
+  - Detect existing test patterns in the project
+  - Generate test file with appropriate framework (Jest/Vitest/Mocha)
+  - Create test cases for each public function/method
+  - Include edge cases and error scenarios
+  - Write test file to appropriate location
+retries: 1
+dryRunSupported: true
+dependencies: []
+
+
