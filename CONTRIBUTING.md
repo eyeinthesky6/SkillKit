@@ -83,7 +83,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
 
 ## Reporting Bugs
 
-Bugs are tracked as [GitHub issues](https://github.com/trinity-os/skillkit/issues).
+Bugs are tracked as [GitHub issues](https://github.com/eyeinthesky6/SkillKit/issues).
 
 When reporting a bug, please include the following:
 
@@ -140,7 +140,7 @@ Good documentation is crucial for any open-source project. When making changes:
 
 Join our community to ask questions and discuss ideas:
 
-- [GitHub Discussions](https://github.com/trinity-os/skillkit/discussions)
+- [GitHub Discussions](https://github.com/eyeinthesky6/SkillKit/discussions)
 - [Discord Server](#) (coming soon)
 
 ## License
