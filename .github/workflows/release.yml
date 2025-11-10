@@ -47,6 +47,8 @@ jobs:
         run: pnpm publish --no-git-checks --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # Note: For trusted publishing, setup-node@v4 with registry-url automatically uses OIDC
+        # Make sure trusted publisher is configured on npm for this workflow
 
       - name: Create GitHub Release
         uses: actions/create-release@v2
