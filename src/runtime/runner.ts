@@ -138,12 +138,17 @@ export class SkillRunner {
     
     // Display warnings
     if (warnings.length > 0) {
+      // Read version from package.json
+      const packageJsonPath = path.join(__dirname, '../../package.json');
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+      const version = packageJson.version;
+
       console.warn('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      console.warn('🚨 SECURITY WARNINGS - SkillKit v0.0.1');
+      console.warn(`🚨 SECURITY WARNINGS - SkillKit v${version}`);
       console.warn('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       console.warn(`\nSkill: ${skill.name}`);
       warnings.forEach(w => console.warn(w));
-      console.warn('\n⚠️  SkillKit v0.0.1 has known security limitations:');
+      console.warn(`\n⚠️  SkillKit v${version} has known security limitations:`);
       console.warn('   • Resource limits NOT enforced');
       console.warn('   • Path validation has bypass opportunities');
       console.warn('   • Command execution not fully sandboxed');
