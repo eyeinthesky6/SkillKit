@@ -5,7 +5,7 @@ const importPlugin = require('eslint-plugin-import');
 
 module.exports = [
   {
-    ignores: ['dist/**', 'node_modules/**', 'coverage/**', '*.js', 'vitest.config.ts']
+    ignores: ['dist/**', 'node_modules/**', 'coverage/**', '*.js', 'vitest.config.ts', 'docs-site/**']
   },
   {
     files: ['src/**/*.ts'],
