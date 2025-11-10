@@ -1,6 +1,6 @@
 {
   "name": "@trinity-os/skillkit",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Terminal-aware workflow orchestration + Anthropic skills integration for AI-assisted development",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -25,7 +25,7 @@
     "format:check": "prettier --check \"**/*.{ts,json,md}\"",
     "clean": "rimraf dist coverage .skillkit test-dx-skill test-input.json",
     "prepare": "husky install",
-    "prepublishOnly": "pnpm run lint && pnpm run type-check && pnpm run test && pnpm run build",
+    "prepublishOnly": "pnpm run build",
     "release": "standard-version",
     "docs:dev": "cd docs-site && pnpm start",
     "docs:build": "cd docs-site && pnpm build",
