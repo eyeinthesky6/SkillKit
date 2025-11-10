@@ -180,16 +180,71 @@ export class GitHubIntegration {
   /**
    * Copy skill to target location
    */
-  async copySkill(skill: DiscoveredSkill, targetDir: string): Promise<void> {
+  async copySkill(skill: DiscoveredSkill, targetDir: string, force = false): Promise<void> {
     const skillTargetDir = path.join(targetDir, skill.name);
 
     // Check if exists
     if (fs.existsSync(skillTargetDir)) {
-      throw new Error(`Skill already exists: ${skill.name}. Use --force to overwrite.`);
+      if (!force) {
+        throw new Error(`Skill already exists: ${skill.name}. Use --force to overwrite.`);
+      }
+      
+      // If forcing, check if content is identical (content-based deduplication)
+      if (await this.skillsAreIdentical(skill.path, skillTargetDir)) {
+        throw new Error(`Skill ${skill.name} already exists with identical content. Skipping.`);
+      }
     }
 
     // Copy entire skill directory
     await this.copyDirectory(skill.path, skillTargetDir);
+  }
+
+  /**
+   * Check if two skills are identical by comparing content
+   * Compares SKILL.md/yaml and index.js
+   */
+  private async skillsAreIdentical(skill1Path: string, skill2Path: string): Promise<boolean> {
+    try {
+      // Compare SKILL.md or SKILL.yaml
+      const skill1Md = path.join(skill1Path, 'SKILL.md');
+      const skill1Yaml = path.join(skill1Path, 'SKILL.yaml');
+      const skill2Md = path.join(skill2Path, 'SKILL.md');
+      const skill2Yaml = path.join(skill2Path, 'SKILL.yaml');
+      
+      let skill1Meta = '';
+      let skill2Meta = '';
+      
+      if (fs.existsSync(skill1Md) && fs.existsSync(skill2Md)) {
+        skill1Meta = fs.readFileSync(skill1Md, 'utf-8');
+        skill2Meta = fs.readFileSync(skill2Md, 'utf-8');
+      } else if (fs.existsSync(skill1Yaml) && fs.existsSync(skill2Yaml)) {
+        skill1Meta = fs.readFileSync(skill1Yaml, 'utf-8');
+        skill2Meta = fs.readFileSync(skill2Yaml, 'utf-8');
+      } else {
+        // Different metadata formats, assume different
+        return false;
+      }
+      
+      // Compare index.js
+      const skill1Index = path.join(skill1Path, 'index.js');
+      const skill2Index = path.join(skill2Path, 'index.js');
+      
+      if (!fs.existsSync(skill1Index) || !fs.existsSync(skill2Index)) {
+        return false;
+      }
+      
+      const skill1IndexContent = fs.readFileSync(skill1Index, 'utf-8');
+      const skill2IndexContent = fs.readFileSync(skill2Index, 'utf-8');
+      
+      // Compare content (simple hash for performance)
+      const hash1 = Buffer.from(skill1Meta + skill1IndexContent).toString('base64').substring(0, 64);
+      const hash2 = Buffer.from(skill2Meta + skill2IndexContent).toString('base64').substring(0, 64);
+      
+      return hash1 === hash2;
+    } catch {
+      // If comparison fails, assume different (safer)
+      return false;
+    }
   }
 
   /**

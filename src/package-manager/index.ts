@@ -87,8 +87,17 @@ export class PackageManager {
           }
 
           installSpinner.text = `Installing ${skill.name}...`;
-          await this.github.copySkill(skill, location.base);
-          installed.push(skill.name);
+          try {
+            await this.github.copySkill(skill, location.base, options.force || false);
+            installed.push(skill.name);
+          } catch (error) {
+            if (error instanceof Error && error.message.includes('identical content')) {
+              // Content-based duplicate detected
+              installSpinner.text = `Skipping ${skill.name} (identical content)`;
+              continue;
+            }
+            throw error;
+          }
         } catch {
           failed.push(skill.name);
         }

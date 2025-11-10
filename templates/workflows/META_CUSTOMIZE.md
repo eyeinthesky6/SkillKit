@@ -6,6 +6,37 @@
 
 ---
 
+## Step 0: Check Customizations & Updates ⭐ CRITICAL
+
+**Before customizing, check for existing customizations and available updates:**
+
+```bash
+# Run audit to detect customizations
+tsk audit --quick
+
+# Check version info
+cat .skillkit/version.json 2>/dev/null || echo "No version metadata"
+
+# Check for customized files
+tsk audit | grep -i "customized\|update\|conflict"
+```
+
+**If customizations detected:**
+- ⚠️ **DO NOT overwrite** customized files
+- ⚠️ **Prompt user** for consolidation strategy
+- ⚠️ **Check for updates** that may conflict
+
+**Agent Instructions:**
+1. **Always check for customizations first** using `@docs/workflows/subtasks/check-customizations.md`
+2. **If customized files found**, ask user:
+   - Keep customizations?
+   - Update to standard?
+   - Merge/consolidate versions?
+3. **Never force update** customized files without user confirmation
+4. **Handle skipped versions** by checking CHANGELOG.md
+
+---
+
 ## Step 1: Analyze Current Project (2min)
 
 ```bash
@@ -209,7 +240,38 @@ lib/ spec/ documentation/
 
 ---
 
-## Step 9: Document Customizations
+## Step 9: Mark Customizations as Intentional ⭐ CRITICAL
+
+**After customizing workflows (via META_CUSTOMIZE OR manual edits), mark them as intentional:**
+
+```bash
+# Mark all customized files as intentional (recommended)
+tsk meta-customize:mark --all
+
+# Or mark specific files
+tsk meta-customize:mark --files ".cursor/commands/BEGIN_SESSION.md" ".cursor/commands/IMPLEMENT_FEATURE.md"
+```
+
+**Why this matters:**
+- ✅ **All customizations are valid** - whether via META_CUSTOMIZE or manual edits
+- ✅ Marking them ensures they're **preserved automatically** during updates
+- ✅ They won't be flagged as "conflicts" in audit
+- ✅ Future `tsk init` runs won't overwrite them
+- ✅ This tells SkillKit: "Preserve this customization!"
+
+**Important:**
+- **Manual edits are NOT accidental** - they're intentional user/agent customizations
+- **Both META_CUSTOMIZE and manual edits** should be marked and preserved
+- **The distinction is informational only** - both are equally valid
+
+**Agent Instructions:**
+- **Always run this command** after completing META_CUSTOMIZE workflow
+- **Also run this** if you manually edit workflow files
+- **This ensures** all customizations are preserved during updates
+
+---
+
+## Step 10: Document Customizations
 
 **Create `docs/SKILLKIT_CUSTOMIZATIONS.md`:**
 
@@ -239,12 +301,14 @@ lib/ spec/ documentation/
 
 ---
 
-## Step 10: Commit Customizations
+## Step 11: Commit Customizations
 
 ```bash
-git add .cursor/ docs/workflows/ .skillkit.config.json
+git add .cursor/ docs/workflows/ .skillkit.config.json .skillkit/version.json
 git commit -m "chore: customize SkillKit workflows for project"
 ```
+
+**Note:** `.skillkit/version.json` now contains intentional customization flags!
 
 ---
 
@@ -253,9 +317,22 @@ git commit -m "chore: customize SkillKit workflows for project"
 **SkillKit is now tailored to YOUR project!**
 
 **Next steps:**
-- Run `/REVIEW_SKILLKIT` periodically to refine further
+- Run `/AUDIT_SKILLKIT` periodically to check for updates
 - Update customizations when project structure changes
 - Share `docs/SKILLKIT_CUSTOMIZATIONS.md` with team
+
+---
+
+## ⚠️ **Important: Update Conflicts**
+
+**If you see customization warnings during updates:**
+
+1. **Never force update** customized files
+2. **Always prompt user** for consolidation strategy
+3. **Check CHANGELOG.md** for breaking changes
+4. **Handle skipped versions** carefully
+
+**Use:** `@docs/workflows/subtasks/check-customizations.md` to detect and handle conflicts.
 
 ---
 

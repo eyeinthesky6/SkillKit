@@ -18,6 +18,10 @@ import { Command } from 'commander';
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
+import {
+  getVersionInfo,
+  getCustomizedFiles,
+} from '../utils/version-checker.js';
 
 interface AuditIssue {
   id: string;
@@ -62,6 +66,12 @@ export function createAuditCommand(): Command {
         spinner.text = 'Checking for duplicate workflows...';
         const duplicateIssues = await checkDuplicates(projectRoot);
         issues.push(...duplicateIssues);
+        checksPerformed++;
+        
+        // 1.5. Check for customized files and update conflicts
+        spinner.text = 'Checking for customized files and update conflicts...';
+        const customizationIssues = await checkCustomizations(projectRoot);
+        issues.push(...customizationIssues);
         checksPerformed++;
         
         // 2. Validate workflow structure
@@ -434,6 +444,160 @@ async function checkSubtaskReferences(projectRoot: string): Promise<AuditIssue[]
   }
   
   return issues;
+}
+
+/**
+ * Check for customized files and update conflicts
+ */
+async function checkCustomizations(projectRoot: string): Promise<AuditIssue[]> {
+  const issues: AuditIssue[] = [];
+  
+  try {
+    // Check version info
+    const versionInfo = getVersionInfo(projectRoot);
+    if (!versionInfo) {
+      // No version metadata - fresh install
+      return issues;
+    }
+    
+    const { installed, current, skippedVersions, hasBreakingChanges } = versionInfo;
+    
+    // Check if update available
+    if (installed !== current) {
+      if (skippedVersions.length > 0) {
+        issues.push({
+          id: 'CUST-skipped-versions',
+          severity: 'warning',
+          category: 'Updates',
+          message: `Skipped versions detected: ${installed} → ${current}`,
+          impact: 'May have breaking changes. Review CHANGELOG.md before updating.',
+          fix: `Review CHANGELOG.md for versions: ${skippedVersions.join(', ')}. Consider incremental updates.`,
+          autoFixable: false,
+        });
+      }
+      
+      if (hasBreakingChanges) {
+        issues.push({
+          id: 'CUST-breaking-changes',
+          severity: 'critical',
+          category: 'Updates',
+          message: `Major version update detected: ${installed} → ${current}`,
+          impact: 'Breaking changes likely. Customized files may be incompatible.',
+          fix: 'Review CHANGELOG.md for breaking changes. Test customized workflows after update.',
+          autoFixable: false,
+        });
+      }
+    }
+    
+    // Check for customized files
+    const customizations = getCustomizedFiles(projectRoot);
+    
+    if (customizations.length > 0) {
+      // Check if customized files differ from current templates
+      const templatesDir = path.join(__dirname, '..', '..', 'templates', 'workflows');
+      
+      for (const custom of customizations) {
+        const customPath = path.join(projectRoot, custom.file);
+        const templateName = path.basename(custom.file);
+        const templatePath = path.join(templatesDir, templateName);
+        
+        if (fs.existsSync(customPath) && fs.existsSync(templatePath)) {
+          // Compare current content with template
+          const currentContent = fs.readFileSync(customPath, 'utf-8');
+          const templateContent = fs.readFileSync(templatePath, 'utf-8');
+          
+          const currentHash = Buffer.from(currentContent).toString('base64').substring(0, 32);
+          const templateHash = Buffer.from(templateContent).toString('base64').substring(0, 32);
+          
+          // If differs from template, it's customized
+          // All customizations are valid - just track how they were customized
+          if (currentHash !== templateHash && currentHash !== custom.originalHash) {
+            const via = custom.customizedVia || 'unknown';
+            const isMarked = custom.intentional === true;
+            
+            if (via === 'META_CUSTOMIZE' || isMarked) {
+              // Customized via META_CUSTOMIZE or marked as intentional - info only
+              issues.push({
+                id: `CUST-${templateName}-${via}`,
+                severity: 'info',
+                category: 'Customizations',
+                file: custom.file,
+                message: `Customized workflow: ${templateName} (${via === 'META_CUSTOMIZE' ? 'via META_CUSTOMIZE' : 'marked as intentional'})`,
+                impact: `File was customized on ${new Date(custom.customizedAt).toLocaleDateString()}. This will be preserved during updates.`,
+                fix: `No action needed. This customization will be preserved automatically.`,
+                autoFixable: false,
+              });
+            } else {
+              // Manual customization - still valid, just informational
+              issues.push({
+                id: `CUST-${templateName}-manual`,
+                severity: 'info',
+                category: 'Customizations',
+                file: custom.file,
+                message: `Manually customized workflow: ${templateName}`,
+                impact: `File was customized on ${new Date(custom.customizedAt).toLocaleDateString()}. This will be preserved during updates.`,
+                fix: `No action needed. To mark as intentional: tsk meta-customize:mark --files "${custom.file}"`,
+                autoFixable: false,
+              });
+            }
+          }
+        }
+      }
+      
+      // Summary
+      if (customizations.length > 0) {
+        issues.push({
+          id: 'CUST-summary',
+          severity: 'info',
+          category: 'Customizations',
+          message: `${customizations.length} customized file(s) detected`,
+          impact: 'These files differ from standard templates and may need consolidation.',
+          fix: `Run /META_CUSTOMIZE to review and consolidate customizations with version ${current}.`,
+          autoFixable: false,
+        });
+      }
+    }
+    
+    // Check for deprecated workflows/skills
+    // This would require a deprecation list - for now, check version metadata
+    if (versionInfo.installed && compareVersions(versionInfo.installed, '0.0.3') < 0) {
+      issues.push({
+        id: 'CUST-deprecated-version',
+        severity: 'warning',
+        category: 'Deprecation',
+        message: `Very old version detected: ${versionInfo.installed}`,
+        impact: 'Some workflows may be deprecated. Check for updates.',
+        fix: `Update to latest version (${current}) or review CHANGELOG.md for deprecated features.`,
+        autoFixable: false,
+      });
+    }
+    
+  } catch (error) {
+    issues.push({
+      id: 'CUST-error',
+      severity: 'warning',
+      category: 'Customizations',
+      message: `Error checking customizations: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      impact: 'Cannot verify if files are customized.',
+      fix: 'Check .skillkit/version.json exists and is valid.',
+      autoFixable: false,
+    });
+  }
+  
+  return issues;
+}
+
+/**
+ * Compare two semantic versions
+ */
+function compareVersions(v1: string, v2: string): number {
+  const parse = (v: string) => v.split('.').map(Number);
+  const [m1, i1, p1] = parse(v1);
+  const [m2, i2, p2] = parse(v2);
+  
+  if (m1 !== m2) return m1 - m2;
+  if (i1 !== i2) return i1 - i2;
+  return p1 - p2;
 }
 
 /**
