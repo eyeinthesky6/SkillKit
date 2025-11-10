@@ -214,7 +214,7 @@ Please include:
 **Response Time:** We aim to respond within 48 hours.
 
 ### For General Bugs:
-- GitHub Issues: https://github.com/trinity-os/skillkit/issues
+- GitHub Issues: https://github.com/eyeinthesky6/SkillKit/issues
 - Include security label if security-related
 
 ---

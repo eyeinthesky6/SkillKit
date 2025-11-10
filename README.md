@@ -1,10 +1,10 @@
 # SkillKit
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![CI](https://github.com/trinity-os/skillkit/actions/workflows/ci.yml/badge.svg)](https://github.com/trinity-os/skillkit/actions/workflows/ci.yml)
+[![CI](https://github.com/eyeinthesky6/SkillKit/actions/workflows/ci.yml/badge.svg)](https://github.com/eyeinthesky6/SkillKit/actions/workflows/ci.yml)
 [![npm version](https://badge.fury.io/js/%40trinity-os%2Fskillkit.svg)](https://badge.fury.io/js/%40trinity-os%2Fskillkit)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![GitHub Discussions](https://img.shields.io/github/discussions/trinity-os/skillkit)](https://github.com/trinity-os/skillkit/discussions)
+[![GitHub Discussions](https://img.shields.io/github/discussions/eyeinthesky6/SkillKit)](https://github.com/eyeinthesky6/SkillKit/discussions)
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/0000/badge)](https://bestpractices.coreinfrastructure.org/projects/0000)
 
 **Self-customizing workflow orchestration for AI-assisted development.**
@@ -218,8 +218,8 @@ Search GitHub for:
 ```
 
 ### Get Help
-- [GitHub Discussions](https://github.com/trinity-os/skillkit/discussions) - Ask questions
-- [Issues](https://github.com/trinity-os/skillkit/issues) - Report bugs
+- [GitHub Discussions](https://github.com/eyeinthesky6/SkillKit/discussions) - Ask questions
+- [Issues](https://github.com/eyeinthesky6/SkillKit/issues) - Report bugs
 - Type `/HELP` in Cursor - Complete documentation
 
 ## License
