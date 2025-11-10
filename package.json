@@ -22,6 +22,7 @@
     "dist/**/*.map",
     "templates/**/*.md",
     "docs/workflows/subtasks/**/*.md",
+    "scripts/postinstall.js",
     "README.md",
     "LICENSE",
     "CHANGELOG.md"
