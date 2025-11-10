@@ -29,8 +29,13 @@ import { createValidateWorkflowCommand } from './cli-commands/validate-workflow'
 import { ErrorFactory, SkillKitError } from './errors';
 import { discoverSkills } from './utils/skill-resolver';
 
+// Read version from package.json
+const packageJsonPath = path.join(__dirname, '../package.json');
+const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+const version = packageJson.version;
+
 const program = new Command();
-program.name('tsk').description('SkillKit - Terminal-aware workflow orchestration + Anthropic skills integration for AI-assisted development').version('0.0.1');
+program.name('tsk').description('SkillKit - Terminal-aware workflow orchestration + Anthropic skills integration for AI-assisted development').version(version);
 
 function resolveDir(dir?: string): string {
   const d = dir ? path.resolve(process.cwd(), dir) : process.cwd();
