@@ -1,0 +1,540 @@
+# SkillKit Vision
+
+**Version:** 0.0.1 (Initial Release)  
+**Last Updated:** November 7, 2025  
+**Status:** ✅ SELF-CUSTOMIZING WORKFLOW ORCHESTRATION
+
+---
+
+## 🎯 The Vision
+
+**SkillKit is a self-customizing workflow orchestration system for AI-assisted development.**
+
+We enable developers and AI agents to:
+1. **Execute** systematic, repeatable development procedures with doc-based workflows
+2. **Customize** workflows automatically to adapt to YOUR specific project
+3. **Integrate** deep domain expertise on-demand via Anthropic skills
+4. **Evolve** continuously through META workflows that improve the system itself
+
+**The Innovation:** From generic text instructions to project-specific, self-improving workflows.
+
+**The Moat:** Self-customization through META workflows - no other system adapts itself to your project.
+
+---
+
+## 🌍 The Ecosystem
+
+SkillKit builds on and integrates with the AI development ecosystem:
+
+### We Stand on Giants' Shoulders
+- **Anthropic Skills** - Deep domain expertise (PDF, Excel, databases, etc.)
+- **OpenSkills** - Package management for Anthropic skills
+- **Cursor Commands** - Native IDE workflow integration
+- **AGENTS.md** - Universal catalog format
+
+### What Makes SkillKit Unique
+SkillKit is the **first self-customizing workflow system** that:
+- ✅ **Hierarchical** - Workflows → Subtasks → Skills (like functions in programming)
+- ✅ **Self-Customizing** - META_CUSTOMIZE adapts ALL workflows to YOUR project
+- ✅ **Terminal-Aware** - Cross-platform execution (Windows/Mac/Linux) just works
+- ✅ **Community-Driven** - GitHub-based marketplace, one-command install
+- ✅ **Self-Improving** - AUDIT_SKILLKIT evolves workflows based on usage
+
+**The Innovation:** Generic instructions become project-specific, self-improving procedures.
+
+---
+
+## 🏗️ The SkillKit Architecture
+
+### The Hierarchical System
+
+```
+┌─────────────────────────────────────────────────┐
+│  Main Workflows (Entry Points)                  │
+│  /BEGIN_SESSION, /IMPLEMENT_FEATURE, /FIX_BUGS  │
+│                                                  │
+│  • Multi-step procedures for AI agents          │
+│  • Cursor slash commands                        │
+│  • Show menus, route to workflows               │
+│  • 10 production workflows                      │
+└─────────────────────────────────────────────────┘
+                       ↓ calls
+┌─────────────────────────────────────────────────┐
+│  Subtasks (Reusable Components)                 │
+│  run-tests.md, load-skill.md, audit-system.md   │
+│                                                  │
+│  • Granular, focused (15-25 lines)              │
+│  • Referenced by workflows                      │
+│  • Terminal-aware execution                     │
+│  • 20+ reusable subtasks                        │
+└─────────────────────────────────────────────────┘
+                       ↓ loads
+┌─────────────────────────────────────────────────┐
+│  Skills (Domain Expertise)                      │
+│  pdf, xlsx, docx, database (Anthropic)          │
+│                                                  │
+│  • Deep domain knowledge (200-600 lines)        │
+│  • Loaded on-demand via tsk skill:load          │
+│  • Cross-platform (terminal-aware)              │
+│  • 15+ Anthropic skills integrated              │
+└─────────────────────────────────────────────────┘
+                       ⟲
+┌─────────────────────────────────────────────────┐
+│  META System (Self-Improvement)                  │
+│  META_CUSTOMIZE, AUDIT_SKILLKIT                  │
+│                                                  │
+│  • Customizes workflows to YOUR project         │
+│  • Continuous improvement loop                  │
+│  • Creates new workflows                        │
+│  • Self-evolving system                         │
+└─────────────────────────────────────────────────┘
+```
+
+**Like programming:** Main() → Function() → Subroutine() → Library()
+
+---
+
+## 🎭 The User Experience
+
+### For Human Developers
+
+**Initialize once:**
+```bash
+npm install -g @trinity-os/skillkit
+cd your-project
+tsk init --cursor
+
+# Result:
+# ✓ 10 workflows in .cursor/commands/
+# ✓ Anthropic skills installed
+# ✓ AGENTS.md generated
+# ✓ Ready to use!
+```
+
+**Customize to your project:**
+```
+In Cursor: /META_CUSTOMIZE
+
+# What happens:
+# → Detects: pnpm (not npm)
+# → Detects: src/ directory
+# → Detects: vitest (not jest)
+# → Updates ALL workflows automatically
+# → "npm test" becomes "pnpm test" everywhere
+```
+
+**Daily workflow:**
+```
+In Cursor:
+/BEGIN_SESSION
+
+# AI shows menu:
+# 1. /IMPLEMENT_FEATURE
+# 2. /FIX_BUGS
+# 3. /DEPLOY_PREP
+# 4. /CONTINUE
+# etc.
+
+You: /IMPLEMENT_FEATURE
+
+# AI guides step-by-step:
+# → Gathers requirements
+# → Detects if PDF/Excel needed
+# → Loads relevant skills
+# → Implements feature
+# → Runs tests
+# → Commits changes
+```
+
+**Community marketplace:**
+```bash
+# Install workflows from GitHub
+tsk workflows:add john/k8s-workflows/DEPLOY_K8S.md
+
+# Install skills from community
+tsk skills:add alice/db-skills/postgres
+
+# Share your workflows
+# 1. Push to GitHub
+# 2. Add topic: skillkit-workflow
+# 3. Others install with one command
+```
+
+---
+
+### For AI Agents
+
+**Skill discovery:**
+```xml
+<!-- AGENTS.md (auto-generated by tsk sync) -->
+<available_skills>
+  <skill>
+    <name>pdf</name>
+    <description>Extract text and tables from PDFs</description>
+  </skill>
+  <skill>
+    <name>xlsx</name>
+    <description>Create and edit spreadsheets</description>
+  </skill>
+</available_skills>
+```
+
+**Skill execution:**
+```bash
+# AI agent invokes from terminal:
+tsk run pdf extract --input doc.pdf --json
+# → Returns structured JSON
+# → AI parses and uses results
+```
+
+**Workflow guidance:**
+```markdown
+<!-- BEGIN_SESSION.md -->
+Step 1: Load context
+Step 2: Run diagnostics (tsk diagnose --json)
+Step 3: Parse results
+Step 4: Present task menu
+Step 5: Route to appropriate workflow
+```
+
+**Environment adaptation:**
+```bash
+# AI doesn't need to know project type
+tsk diagnose --json
+# → SkillKit detects environment
+# → Runs appropriate commands
+# → Returns structured report
+```
+
+---
+
+## 🔑 What Makes SkillKit Unique
+
+### The Complete Integration
+
+**Other tools solve pieces:**
+- Package managers: Install but don't execute
+- Task runners: Execute but no package management
+- Workflow tools: Orchestrate but no intelligence
+- IDEs: Everything but skill-focused
+
+**SkillKit solves everything:**
+- 📦 Install skills from GitHub
+- ⚡ Execute them securely
+- 🔄 Orchestrate workflows
+- 🧠 Adapt to environments
+- **All in one system**
+
+### The Four Layers Working Together
+
+```
+User installs skill (Layer 1)
+  └─> Skill executes securely (Layer 2)
+      └─> Part of a workflow (Layer 3)
+          └─> Adapts to project (Layer 4)
+```
+
+**No other tool does this.** SkillKit is the first complete system.
+
+---
+
+## 🗺️ The Roadmap
+
+### Week 1: OpenSkills Compatibility (Package Management)
+
+**Goal:** Be a drop-in replacement for OpenSkills
+
+**Deliverables:**
+- GitHub repo cloning
+- Interactive TUI (checkbox selection)
+- Multi-location storage (.claude, .agent, global)
+- AGENTS.md generation
+
+**Commands:**
+```bash
+tsk install anthropics/skills  # Like openskills install
+tsk list                        # Like openskills list
+tsk sync                        # Like openskills sync
+tsk manage                      # Like openskills manage
+```
+
+**Success:** Can install anthropics/skills with same UX as OpenSkills
+
+---
+
+### Week 2: Add Execution Layer
+
+**Goal:** Make skills executable
+
+**Deliverables:**
+- Skill execution engine
+- Bundled resource handling
+- JSON output support
+- Sandbox integration
+
+**Commands:**
+```bash
+tsk run pdf extract --input doc.pdf
+# → Actually extracts (not just shows instructions)
+```
+
+**Success:** Can execute anthropics/skills
+
+---
+
+### Week 3: Add Workflow Layer
+
+**Goal:** Multi-step orchestration
+
+**Deliverables:**
+- Workflow template system
+- BEGIN_SESSION.md generation
+- Cursor integration
+- Skill chaining
+
+**Commands:**
+```bash
+tsk init --cursor
+# → Creates workflow protocols
+
+@BEGIN_SESSION.md
+# → AI follows multi-step guidance
+```
+
+**Success:** Workflows work in Cursor IDE
+
+---
+
+### Week 4: Add Intelligence Layer
+
+**Goal:** Environment adaptation
+
+**Deliverables:**
+- Framework detection
+- Command adaptation
+- Cross-language support
+- Integration with workflows
+
+**Commands:**
+```bash
+tsk diagnose
+# → Auto-detects TypeScript/Python/Java
+# → Runs appropriate commands
+```
+
+**Success:** Works across TypeScript, Python, Java
+
+---
+
+## 🌍 The Ecosystem
+
+### Who Are We?
+
+**SkillKit:** The execution and orchestration layer
+
+**Built on:**
+- [OpenSkills](https://github.com/numman-ali/openskills) - Package management patterns
+- [Anthropic Skills](https://github.com/anthropics/skills) - SKILL.md format
+- [OpenAI AGENTS.md](https://github.com/openai/agents.md) - Skill catalog format
+
+**Works with:**
+- Cursor IDE (native integration)
+- Claude Code (via AGENTS.md)
+- Windsurf (via AGENTS.md)
+- Aider (via AGENTS.md)
+- Any agent with terminal access
+
+---
+
+## 💡 The Value Proposition
+
+### For Developers
+
+**Before SkillKit:**
+```bash
+# Manual installation
+git clone https://github.com/anthropics/skills
+cp -r skills/pdf .claude/skills/
+# → Error-prone, no validation
+
+# Manual execution
+# → Read SKILL.md instructions
+# → Run commands manually
+# → Hope it works
+```
+
+**With SkillKit:**
+```bash
+# One command installation
+tsk install anthropics/skills
+# → Interactive, validated, automatic
+
+# Automatic execution
+tsk run pdf extract --input doc.pdf
+# → Sandboxed, validated, logged
+```
+
+---
+
+### For AI Agents
+
+**Before SkillKit:**
+```
+1. User: "Extract text from this PDF"
+2. AI: *reads SKILL.md instructions*
+3. AI: *tries to follow steps manually*
+4. AI: *might make mistakes*
+```
+
+**With SkillKit:**
+```
+1. User: "Extract text from this PDF"
+2. AI: tsk run pdf extract --input doc.pdf --json
+3. AI: *gets structured output*
+4. ✅ Done correctly
+```
+
+---
+
+### For Skill Authors
+
+**Before SkillKit:**
+```
+1. Write SKILL.md
+2. Push to GitHub
+3. Users manually copy files
+4. Users manually follow instructions
+```
+
+**With SkillKit:**
+```
+1. tsk gen-skill myskill
+2. Write SKILL.md + index.js
+3. Push to GitHub
+4. Users: tsk install myuser/myskill
+5. Users: tsk run myskill
+6. ✅ Executes automatically
+```
+
+---
+
+## 🎯 Success Metrics
+
+### Adoption Metrics
+
+**Target (6 months):**
+- 1,000+ npm downloads/week
+- 100+ GitHub stars
+- 10+ external skill repositories
+- 5+ IDE integrations
+
+**Current:**
+- OpenSkills: 834 stars (proof of demand)
+- Market validated
+
+---
+
+### Technical Metrics
+
+**Quality Goals:**
+- 90%+ test coverage
+- <100ms CLI startup time
+- <1s skill execution overhead
+- Zero security vulnerabilities (high/critical)
+
+**Feature Completeness:**
+- Week 1: OpenSkills parity ✅
+- Week 2: Execution working ✅
+- Week 3: Workflows integrated ✅
+- Week 4: Intelligence complete ✅
+
+---
+
+## 🔮 Future Vision (Beyond Week 4)
+
+### Phase 2: Enhanced Features
+
+**Skill Marketplace:**
+- Web UI for skill discovery
+- Skill ratings and reviews
+- Verified publishers
+- Usage analytics
+
+**Advanced Workflows:**
+- Conditional branching
+- Parallel execution
+- State management
+- Error recovery
+
+**Team Features:**
+- Shared skill libraries
+- Team workspaces
+- Audit reports
+- Policy enforcement
+
+---
+
+### Phase 3: Enterprise
+
+**Security Hardening:**
+- Full resource isolation
+- Network sandboxing
+- Credential management
+- Compliance reports
+
+**Scalability:**
+- Distributed execution
+- Caching layers
+- Performance optimization
+- Load balancing
+
+**Integration:**
+- CI/CD pipelines
+- Cloud platforms
+- Container orchestration
+- Enterprise IDEs
+
+---
+
+## 📖 Documents
+
+### Core Documentation
+
+- ✅ [README.md](README.md) - Project overview
+- ✅ [UNDERSTANDING_EVOLUTION.md](docs/UNDERSTANDING_EVOLUTION.md) - The journey
+- ✅ [CORRECTED_ARCHITECTURE.md](docs/CORRECTED_ARCHITECTURE.md) - The 4 layers
+- ✅ [BUILD_ORDER_CORRECTED.md](docs/BUILD_ORDER_CORRECTED.md) - Implementation plan
+
+### Analysis & Research
+
+- ✅ [OPENSKILLS_ANALYSIS.md](docs/OPENSKILLS_ANALYSIS.md) - Reference implementation
+- ✅ [TASK_RUNNERS_COMPARISON.md](docs/TASK_RUNNERS_COMPARISON.md) - vs Make/Just/Nx
+- ✅ [Developer Experience Audit](docs/audit/Developer_Experience_Audit_05-11-2025.md) - DX analysis
+
+### Technical Specs
+
+- ✅ [SKILLKIT_ARCHITECTURE.md](docs/SKILLKIT_ARCHITECTURE.md) - System design
+- ✅ [SECURITY.md](SECURITY.md) - Security policy
+- ✅ [Getting Started](docs/getting-started.md) - Quick start guide
+
+---
+
+## ✅ Status: Ready to Build
+
+**Understanding:** ✅ Complete  
+**Architecture:** ✅ Defined  
+**Roadmap:** ✅ Prioritized  
+**Documentation:** ✅ Comprehensive
+
+**Next:** Start Week 1 - Build OpenSkills compatibility layer
+
+---
+
+**Reference:**
+- [OpenSkills GitHub](https://github.com/numman-ali/openskills) (834 stars)
+- [Anthropic Skills](https://github.com/anthropics/skills)
+- [OpenAI AGENTS.md](https://github.com/openai/agents.md)
+
+**Maintainers:**
+- Primary: SkillKit Team
+- Inspired by: OpenSkills, Anthropic, OpenAI communities

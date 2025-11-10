@@ -1,0 +1,55 @@
+# Session End Diagnostics - MANDATORY
+
+**⚡ RUN BEFORE ENDING SESSION OR MARKING COMPLETE**
+
+---
+
+## 📋 **Mandatory Commands (In Order)**
+
+```bash
+# 1. LINT (CRITICAL - catches architecture, patterns, any usage)
+pnpm run lint
+
+# 2. TYPE-CHECK (catches type errors)
+pnpm run type-check
+
+# 3. BUILD (catches compilation errors)
+pnpm run build
+```
+
+**❌ NEVER skip lint! It has deeper checks than type-check.**
+
+---
+
+## ✅ **Success Criteria**
+
+**ALL must pass before ending session:**
+- [ ] `pnpm run lint` → 0 errors
+- [ ] `pnpm run type-check` → 0 errors  
+- [ ] `pnpm run build` → succeeds
+
+**If ANY fail:** Fix before marking work complete
+
+---
+
+## 🔧 **Per-File Fixing**
+
+**For files worked on in session:**
+
+```bash
+# Get list of files changed
+git diff --name-only HEAD
+
+# Lint specific files
+pnpm run lint path/to/file1.ts path/to/file2.ts
+
+# Fix if possible
+pnpm run lint --fix path/to/file.ts
+
+# Then type-check
+pnpm run type-check
+```
+
+---
+
+**Priority: LINT > TYPE-CHECK > BUILD**

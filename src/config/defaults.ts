@@ -8,10 +8,10 @@ export const DEFAULT_SKILL_CONFIG = {
     read: [],
     write: [],
   },
-  
+
   // Default allowed commands (empty array means no commands allowed)
   allowedCommands: [],
-  
+
   // Default resource limits
   resourceLimits: {
     maxCpuTime: 30 * 1000, // 30 seconds
@@ -21,19 +21,19 @@ export const DEFAULT_SKILL_CONFIG = {
     maxStackSize: 8 * 1024 * 1024, // 8MB
     maxOutputSize: 10 * 1024 * 1024, // 10MB
   },
-  
+
   // Default timeout for operations
   timeout: 30 * 1000, // 30 seconds
-  
+
   // Default retry settings
   retries: 3,
   retryDelay: 1000, // 1 second
-  
+
   // Default environment variables
   env: {
     NODE_ENV: 'production',
   },
-  
+
   // Default logging settings
   logging: {
     level: 'info',

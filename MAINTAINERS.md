@@ -3,11 +3,13 @@
 ## Core Team
 
 ### Jai Thakur (Founder)
+
 - **GitHub**: [@jai-thakur](https://github.com/jai-thakur)
 - **Role**: Project Lead, Architecture, Core Development
 - **Areas**: System Design, API Development, Security
 
 ### [Your Name Here]
+
 - **GitHub**: [@yourusername]
 - **Role**: Core Maintainer
 - **Areas**: [Areas of expertise]

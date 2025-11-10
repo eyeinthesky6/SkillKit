@@ -16,13 +16,13 @@ describe('Sandbox Security', () => {
     outputs: { type: 'object', properties: {} },
     allowedPaths: {
       read: [path.join(testDir, 'allowed-read/**/*')],
-      write: [path.join(testDir, 'allowed-write/**/*')]
+      write: [path.join(testDir, 'allowed-write/**/*')],
     },
     allowedCommands: [process.platform === 'win32' ? '^dir' : '^ls'],
     steps: [],
     retries: 1,
     dryRunSupported: true,
-    dependencies: []
+    dependencies: [],
   };
 
   beforeEach(() => {
@@ -30,13 +30,9 @@ describe('Sandbox Security', () => {
     fs.mkdirSync(testDir, { recursive: true });
     fs.mkdirSync(path.join(testDir, 'allowed-read'), { recursive: true });
     fs.mkdirSync(path.join(testDir, 'allowed-write'), { recursive: true });
-    
+
     // Create test file
-    fs.writeFileSync(
-      path.join(testDir, 'allowed-read/test.txt'), 
-      'test content', 
-      'utf8'
-    );
+    fs.writeFileSync(path.join(testDir, 'allowed-read/test.txt'), 'test content', 'utf8');
   });
 
   afterEach(() => {
@@ -46,10 +42,10 @@ describe('Sandbox Security', () => {
 
   it('should prevent path traversal attacks', async () => {
     sandbox = new Sandbox(testSkill, { cwd: testDir });
-    
+
     // Try to access files outside sandbox
     const maliciousPath = path.join(testDir, '../sensitive-file');
-    
+
     expect(() => sandbox.readFile(maliciousPath)).toThrow('Path traversal attempt');
     expect(() => sandbox.writeFile(maliciousPath, 'hacked')).toThrow('Path traversal attempt');
     expect(() => sandbox.deletePath(maliciousPath)).toThrow('Path traversal attempt');
@@ -57,10 +53,10 @@ describe('Sandbox Security', () => {
 
   it('should enforce allowed paths', async () => {
     sandbox = new Sandbox(testSkill, { cwd: testDir });
-    
+
     // Try to access disallowed paths
     const disallowedPath = path.join(testDir, 'disallowed/test.txt');
-    
+
     expect(() => sandbox.readFile(disallowedPath)).toThrow('not allowed');
     expect(() => sandbox.writeFile(disallowedPath, 'test')).toThrow('not allowed');
   });
@@ -69,33 +65,29 @@ describe('Sandbox Security', () => {
     // Create a test file to verify file operations
     const testFilePath = path.join(testDir, 'test-file.txt');
     fs.writeFileSync(testFilePath, 'test content');
-    
+
     // Use a simple command that's guaranteed to work on all platforms
     const testCommand = process.platform === 'win32' ? 'cmd' : 'sh';
-    const testArgs = process.platform === 'win32' 
-      ? ['/c', 'echo test'] 
-      : ['-c', 'echo test'];
-    
+    const testArgs = process.platform === 'win32' ? ['/c', 'echo test'] : ['-c', 'echo test'];
+
     // Update the sandbox to allow the test command
     // Note: The pattern should match the full command string
     const testSkillWithCmd: Skill = {
       ...testSkill,
-      allowedCommands: [process.platform === 'win32' ? '/^cmd \/c/' : '/^sh -c/']
+      allowedCommands: [process.platform === 'win32' ? '/^cmd \/c/' : '/^sh -c/'],
     };
-    
+
     sandbox = new Sandbox(testSkillWithCmd, { cwd: testDir });
-    
+
     // Test allowed command - use the full command pattern that matches the regex
     const result = await sandbox.executeCommand(
-      testCommand, 
-      [testArgs.join(' ')] // Join args to match the regex pattern
+      testCommand,
+      [testArgs.join(' ')], // Join args to match the regex pattern
     );
     expect(result).toBeDefined();
-    
+
     // Test disallowed command
-    await expect(
-      sandbox.executeCommand('rm', ['-rf', '/'])
-    ).rejects.toThrow('not allowed');
+    await expect(sandbox.executeCommand('rm', ['-rf', '/'])).rejects.toThrow('not allowed');
   });
 
   it('should respect resource limits', async () => {
@@ -104,37 +96,33 @@ describe('Sandbox Security', () => {
       maxMemory: 10 * 1024 * 1024, // 10MB
       maxOutputSize: 100, // 100 bytes
     };
-    
+
     sandbox = new Sandbox(
       { ...testSkill },
-      { 
+      {
         cwd: testDir,
         limits: lowLimits,
-        timeout: 50 // 50ms timeout
-      }
+        timeout: 50, // 50ms timeout
+      },
     );
 
     // Test output size limit
     const testString = 'x'.repeat(200);
     if (process.platform === 'win32') {
-      await expect(
-        sandbox.executeCommand('cmd', ['/c', `echo ${testString}`])
-      ).rejects.toThrow();
+      await expect(sandbox.executeCommand('cmd', ['/c', `echo ${testString}`])).rejects.toThrow();
     } else {
-      await expect(
-        sandbox.executeCommand('echo', [testString])
-      ).rejects.toThrow('Output size limit exceeded');
+      await expect(sandbox.executeCommand('echo', [testString])).rejects.toThrow(
+        'Output size limit exceeded',
+      );
     }
 
     // Test timeout - use a command that will run longer than the timeout
     if (process.platform === 'win32') {
       await expect(
-        sandbox.executeCommand('timeout', ['2', 'echo', 'should timeout'])
+        sandbox.executeCommand('timeout', ['2', 'echo', 'should timeout']),
       ).rejects.toThrow();
     } else {
-      await expect(
-        sandbox.executeCommand('sleep', ['1'])
-      ).rejects.toThrow();
+      await expect(sandbox.executeCommand('sleep', ['1'])).rejects.toThrow();
     }
   });
 
@@ -146,22 +134,18 @@ describe('Sandbox Security', () => {
     }
 
     // Use a command that will definitely fail with a non-zero exit code
-    const failingCommand = process.platform === 'win32' 
-      ? 'cmd' 
-      : 'sh';
-    const failingArgs = process.platform === 'win32'
-      ? ['/c', 'exit 1']
-      : ['-c', 'exit 1'];
+    const failingCommand = process.platform === 'win32' ? 'cmd' : 'sh';
+    const failingArgs = process.platform === 'win32' ? ['/c', 'exit 1'] : ['-c', 'exit 1'];
 
     // Create a skill that allows the failing command
     const failingSkill: Skill = {
       ...testSkill,
-      allowedCommands: [process.platform === 'win32' ? '/^cmd/' : '/^sh/']
+      allowedCommands: [process.platform === 'win32' ? '/^cmd/' : '/^sh/'],
     };
-    
-    sandbox = new Sandbox(failingSkill, { 
+
+    sandbox = new Sandbox(failingSkill, {
       cwd: testDir,
-      timeout: 5000 // Increased timeout for CI
+      timeout: 5000, // Increased timeout for CI
     });
 
     // Track if error event was emitted
@@ -171,23 +155,23 @@ describe('Sandbox Security', () => {
     try {
       // This should throw an error due to non-zero exit code
       await sandbox.executeCommand(failingCommand, failingArgs);
-      
+
       // If we get here, the test should fail
       throw new Error('Command should have thrown an error');
     } catch (error) {
       // Expected error - verify it's the right type
       expect(error).toBeDefined();
-      
+
       // Log the error for debugging
       const errorMessage = error instanceof Error ? error.message : String(error);
       console.log('Command failed with error:', errorMessage);
-      
+
       // Just verify that some error occurred
       expect(errorMessage).toBeTruthy();
     } finally {
       // Give some time for cleanup to complete
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // Verify cleanup - check if activeProcesses is empty
       const activeProcesses = (sandbox as any).activeProcesses as Set<any>;
       console.log('Active processes after cleanup:', activeProcesses.size);

@@ -84,7 +84,7 @@ export async function runSkill<T = unknown>(
  * Skill runner that manages the execution of skills in a sandboxed environment
  */
 export class SkillRunner {
-  private sandbox: (Sandbox & { getSkill?: () => Skill; getLastInput?: () => any }) | null = null;
+  private sandbox: (Sandbox & { getSkill?: () => Skill; getLastInput?: () => unknown }) | null = null;
   private options: Required<RunnerOptions>;
   private validations: Array<{
     type: 'input' | 'output' | 'path' | 'command';
@@ -98,6 +98,63 @@ export class SkillRunner {
   }
 
   /**
+   * Check for potentially dangerous skill permissions and warn user
+   */
+  private checkSecurityWarnings(skill: Skill): void {
+    const warnings: string[] = [];
+    
+    // Check for broad file access
+    const readPaths = skill.allowedPaths?.read || [];
+    const writePaths = skill.allowedPaths?.write || [];
+    
+    const hasBroadRead = readPaths.some((p: string) => 
+      p === '/' || p === '.' || p === './' || p === '**' || p.includes('/**')
+    );
+    const hasBroadWrite = writePaths.some((p: string) => 
+      p === '/' || p === '.' || p === './' || p === '**' || p.includes('/**')
+    );
+    
+    if (hasBroadRead) {
+      warnings.push('⚠️  Skill has broad READ access to file system');
+    }
+    if (hasBroadWrite) {
+      warnings.push('⚠️  Skill has broad WRITE access to file system');
+    }
+    
+    // Check for unrestricted command access
+    const allowedCommands = skill.allowedCommands || [];
+    if (allowedCommands.length === 0 || allowedCommands.includes('*')) {
+      warnings.push('⚠️  Skill can execute ANY command');
+    }
+    
+    // Check for dangerous commands
+    const dangerousCommands = ['rm', 'del', 'format', 'dd', 'mkfs', 'shutdown', 'reboot'];
+    const hasDangerous = allowedCommands.some((cmd: string) => 
+      dangerousCommands.some(d => cmd.toLowerCase().includes(d))
+    );
+    if (hasDangerous) {
+      warnings.push('⚠️  Skill can execute DANGEROUS commands');
+    }
+    
+    // Display warnings
+    if (warnings.length > 0) {
+      console.warn('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.warn('🚨 SECURITY WARNINGS - SkillKit v1.1.0 ALPHA');
+      console.warn('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.warn(`\nSkill: ${skill.name}`);
+      warnings.forEach(w => console.warn(w));
+      console.warn('\n⚠️  SkillKit v1.1.0 has known security limitations:');
+      console.warn('   • Resource limits NOT enforced');
+      console.warn('   • Path validation has bypass opportunities');
+      console.warn('   • Command execution not fully sandboxed');
+      console.warn('\n✅ Only run skills from TRUSTED sources');
+      console.warn('❌ DO NOT run untrusted skills in production');
+      console.warn('\n📖 See SECURITY.md for details\n');
+      console.warn('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+    }
+  }
+
+  /**
    * Run a skill with the given input
    */
   async run<T = unknown>(
@@ -108,6 +165,9 @@ export class SkillRunner {
     const startTime = Date.now();
     const { dryRun, audit, autoApply, maxRetries } = this.options;
     const applied = autoApply || !dryRun;
+
+    // Security warning for broad permissions
+    this.checkSecurityWarnings(skill);
 
     // Create a new sandbox for this execution
     this.sandbox = createSandbox(skill, {
@@ -128,7 +188,7 @@ export class SkillRunner {
       return this.createErrorResult('Input validation failed', inputValidation.error, startTime, {
         applied,
         audit,
-      });
+      }) as ExecutionResult<T>;
     }
     this.recordValidation('input', true, 'Input is valid');
 
@@ -166,7 +226,7 @@ export class SkillRunner {
             outputValidation.error,
             startTime,
             { applied, audit, output },
-          );
+          ) as ExecutionResult<T>;
         }
 
         this.recordValidation('output', true, 'Output is valid');
@@ -219,7 +279,7 @@ export class SkillRunner {
           lastError,
           startTime,
           { applied, audit },
-        );
+        ) as ExecutionResult<T>;
       }
     }
 
@@ -301,7 +361,7 @@ export class SkillRunner {
       audit = false,
       output,
     }: { applied?: boolean; audit?: boolean; output?: unknown } = {},
-  ): ExecutionResult<any> {
+  ): ExecutionResult<unknown> {
     const errorMessage = error instanceof Error ? error.message : error || 'Unknown error';
     const duration = Date.now() - startTime;
     const fileOps = this.sandbox?.getFileOperations() || [];
@@ -312,7 +372,7 @@ export class SkillRunner {
       cwd: cmd.cwd,
     }));
 
-    const result: ExecutionResult<any> = {
+    const result: ExecutionResult<unknown> = {
       success: false,
       error: errorMessage,
       output,
@@ -371,7 +431,7 @@ export class SkillRunner {
 /**
  * Type for the default export of a skill module
  */
-export type SkillFunction<TInput = any, TOutput = any> = (
+export type SkillFunction<TInput = unknown, TOutput = unknown> = (
   input: TInput,
   sandbox: Sandbox,
   context: {

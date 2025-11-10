@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["sourceFile"],
+  "properties": {
+    "sourceFile": {
+      "type": "string",
+      "description": "Path to the source file to generate tests for"
+    },
+    "testFramework": {
+      "type": "string",
+      "description": "Test framework to use",
+      "enum": ["jest", "vitest", "mocha"],
+      "default": "vitest"
+    },
+    "outputPath": {
+      "type": "string",
+      "description": "Output path for test file (auto-detected if not specified)"
+    },
+    "coverage": {
+      "type": "number",
+      "description": "Target code coverage percentage",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 80
+    },
+    "includeEdgeCases": {
+      "type": "boolean",
+      "description": "Generate edge case tests",
+      "default": true
+    },
+    "includeErrorCases": {
+      "type": "boolean",
+      "description": "Generate error handling tests",
+      "default": true
+    }
+  }
+}
+
+

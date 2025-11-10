@@ -7,15 +7,56 @@
 [![GitHub Discussions](https://img.shields.io/github/discussions/trinity-os/skillkit)](https://github.com/trinity-os/skillkit/discussions)
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/0000/badge)](https://bestpractices.coreinfrastructure.org/projects/0000)
 
-A router-first, sandboxed skill runner with strong typing and audit trails. SkillKit enables developers to build, share, and run modular skills in a secure and scalable way.
+**Self-customizing workflow orchestration for AI-assisted development.**
 
-## Features
+Granular, doc-based workflows that adapt to your project + Anthropic skills integration + Community marketplace.
 
-- 🛡️ **Sandboxed Execution**: Run skills in isolated environments
-- 🧩 **Modular Architecture**: Easily add or remove skills
-- 🔍 **Type Safety**: Built with TypeScript for better developer experience
-- 📊 **Audit Trails**: Track skill execution and changes
-- 🚀 **High Performance**: Optimized for speed and efficiency
+A cross-platform system that combines intelligent workflows, terminal-aware skill loading, and self-customization into one powerful tool for systematic development.
+
+## 🎯 What's New
+
+**SkillKit** is a self-customizing workflow orchestration system focused on doc-based workflows:
+
+### ✨ Key Features:
+- ✅ **12 Production Workflows** - BEGIN_SESSION, IMPLEMENT_FEATURE, FIX_BUGS, and more
+- ✅ **Self-Customizing** - META workflows adapt to your project automatically
+- ✅ **Terminal-Aware** - Cross-platform skill loading (Windows/Mac/Linux)
+- ✅ **Community Marketplace** - Install workflows/skills from GitHub with one command
+- ✅ **System Auditing** - Comprehensive health checks with auto-fix
+- ✅ **Anthropic Skills** - Integrated PDF, Excel, database expertise on-demand
+
+### 🚀 IDE Support Status:
+- ✅ **Cursor**: Full support with slash commands (`/BEGIN_SESSION`, `/IMPLEMENT_FEATURE`)
+- 🔜 **VS Code**: CLI + tasks.json (coming soon)
+- 🔜 **Other IDEs**: Universal AGENTS.md support (roadmap)
+
+## What Makes SkillKit Unique?
+
+**The Self-Customizing Workflow System:**
+
+### 🔄 Hierarchical Workflows
+- **Main Workflows** - Multi-step procedures (`/IMPLEMENT_FEATURE`, `/FIX_BUGS`)
+- **Subtasks** - Reusable components (22 granular subtasks)
+- **Skills** - Domain expertise (PDF, Excel, databases via Anthropic)
+- **Hierarchical** - Like functions in programming, workflows call subtasks call skills
+
+### 🎯 Self-Customization (The Moat!)
+- **META_CUSTOMIZE** - Automatically adapts workflows to YOUR project
+- **Detects** - Package manager (npm/pnpm/yarn), project structure, tech stack
+- **Adjusts** - All commands updated to match your environment
+- **Evolves** - REVIEW_SKILLKIT continuously improves based on your usage
+
+### 🌐 Terminal-Aware Cross-Platform
+- **Smart Execution** - Detects shell (PowerShell/CMD/Bash/Zsh)
+- **Auto-Translates** - Commands work everywhere (Windows/Mac/Linux)
+- **Skill Loading** - `tsk skill:load pdf` works on any platform
+- **No Configuration** - Just works™
+
+### 🏪 Community Marketplace
+- **One Command Install** - `tsk skills:add user/repo/skill-name`
+- **GitHub-Based** - Free, distributed, no central server
+- **Auto-Validate** - Checks format before installing
+- **Easy Share** - Publish to GitHub, others install instantly
 
 ## Installation
 
@@ -32,35 +73,154 @@ pnpm add @trinity-os/skillkit
 
 ## Quick Start
 
-```typescript
-import { SkillRunner } from '@trinity-os/skillkit';
+### 🚀 Initialize in Your Project
 
-// Initialize the skill runner
-const runner = new SkillRunner();
+```bash
+# Install globally
+npm install -g @trinity-os/skillkit
 
-// Load skills
-await runner.loadSkills();
+# Initialize in your project (Cursor)
+cd your-project
+tsk init --cursor
 
-// Execute a skill
-const result = await runner.execute('example-skill', { input: 'Hello' });
-console.log(result);
+# What this does:
+# ✓ Copies 12 workflows to .cursor/commands/
+# ✓ Installs Anthropic skills (pdf, xlsx, docx, etc.)
+# ✓ Generates AGENTS.md catalog
+# ✓ Auto-deduplicates any conflicts
+# ✓ Ready to use!
+```
+
+### 📋 Use Workflows in Cursor
+
+```
+Type "/" in Cursor to see available workflows:
+
+/BEGIN_SESSION          → Start session (shows menu!)
+/IMPLEMENT_FEATURE      → Build new feature
+/FIX_BUGS              → Fix bugs systematically
+/DEPLOY_PREP           → Pre-deployment checks
+/CONTINUE              → Resume from last session
+/AUDIT_SKILLKIT        → System health check
+/SECURITY_AUDIT        → Security scan
+/META_CUSTOMIZE        → Adapt to your project
+/HELP                  → Complete documentation
+```
+
+### 🎯 Self-Customize to Your Project
+
+```
+In Cursor:
+/META_CUSTOMIZE
+
+What it does:
+✓ Detects your package manager (npm/pnpm/yarn)
+✓ Detects your project structure (src/, app/, etc.)
+✓ Tests all commands in your environment
+✓ Updates ALL workflows to match YOUR project
+✓ Workflows become project-specific!
+
+Result: Commands like "npm test" become "pnpm test" everywhere
+```
+
+### 📦 Skills Management
+
+```bash
+# Install Anthropic skills (done automatically in init)
+tsk install anthropics/skills
+# → Interactive checkbox to select skills
+# → Installs to .claude/skills/
+
+# Load a skill when needed
+tsk skill:load pdf
+# → AI gets PDF expertise in context
+# → Works cross-platform (Windows/Mac/Linux)
+
+# List installed skills
+tsk list
+
+# Install community skills
+tsk skills:add alice/db-skills/postgres
+# → Auto-downloads, validates, installs
+```
+
+### 🛠️ System Commands
+
+```bash
+# Run diagnostics
+tsk diagnose
+# → Auto-detects project type
+# → Runs lint, typecheck, tests
+# → Shows issues
+
+# System audit
+tsk audit
+# → Checks for duplicates
+# → Validates workflows
+# → Tests commands
+# → Generates health score
+
+# Auto-fix safe issues
+tsk audit:fix --auto-safe
+
+# Sync AGENTS.md
+tsk sync
+```
+
+### 🏪 Community Marketplace
+
+```bash
+# Install community workflows
+tsk workflows:add john/devops-workflows/DEPLOY_K8S.md
+# → Downloads from GitHub
+# → Installs to .cursor/commands/
+# → Available as /DEPLOY_K8S
+
+# Install community skills
+tsk skills:add alice/enterprise-skills/database
+# → Downloads from GitHub
+# → Installs to .claude/skills/
+# → Updates AGENTS.md
 ```
 
 ## Documentation
 
-For full documentation, please visit [our documentation site](https://trinity-os.github.io/skillkit).
+### Getting Started
+- Type `/HELP` in Cursor - Complete interactive documentation
+- [Workflow System Explained](docs/WORKFLOW_SYSTEM_EXPLAINED.md) - How CLI, workflows, and subtasks work
+- [Current Status](docs/PROJECT_STATUS_FINAL.md) - What's implemented
+- [Marketplace & Contribution](docs/MARKETPLACE_AND_CONTRIBUTION.md) - Community guide
 
-- [Getting Started](docs/getting-started.md)
-- [API Reference](docs/api.md)
-- [Creating Skills](docs/creating-skills.md)
-- [Security](docs/security.md)
-- [Contributing](CONTRIBUTING.md)
+### Architecture & Vision
+- [Final Correct Architecture](docs/FINAL_CORRECT_ARCHITECTURE.md) - The complete system
+- [Cursor-First Roadmap](docs/CURSOR_FIRST_ROADMAP.md) - Development roadmap
+- [Skill Update Strategy](docs/SKILL_UPDATE_STRATEGY.md) - How updates work
 
-## Community
+### For Contributors
+- [Contributing Guidelines](CONTRIBUTING.md) - How to contribute
+- **[Marketplace Guide](docs/MARKETPLACE_AND_CONTRIBUTION.md)** - Publish your workflows/skills
+- Topic tags: `skillkit-workflow`, `skillkit-skill` on GitHub
 
-- [GitHub Discussions](https://github.com/trinity-os/skillkit/discussions) - Ask questions and share ideas
-- [Issues](https://github.com/trinity-os/skillkit/issues) - Report bugs or request features
-- [Contributing Guide](CONTRIBUTING.md) - Contribute to the project
+## Community & Marketplace
+
+### Find Community Content
+Search GitHub for:
+- Topic: `skillkit-workflow` - Community workflows
+- Topic: `skillkit-skill` - Community skills
+- Or browse: [Awesome SkillKit](https://github.com/search?q=topic%3Askillkit) (coming soon)
+
+### Share Your Work
+```bash
+# 1. Create repo with your workflows/skills
+# 2. Add topic: skillkit-workflow or skillkit-skill
+# 3. Share in GitHub Discussions
+# 4. Others install with: tsk workflows:add your-username/repo
+```
+
+### Get Help
+- [GitHub Discussions](https://github.com/trinity-os/skillkit/discussions) - Ask questions
+- [Issues](https://github.com/trinity-os/skillkit/issues) - Report bugs
+- Type `/HELP` in Cursor - Complete documentation
 
 ## License
 

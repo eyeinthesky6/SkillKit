@@ -9,6 +9,7 @@ This document outlines the governance and contribution model for the Trinity OS 
 ### Users
 
 Users are community members who use the project. They can contribute by:
+
 - Reporting bugs
 - Requesting features
 - Providing feedback
@@ -17,6 +18,7 @@ Users are community members who use the project. They can contribute by:
 ### Contributors
 
 Contributors are community members who submit pull requests. They can:
+
 - Fix bugs
 - Implement features
 - Improve documentation
@@ -25,6 +27,7 @@ Contributors are community members who submit pull requests. They can:
 ### Maintainers
 
 Maintainers are contributors who have been given write access to the repository. They can:
+
 - Review and merge pull requests
 - Triage issues
 - Help guide the project's direction
@@ -32,6 +35,7 @@ Maintainers are contributors who have been given write access to the repository.
 ### Core Team
 
 The core team consists of long-term contributors who are responsible for the project's vision and major decisions. They have additional responsibilities:
+
 - Setting the project roadmap
 - Making final decisions on major changes
 - Managing releases
@@ -55,6 +59,7 @@ The core team consists of long-term contributors who are responsible for the pro
 ### Major Changes
 
 Major changes (breaking changes, major new features, changes to governance) require:
+
 1. A formal proposal in a GitHub Discussion or GitHub Issue
 2. A minimum 7-day discussion period
 3. Approval from at least 2/3 of core team members
@@ -85,6 +90,7 @@ When a formal vote is needed, the following process is used:
 ## Removing a Maintainer
 
 A maintainer can be removed by:
+
 1. A proposal from another maintainer
 2. Discussion with the core team
 3. A 2/3 majority vote of the core team
@@ -98,6 +104,7 @@ A maintainer can be removed by:
 ## Changes to This Document
 
 Changes to this document follow the same process as Major Changes, requiring:
+
 1. A proposal with clear rationale
 2. Discussion period
 3. Approval from the core team

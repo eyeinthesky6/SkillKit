@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["summary", "fixes", "plan"],
+  "properties": {
+    "summary": {
+      "type": "object",
+      "required": ["totalErrors", "errorsByType", "severity"],
+      "properties": {
+        "totalErrors": {
+          "type": "number"
+        },
+        "errorsByType": {
+          "type": "object",
+          "properties": {
+            "lint": { "type": "number" },
+            "typecheck": { "type": "number" },
+            "test": { "type": "number" },
+            "runtime": { "type": "number" },
+            "build": { "type": "number" }
+          }
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["critical", "high", "medium", "low"]
+        }
+      }
+    },
+    "fixes": {
+      "type": "array",
+      "description": "List of fixes to apply",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string" },
+          "file": { "type": "string" },
+          "line": { "type": "number" },
+          "message": { "type": "string" },
+          "fix": { "type": "string" },
+          "priority": { "type": "number" }
+        }
+      }
+    },
+    "plan": {
+      "type": "object",
+      "required": ["steps"],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "step": { "type": "number" },
+              "action": { "type": "string" },
+              "command": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "estimatedTime": { "type": "string" },
+        "fixPlanFile": { "type": "string" }
+      }
+    }
+  }
+}
+

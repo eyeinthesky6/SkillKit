@@ -8,7 +8,7 @@ import type { Skill } from '../types';
 /**
  * Convert a JSON Schema to a Zod schema
  */
-export function jsonSchemaToZod(schema: JSONSchema7): ZodSchema<any> {
+export function jsonSchemaToZod(schema: JSONSchema7): ZodSchema<unknown> {
   // This is a simplified implementation. In a real-world scenario,
   // you'd want to use a more comprehensive library or handle more cases.
 
@@ -62,15 +62,17 @@ export function jsonSchemaToZod(schema: JSONSchema7): ZodSchema<any> {
 
   if (schema.type === 'array' && schema.items) {
     const itemsSchema = Array.isArray(schema.items)
-      ? z.tuple(schema.items.map((s) => jsonSchemaToZod(s as JSONSchema7)) as [ZodType, ...ZodType[]])
+      ? z.tuple(
+          schema.items.map((s) => jsonSchemaToZod(s as JSONSchema7)) as [ZodType, ...ZodType[]],
+        )
       : z.array(jsonSchemaToZod(schema.items as JSONSchema7));
 
     if (schema.minItems !== undefined) {
-      (itemsSchema as any).min(schema.minItems);
+      (itemsSchema as { min: (n: number) => unknown }).min(schema.minItems);
     }
 
     if (schema.maxItems !== undefined) {
-      (itemsSchema as any).max(schema.maxItems);
+      (itemsSchema as { max: (n: number) => unknown }).max(schema.maxItems);
     }
 
     return itemsSchema;
@@ -116,19 +118,19 @@ export function jsonSchemaToZod(schema: JSONSchema7): ZodSchema<any> {
 /**
  * Validate input data against a schema
  */
-export function validateInput<T = any>(
+export function validateInput<T = unknown>(
   schema: JSONSchema7 | ZodSchema<T>,
   data: unknown,
-): { success: boolean; data?: T; error?: string; details?: any } {
+): { success: boolean; data?: T; error?: string; details?: unknown } {
   try {
     let zodSchema: ZodSchema<T>;
 
     // If it's already a Zod schema, use it directly
-    if (typeof (schema as any)?.parse === 'function') {
+    if (typeof (schema as { parse?: unknown })?.parse === 'function') {
       zodSchema = schema as ZodSchema<T>;
     } else {
       // Convert JSON Schema to Zod schema
-      zodSchema = jsonSchemaToZod(schema as JSONSchema7);
+      zodSchema = jsonSchemaToZod(schema as JSONSchema7) as ZodSchema<T>;
     }
 
     const result = zodSchema.safeParse(data);
@@ -156,7 +158,7 @@ export function validateInput<T = any>(
 export function validateOutput(
   skill: Skill,
   data: unknown,
-): { success: boolean; data?: any; error?: string; details?: any } {
+): { success: boolean; data?: unknown; error?: string; details?: unknown } {
   if (!skill.outputs) {
     return { success: true, data };
   }
@@ -167,20 +169,20 @@ export function validateOutput(
 /**
  * Format Zod validation error for better readability
  */
-export function formatZodError(error: ZodError): any {
+export function formatZodError(error: ZodError): { message: string; path?: string; code?: string } {
   if (!error.issues || error.issues.length === 0) {
     return { message: 'Unknown validation error' };
   }
 
   const issue = error.issues[0];
-  const result: any = {
+  const result: { message: string; path?: string; code?: string; params?: unknown } = {
     message: issue.message || 'Validation error',
     path: issue.path.join('.'),
-    code: (issue as any).code,
+    code: (issue as { code?: string }).code,
   };
 
   // Add params if they exist
-  const params = (issue as any).params;
+  const params = (issue as { params?: unknown }).params;
   if (params) {
     result.params = params;
   }

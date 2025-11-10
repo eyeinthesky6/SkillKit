@@ -36,11 +36,13 @@ This project and everyone participating in it is governed by our [Code of Conduc
    - Git
 
 2. Install dependencies:
+
    ```bash
    pnpm install
    ```
 
 3. Build the project:
+
    ```bash
    pnpm build
    ```
@@ -53,6 +55,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
 ## Making Changes
 
 1. Create a new branch for your feature or bugfix:
+
    ```bash
    git checkout -b feature/your-feature-name
    # or
@@ -83,6 +86,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
 Bugs are tracked as [GitHub issues](https://github.com/trinity-os/skillkit/issues).
 
 When reporting a bug, please include the following:
+
 - A clear and descriptive title
 - Steps to reproduce the issue
 - Expected behavior

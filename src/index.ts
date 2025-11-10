@@ -10,6 +10,7 @@ export * from './runtime/validator';
 export * from './runtime/sandbox';
 export * from './runtime/audit';
 export * from './config/defaults';
+export * from './adapters';
 
 export * from './types';
 

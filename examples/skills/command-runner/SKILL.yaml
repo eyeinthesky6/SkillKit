@@ -1,0 +1,28 @@
+name: command-runner
+version: 1.0.0
+description: Executes shell commands safely and captures their output
+tags:
+  - commands
+  - execution
+  - automation
+inputs: ./input.schema.json
+outputs: ./output.schema.json
+allowedPaths:
+  read:
+    - "./**"
+  write:
+    - "./output/**"
+allowedCommands:
+  - node
+  - git
+  - npm
+  - /^echo .+$/
+steps:
+  - Validate command is in allowlist
+  - Execute command with specified arguments
+  - Capture stdout and stderr
+  - Return execution results with exit code
+retries: 0
+dryRunSupported: true
+dependencies: []
+

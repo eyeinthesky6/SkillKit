@@ -1,5 +1,5 @@
 ---
-name: "🐛 Bug Report"
+name: '🐛 Bug Report'
 about: Report a bug or unexpected behavior
 labels: bug, needs-triage
 ---
@@ -11,6 +11,7 @@ A clear and concise description of what the bug is.
 ## To Reproduce
 
 Steps to reproduce the behavior:
+
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'

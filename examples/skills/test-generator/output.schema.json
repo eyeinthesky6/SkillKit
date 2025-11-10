@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["testFile", "testsGenerated"],
+  "properties": {
+    "testFile": {
+      "type": "string",
+      "description": "Path to the generated test file"
+    },
+    "testsGenerated": {
+      "type": "number",
+      "description": "Number of test cases generated"
+    },
+    "functions": {
+      "type": "array",
+      "description": "Functions that were tested",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "testCount": {
+            "type": "number"
+          },
+          "scenarios": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "framework": {
+      "type": "string",
+      "description": "Test framework used"
+    },
+    "estimatedCoverage": {
+      "type": "number",
+      "description": "Estimated code coverage percentage"
+    }
+  }
+}
+
+

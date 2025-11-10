@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "projectRoot": {
+      "type": "string",
+      "description": "Root directory of the project to analyze"
+    },
+    "trackingDocs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Glob patterns for tracking documents (AITracking, SprintStatus)",
+      "default": ["docs/AITracking/**", "docs/SprintStatus/**"]
+    },
+    "userPreferences": {
+      "type": "object",
+      "properties": {
+        "showGitLog": {
+          "type": "boolean",
+          "description": "Show recent git commits",
+          "default": true
+        },
+        "showDiagnostics": {
+          "type": "boolean",
+          "description": "Run and show diagnostics",
+          "default": true
+        },
+        "autoRecommend": {
+          "type": "boolean",
+          "description": "Automatically suggest best task",
+          "default": true
+        }
+      }
+    }
+  },
+  "required": ["projectRoot"]
+}
+

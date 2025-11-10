@@ -1,0 +1,17 @@
+name: hello-world
+version: 0.1.0
+description: Example skill that returns a greeting message
+tags:
+  - example
+  - greeting
+inputs: ./input.schema.json
+outputs: ./output.schema.json
+allowedPaths:
+  read: ["./**"]
+  write: ["./**"]
+allowedCommands: []
+steps:
+  - Return a friendly greeting using the provided message
+retries: 0
+dryRunSupported: true
+dependencies: []
