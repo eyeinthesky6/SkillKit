@@ -26,6 +26,7 @@ import { createDedupeWorkflowsCommand } from './cli-commands/dedupe-workflows';
 import { createAuditCommand } from './cli-commands/audit';
 import { createAuditFixCommand } from './cli-commands/audit-fix';
 import { createValidateWorkflowCommand } from './cli-commands/validate-workflow';
+import { createMetaCustomizeCommand } from './cli-commands/meta-customize';
 import { ErrorFactory, SkillKitError } from './errors';
 import { discoverSkills } from './utils/skill-resolver';
 
@@ -264,6 +265,7 @@ program.addCommand(createDedupeWorkflowsCommand());
 program.addCommand(createAuditCommand());
 program.addCommand(createAuditFixCommand());
 program.addCommand(createValidateWorkflowCommand());
+program.addCommand(createMetaCustomizeCommand());
 
 // Utility commands
 program.addCommand(createCompletionCommand());

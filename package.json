@@ -1,17 +1,32 @@
 {
   "name": "@trinity-os/skillkit",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Terminal-aware workflow orchestration + Anthropic skills integration for AI-assisted development",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "bin": {
     "tsk": "./dist/cli.js"
   },
   "files": [
-    "dist",
-    "src",
-    "templates"
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "dist/**/*.map",
+    "templates/**/*.md",
+    "docs/workflows/subtasks/**/*.md",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
   ],
+  "sideEffects": false,
   "scripts": {
     "build": "tsc",
     "dev": "tsx watch src/cli.ts",
@@ -25,7 +40,8 @@
     "format:check": "prettier --check \"**/*.{ts,json,md}\"",
     "clean": "rimraf dist coverage .skillkit test-dx-skill test-input.json",
     "prepare": "husky install",
-    "prepublishOnly": "pnpm run build",
+    "postinstall": "node scripts/postinstall.js",
+    "prepublishOnly": "pnpm run type-check && pnpm run lint && pnpm run build",
     "release": "standard-version",
     "docs:dev": "cd docs-site && pnpm start",
     "docs:build": "cd docs-site && pnpm build",
@@ -36,9 +52,20 @@
     "automation",
     "workflow",
     "sandbox",
-    "typescript"
+    "typescript",
+    "ai",
+    "claude",
+    "anthropic",
+    "cursor",
+    "development-tools",
+    "cli",
+    "workflow-orchestration",
+    "terminal-aware"
   ],
-  "author": "Trinity OS Team",
+  "author": {
+    "name": "Trinity OS Team",
+    "url": "https://github.com/eyeinthesky6"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -48,8 +75,25 @@
   "bugs": {
     "url": "https://github.com/eyeinthesky6/SkillKit/issues"
   },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/eyeinthesky6"
+  },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
     "@types/inquirer": "^9.0.9",
@@ -85,6 +129,7 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.5.4",
     "husky": "^9.1.7",
+    "madge": "^8.0.0",
     "prettier": "^3.6.2",
     "standard-version": "^9.5.0",
     "tsx": "^4.20.6",

@@ -8,13 +8,16 @@
 
 Performs a complete health check of your SkillKit installation:
 1. ✓ Checks for duplicate workflows
-2. ✓ Validates workflow structure and syntax
-3. ✓ Tests all commands in workflows
-4. ✓ Verifies skills installation
-5. ✓ Checks subtask references
-6. ✓ Validates file integrity
-7. ✓ Tests environment compatibility
-8. ✓ Generates detailed audit report
+2. ✓ **Detects customized files and update conflicts**
+3. ✓ **Checks for deprecated workflows/skills**
+4. ✓ **Handles non-linear version updates (skipped versions)**
+5. ✓ Validates workflow structure and syntax
+6. ✓ Tests all commands in workflows
+7. ✓ Verifies skills installation
+8. ✓ Checks subtask references
+9. ✓ Validates file integrity
+10. ✓ Tests environment compatibility
+11. ✓ Generates detailed audit report
 
 **Result:** Comprehensive audit document with actionable recommendations
 
@@ -140,6 +143,13 @@ tsk audit --verify
 - Conflicting command names
 - Redundant skills
 
+### **1.5. Customization & Update Detection** ⭐ NEW
+- **Customized workflows/skills** - Files modified by user
+- **Update conflicts** - Files that failed to update due to customizations
+- **Skipped versions** - Non-linear updates (e.g., 0.0.1 → 0.0.5)
+- **Breaking changes** - Major version updates with potential incompatibilities
+- **Deprecated items** - Old workflows/skills that should be updated
+
 ### **2. Workflow Structure Validation**
 - Valid Markdown syntax
 - Proper headers (# title)
@@ -206,6 +216,36 @@ tsk audit --verify
 ```
 ❌ Found: AGENTS.md missing 3 new workflows
 ✓ Fix: tsk sync
+```
+
+### **Issue: Customized Files Blocking Updates** ⭐ NEW
+```
+⚠️  Found: 3 customized workflows detected
+   - BEGIN_SESSION.md (customized on 2025-11-05)
+   - IMPLEMENT_FEATURE.md (customized on 2025-11-07)
+   - FIX_BUGS.md (customized on 2025-11-08)
+
+Current version: 0.0.5
+Your workflows: 0.0.3
+
+✓ Fix: Run /META_CUSTOMIZE to consolidate versions
+   Options:
+   1. Keep customizations (no update)
+   2. Update to standard (lose customizations)
+   3. Merge versions (consolidate changes)
+```
+
+### **Issue: Skipped Versions** ⭐ NEW
+```
+⚠️  Found: Skipped versions detected
+   Installed: 0.0.1
+   Current: 0.0.5
+   Skipped: 0.0.2, 0.0.3, 0.0.4
+
+⚠️  Breaking changes may exist
+
+✓ Fix: Review CHANGELOG.md for breaking changes
+   Consider incremental updates if possible
 ```
 
 ---

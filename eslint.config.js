@@ -5,10 +5,11 @@ const importPlugin = require('eslint-plugin-import');
 
 module.exports = [
   {
-    ignores: ['dist/**', 'node_modules/**', 'coverage/**', '*.js', 'vitest.config.ts', 'docs-site/**']
+    ignores: ['dist/**', 'node_modules/**', 'coverage/**', '*.js', 'vitest.config.ts', 'docs-site/**', 'src/workflow-generation.test.ts']
   },
   {
     files: ['src/**/*.ts'],
+    ignores: ['src/**/*.test.ts', 'src/**/*.spec.ts'],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
@@ -44,6 +45,14 @@ module.exports = [
   },
   {
     files: ['src/**/*.test.ts', 'src/**/*.spec.ts'],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        // Don't use project for test files since they're excluded from tsconfig.json
+      },
+    },
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'off',

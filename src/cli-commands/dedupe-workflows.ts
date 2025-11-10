@@ -11,13 +11,14 @@
 import chalk from 'chalk';
 import ora from 'ora';
 import { Command } from 'commander';
-import fs from 'fs';
+import fs from 'fs-extra';
 import path from 'path';
 
 interface WorkflowFile {
   name: string;
   path: string;
   canonical: string; // Uppercase version
+  contentHash?: string; // Content hash for content-based deduplication
 }
 
 export function createDedupeWorkflowsCommand(): Command {
@@ -41,53 +42,86 @@ export function createDedupeWorkflowsCommand(): Command {
           return;
         }
         
-        // Get all .md files
-        const files = fs.readdirSync(commandsDir)
-          .filter(f => f.endsWith('.md'))
-          .map(f => ({
-            name: f,
-            path: path.join(commandsDir, f),
-            canonical: f.toUpperCase()
-          }));
+        // Get all .md files with content hash for content-based deduplication
+        const fileNames = fs.readdirSync(commandsDir).filter(f => f.endsWith('.md'));
+        const files = await Promise.all(
+          fileNames.map(async (f) => {
+            const filePath = path.join(commandsDir, f);
+            let contentHash = '';
+            try {
+              const content = await fs.readFile(filePath, 'utf8');
+              // Simple hash for content comparison
+              contentHash = Buffer.from(content).toString('base64').substring(0, 32);
+            } catch {
+              // If can't read, use empty hash
+            }
+            return {
+              name: f,
+              path: filePath,
+              canonical: f.toUpperCase(),
+              contentHash
+            };
+          })
+        );
         
         if (files.length === 0) {
           spinner.succeed(chalk.green('No workflows found'));
           return;
         }
         
-        // Group by canonical name
-        const groups = new Map<string, WorkflowFile[]>();
+        // Group by canonical name AND content hash (content-based deduplication)
+        const groupsByName = new Map<string, WorkflowFile[]>();
+        const groupsByContent = new Map<string, WorkflowFile[]>();
         
         for (const file of files) {
-          const existing = groups.get(file.canonical) || [];
-          existing.push(file);
-          groups.set(file.canonical, existing);
+          // Group by canonical name (filename-based)
+          const existingByName = groupsByName.get(file.canonical) || [];
+          existingByName.push(file);
+          groupsByName.set(file.canonical, existingByName);
+          
+          // Group by content hash (content-based)
+          if (file.contentHash) {
+            const existingByContent = groupsByContent.get(file.contentHash) || [];
+            existingByContent.push(file);
+            groupsByContent.set(file.contentHash, existingByContent);
+          }
         }
         
-        // Find duplicates
-        const duplicates: WorkflowFile[] = [];
+        // Find duplicates by name (case-insensitive)
+        const duplicatesByName: WorkflowFile[] = [];
         const canonical = new Set<string>();
         
-        for (const [, fileList] of groups) {
+        for (const [, fileList] of groupsByName) {
           if (fileList.length > 1) {
             // Sort: prefer UPPERCASE, then alphabetically
             fileList.sort((a, b) => {
-              // If one is all uppercase, prefer it
               const aUpper = a.name === a.name.toUpperCase();
               const bUpper = b.name === b.name.toUpperCase();
               
               if (aUpper && !bUpper) return -1;
               if (!aUpper && bUpper) return 1;
-              
-              // Otherwise alphabetically
               return a.name.localeCompare(b.name);
             });
             
-            // First file is canonical (keep), rest are duplicates (delete)
             canonical.add(fileList[0].name);
-            duplicates.push(...fileList.slice(1));
+            duplicatesByName.push(...fileList.slice(1));
           }
         }
+        
+        // Find duplicates by content (same content, different names)
+        const duplicatesByContent: WorkflowFile[] = [];
+        for (const [, fileList] of groupsByContent) {
+          if (fileList.length > 1) {
+            // Keep first, mark rest as duplicates
+            duplicatesByContent.push(...fileList.slice(1));
+          }
+        }
+        
+        // Combine duplicates (avoid duplicates in both lists)
+        const allDuplicates = new Map<string, WorkflowFile>();
+        duplicatesByName.forEach(d => allDuplicates.set(d.path, d));
+        duplicatesByContent.forEach(d => allDuplicates.set(d.path, d));
+        const duplicates = Array.from(allDuplicates.values());
         
         if (duplicates.length === 0) {
           spinner.succeed(chalk.green('No duplicate workflows found'));
