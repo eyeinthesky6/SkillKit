@@ -139,11 +139,11 @@ export class SkillRunner {
     // Display warnings
     if (warnings.length > 0) {
       console.warn('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      console.warn('🚨 SECURITY WARNINGS - SkillKit v1.1.0 ALPHA');
+      console.warn('🚨 SECURITY WARNINGS - SkillKit v0.0.1');
       console.warn('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       console.warn(`\nSkill: ${skill.name}`);
       warnings.forEach(w => console.warn(w));
-      console.warn('\n⚠️  SkillKit v1.1.0 has known security limitations:');
+      console.warn('\n⚠️  SkillKit v0.0.1 has known security limitations:');
       console.warn('   • Resource limits NOT enforced');
       console.warn('   • Path validation has bypass opportunities');
       console.warn('   • Command execution not fully sandboxed');

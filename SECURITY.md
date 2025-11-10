@@ -1,8 +1,8 @@
 # Security Policy
 
-## ⚠️ Current Status: ALPHA
+## ⚠️ Current Status: INITIAL RELEASE
 
-**SkillKit v1.1.0 is in ALPHA** and has known security limitations. **Do not use for untrusted code execution in production.**
+**SkillKit v0.0.1 is an initial release** and has known security limitations. **Do not use for untrusted code execution in production.**
 
 ---
 
@@ -260,6 +260,6 @@ We appreciate responsible disclosure. Security researchers who report valid vuln
 
 ---
 
-**Last Updated:** November 5, 2025  
-**Version:** 1.1.0-alpha
+**Last Updated:** November 10, 2025  
+**Version:** 0.0.1 (Initial Release)
 

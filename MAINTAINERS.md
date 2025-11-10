@@ -8,11 +8,9 @@
 - **Role**: Project Lead, Architecture, Core Development
 - **Areas**: System Design, API Development, Security
 
-### [Your Name Here]
+### Additional Maintainers
 
-- **GitHub**: [@yourusername]
-- **Role**: Core Maintainer
-- **Areas**: [Areas of expertise]
+We welcome new maintainers! See [Becoming a Maintainer](#becoming-a-maintainer) section below.
 
 ## Maintainer Responsibilities
 
