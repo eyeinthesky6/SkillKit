@@ -3,30 +3,30 @@
 # See: https://help.github.com/articles/about-codeowners/
 
 # Default owners for everything in the repo
-*       @trinity-os/maintainers
+*       @eyeinthesky6
 
 # Core team owns the core functionality
-/src/runtime/     @trinity-os/core-team
-/src/types/       @trinity-os/core-team
-/src/utils/       @trinity-os/core-team
+/src/runtime/     @eyeinthesky6
+/src/types/       @eyeinthesky6
+/src/utils/       @eyeinthesky6
 
 # Documentation
-/docs/            @trinity-os/documentation
-README.md         @trinity-os/documentation
+/docs/            @eyeinthesky6
+README.md         @eyeinthesky6
 
 # GitHub specific files
-.github/          @trinity-os/maintainers
+.github/          @eyeinthesky6
 
 # Configuration files
-*.json            @trinity-os/core-team
-*.yaml            @trinity-os/core-team
-*.yml             @trinity-os/core-team
+*.json            @eyeinthesky6
+*.yaml            @eyeinthesky6
+*.yml             @eyeinthesky6
 
 # Tests
-/__tests__/       @trinity-os/contributors
+/src/__tests__/   @eyeinthesky6
 
 # Examples
-/examples/        @trinity-os/contributors
+/examples/        @eyeinthesky6
 
-# Note: You'll need to create these teams in your GitHub organization
-# and add the appropriate members to them.
+# Note: Update with actual GitHub usernames as maintainers are added.
+# For teams, use format: @org-name/team-name
