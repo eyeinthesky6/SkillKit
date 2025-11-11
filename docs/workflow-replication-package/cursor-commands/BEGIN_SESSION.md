@@ -61,7 +61,7 @@ pnpm run type-check 2>&1 | tee /tmp/type-errors.log
 TYPE_ERRORS=$(grep -c "error TS" /tmp/type-errors.log 2>/dev/null || echo "0")
 
 # TODO/incomplete work
-node scripts/validation/todo-tracker.cjs > /tmp/todos.txt
+node scripts/todo-tracker/todo-tracker.cjs > /tmp/todos.txt
 TODO_COUNT=$(grep -c "TODO\|FIXME\|MOCK" /tmp/todos.txt 2>/dev/null || echo "0")
 
 # Circular dependencies

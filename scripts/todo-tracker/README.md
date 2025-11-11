@@ -1,0 +1,138 @@
+# TODO Tracker
+
+**Enhanced Comprehensive TODO Tracker for AI-Generated Codebases**
+
+A specialized tool for detecting incomplete implementations, deceptive language patterns, and code quality issues in AI-generated codebases.
+
+---
+
+## Features
+
+### 🎯 Core Capabilities
+
+1. **Explicit TODO Markers** - Detects TODO/FIXME/HACK/XXX/BUG comments
+2. **Deceptive Language Detection** - Finds 50+ patterns like "simplified", "workaround", "for now"
+3. **Commented Code Detection** - Identifies commented-out executable code (TOP BLOCKER)
+4. **Incomplete Implementation Detection** - Finds stubs, placeholders, "not implemented" patterns
+5. **Priority Classification** - Domain-aware blocker/critical/major/minor prioritization
+6. **Business Logic Filtering** - Reduces false positives with domain-specific exclusions
+7. **Action Guidance** - Provides one-liner guidance for each issue type
+
+### 📊 Detection Categories
+
+- **Temporal** - Time-based temporary code ("for now", "temporary")
+- **Incomplete** - Missing implementations (stubs, placeholders)
+- **Deceptive** - Misleading comments/code ("simplified", "workaround")
+- **Technical Debt** - Hardcoded values, deprecated code
+- **Explicit** - Direct TODOs/bugs
+- **Temporary** - Workarounds, stubs
+- **Commented Code** - Executable code that's commented out
+
+---
+
+## Usage
+
+### Basic Usage
+
+```bash
+# Run from project root
+node scripts/todo-tracker/todo-tracker.cjs
+
+# Focus on specific directory
+node scripts/todo-tracker/todo-tracker.cjs --focus=packages/shared/src
+```
+
+### Output
+
+Reports are saved to `docs/audit/Comprehensive_TODO_Analysis_YYYY-MM-DD.md`
+
+---
+
+## Why This Tool?
+
+### Better Than Standard TODO Trackers
+
+**Standard tools (like leasot) only detect:**
+- `// TODO:`
+- `// FIXME:`
+- `// HACK:`
+
+**This tool detects:**
+- ✅ All standard TODO markers
+- ✅ Deceptive language ("simplified", "workaround", "for now")
+- ✅ Commented-out executable code
+- ✅ Incomplete implementations (`throw new Error("not implemented")`)
+- ✅ Mock data and placeholders
+- ✅ Domain-specific patterns
+
+### Perfect for AI-Generated Code
+
+AI-generated code often contains:
+- Deceptive language that looks complete but isn't
+- Commented-out code causing type errors
+- Stubs and placeholders
+- Temporary solutions
+
+This tool catches all of these patterns.
+
+---
+
+## Configuration
+
+Currently uses hardcoded patterns. Future enhancements will support:
+- Configuration file (`.todo-tracker.config.js`)
+- Custom pattern definitions
+- Project-specific exclusions
+
+---
+
+## Documentation
+
+See `docs/` folder for:
+- `TODO_Tracker_Comparison_10-11-2025.md` - Comparison with leasot
+- `AI_Generated_Codebase_TODO_Tracking_Analysis_10-11-2025.md` - Analysis and learnings
+
+---
+
+## Roadmap
+
+### Phase 1: Quick Wins
+- [ ] JSON output format (`--format=json`)
+- [ ] Table output format (`--format=table`)
+- [ ] Configuration file support
+
+### Phase 2: Git Integration
+- [ ] Track TODO age
+- [ ] Git blame integration
+- [ ] Incremental scanning (`--since=HEAD~1`)
+
+### Phase 3: Advanced Features
+- [ ] AST-based parsing
+- [ ] Issue tracking integration
+- [ ] HTML report generation
+
+---
+
+## Project Structure
+
+```
+scripts/todo-tracker/
+├── todo-tracker.cjs      # Main script
+├── README.md            # This file
+└── docs/                # Documentation
+    ├── TODO_Tracker_Comparison_10-11-2025.md
+    └── AI_Generated_Codebase_TODO_Tracking_Analysis_10-11-2025.md
+```
+
+---
+
+## Contributing
+
+This is an experimental project folder. Feel free to experiment and enhance!
+
+**Note:** Scripts directory is gitignored, so changes here won't affect the main repository.
+
+---
+
+**Last Updated:** 10-11-2025
+
