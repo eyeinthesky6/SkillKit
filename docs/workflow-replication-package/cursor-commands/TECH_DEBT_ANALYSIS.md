@@ -74,7 +74,7 @@ echo "" >> "$REPORT_FILE"
 
 # 5. TODO/FIXME count (technical debt markers)
 echo "## 5. Technical Debt Markers" >> "$REPORT_FILE"
-node scripts/validation/todo-tracker.cjs > /tmp/todos.txt
+node scripts/todo-tracker/todo-tracker.cjs > /tmp/todos.txt
 TODO_COUNT=$(grep -c "TODO\|FIXME\|HACK" /tmp/todos.txt || echo "0")
 MOCK_COUNT=$(grep -c "MOCK\|STUB" /tmp/todos.txt || echo "0")
 echo "- TODOs/FIXMEs: $TODO_COUNT" >> "$REPORT_FILE"

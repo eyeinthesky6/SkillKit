@@ -33,7 +33,7 @@ TODO Type → Action
 **✅ RUN THESE COMMANDS:**
 ```bash
 # 1. Run TODO tracker
-node scripts/validation/todo-tracker.cjs > todos.txt
+node scripts/todo-tracker/todo-tracker.cjs > todos.txt
 
 # ⚠️  CRITICAL INTERPRETATION:
 # TODO tracker output = INCOMPLETE WORK (not production comments)

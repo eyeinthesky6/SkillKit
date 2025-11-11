@@ -79,7 +79,7 @@ bash .cursor/commands/DEDUP.md check "feature"
 pnpm run type-check 2>&1 | tee type-errors.log
 
 # 2. Run TODO tracker (MANDATORY - correlates errors with incomplete features)
-node scripts/validation/todo-tracker.cjs > todos.txt
+node scripts/todo-tracker/todo-tracker.cjs > todos.txt
 
 # ⚠️  CRITICAL: TODO tracker findings are NOT "production comments"
 # They indicate INCOMPLETE implementations that cause errors

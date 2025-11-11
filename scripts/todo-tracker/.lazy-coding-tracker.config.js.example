@@ -1,0 +1,126 @@
+// Example configuration file for lazy-coding-tracker
+// Copy this to .lazy-coding-tracker.config.js and customize
+
+module.exports = {
+  // File and directory exclusions
+  exclude: {
+    // Always excluded (cannot be overridden)
+    always: [
+      '**/node_modules/**',
+      '**/.git/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/coverage/**',
+      '**/.next/**',
+      '**/.turbo/**',
+      '**/.cache/**',
+      '**/.vscode/**',
+      '**/.idea/**',
+      '**/logs/**',
+      '**/tmp/**',
+      '**/temp/**',
+      // Self-exclusion (the tracker itself)
+      '**/scripts/todo-tracker/**',
+      '**/lazy-coding-tracker/**',
+    ],
+    
+    // Default exclusions (can be overridden)
+    default: [
+      '**/docs/**',
+      '**/scripts/**',  // Exclude scripts folder by default
+      '**/*.md',
+      '**/*.txt',
+      '**/*.log',
+      '**/*.lock',
+      '**/.env*',
+      '**/package-lock.json',
+      '**/pnpm-lock.yaml',
+      '**/yarn.lock',
+      '**/*.config.js',
+      '**/*.config.ts',
+      '**/tsconfig*.json',
+      '**/jest.config.*',
+      '**/eslint.config.*',
+      '**/prettier.config.*',
+    ],
+    
+    // Custom exclusions (project-specific)
+    custom: [
+      // Add your project-specific exclusions here
+      // Example: '**/generated/**',
+      // Example: '**/legacy/**',
+    ],
+    
+    // Respect .gitignore (default: true)
+    respectGitignore: true,
+    
+    // Additional gitignore patterns (if respectGitignore is true)
+    gitignore: [
+      // Patterns from .gitignore will be automatically included
+      // Add additional patterns here if needed
+    ],
+  },
+  
+  // Include specific folders (overrides default exclusions)
+  include: {
+    // Example: ['scripts/validation/**'], // Scan scripts/validation even if scripts/ is excluded
+    // Leave empty to use default behavior
+    folders: [],
+  },
+  
+  // Pattern detection configuration
+  patterns: {
+    // Enable/disable pattern categories
+    enabled: {
+      deceptive: true,
+      commentedCode: true,
+      incomplete: true,
+      security: true,
+      temporal: true,
+      explicit: true,
+    },
+    
+    // Custom patterns
+    custom: [
+      // Example:
+      // { regex: /CUSTOM_TAG:/gi, type: "CUSTOM", severity: "MEDIUM", category: "deceptive" }
+    ],
+  },
+  
+  // Priority classification
+  priorities: {
+    blocker: {
+      triggers: ['auth', 'security', 'database', 'migration', 'production', 'not implemented'],
+    },
+    critical: {
+      triggers: ['api', 'validation', 'error', 'exception', 'data', 'service'],
+    },
+    major: {
+      triggers: ['ui', 'ux', 'analytics', 'performance', 'feature'],
+    },
+    minor: {
+      triggers: ['documentation', 'cleanup', 'refactor', 'comment', 'style'],
+    },
+  },
+  
+  // Output configuration
+  output: {
+    format: 'markdown', // 'markdown' | 'json' | 'table'
+    file: null, // null = auto-generate, or specify path
+    console: true,
+    verbose: false,
+  },
+  
+  // Scan configuration
+  scan: {
+    // File extensions to scan
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    
+    // Maximum file size (bytes) - skip larger files
+    maxFileSize: 10 * 1024 * 1024, // 10MB
+    
+    // Follow symlinks (default: false)
+    followSymlinks: false,
+  },
+}
+
