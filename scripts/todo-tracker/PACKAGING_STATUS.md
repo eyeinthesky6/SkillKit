@@ -1,7 +1,7 @@
 # TODO Tracker Packaging Status
 
 **Date:** 11-11-2025  
-**Goal:** Transform todo-tracker into standalone npm package `lazy-coding-tracker`
+**Goal:** Transform todo-tracker into standalone npm package `todo-tracker`
 
 ---
 
@@ -31,7 +31,7 @@
 - [ ] Filtering flags (`--priority`, `--category`, `--type`)
 - [ ] CI/CD flags (`--exit-code`, `--max-issues`, `--max-blockers`)
 - [ ] Codebase-agnostic (remove trading-specific references)
-- [ ] Configuration file support (`.lazy-coding-tracker.config.js`)
+- [x] Configuration file support (`.todo-tracker.config.js`)
 - [ ] Package structure setup
 - [ ] Tests
 - [ ] Documentation
@@ -91,7 +91,7 @@
 
 **Files to modify:**
 - `scripts/todo-tracker/todo-tracker.cjs` - Remove trading references
-- Create `.lazy-coding-tracker.config.js` template
+- Create `.todo-tracker.config.js` template
 
 ---
 
@@ -101,11 +101,11 @@
 
 1. **Create package structure**
    ```
-   lazy-coding-tracker/
+   todo-tracker/
    ├── package.json
    ├── README.md
    ├── bin/
-   │   └── lazy-coding-tracker.js
+   │   └── todo-tracker.js
    ├── lib/
    │   ├── scanner.js
    │   ├── patterns.js
@@ -118,7 +118,7 @@
    ```
 
 2. **Update package.json**
-   - Name: `lazy-coding-tracker`
+   - Name: `todo-tracker`
    - Bin entry point
    - Dependencies
    - Scripts
@@ -130,7 +130,7 @@
 
 **Files to create:**
 - `package.json`
-- `bin/lazy-coding-tracker.js`
+- `bin/todo-tracker.js`
 - `lib/` directory with modules
 
 ---
@@ -159,7 +159,7 @@
 **Priority: HIGH** - Final step
 
 1. **Create new repository**
-   - Name: `lazy-coding-tracker`
+   - Name: `todo-tracker`
    - Initialize with package structure
    - Add CI/CD
 

@@ -1,7 +1,7 @@
 # Configuration Guide
 
 **Date:** 10-11-2025  
-**Purpose:** Guide for configuring lazy-coding-tracker
+**Purpose:** Guide for configuring todo-tracker
 
 ---
 
@@ -9,10 +9,10 @@
 
 1. **Copy example config:**
    ```bash
-   cp scripts/todo-tracker/.lazy-coding-tracker.config.js.example .lazy-coding-tracker.config.js
+   cp scripts/todo-tracker/.todo-tracker.config.js.example .todo-tracker.config.js
    ```
 
-2. **Customize as needed** - Edit `.lazy-coding-tracker.config.js`
+2. **Customize as needed** - Edit `.todo-tracker.config.js`
 
 3. **Run tracker:**
    ```bash
@@ -181,7 +181,7 @@ node scripts/todo-tracker/todo-tracker.cjs --config=.custom-config.js
 
 ### Example 1: Scan Only Source Code
 ```javascript
-// .lazy-coding-tracker.config.js
+// .todo-tracker.config.js
 module.exports = {
   exclude: {
     default: [
@@ -244,7 +244,7 @@ module.exports = {
 
 The tracker **always excludes itself**, even with `--include`:
 - ✅ `scripts/todo-tracker/` - Always excluded
-- ✅ `lazy-coding-tracker/` - Always excluded (if installed as package)
+- ✅ `todo-tracker/` - Always excluded (if installed as package)
 
 This cannot be overridden.
 
@@ -265,7 +265,7 @@ The tracker reads `.gitignore` and respects its patterns:
 2. **Use .gitignore** - Let gitignore handle exclusions
 3. **Use --include sparingly** - Prefer config file for permanent includes
 4. **Test exclusions** - Run with `--verbose` to see what's excluded
-5. **Version control config** - Commit `.lazy-coding-tracker.config.js` to repo
+5. **Version control config** - Commit `.todo-tracker.config.js` to repo
 
 ---
 
@@ -290,7 +290,7 @@ node scripts/todo-tracker/todo-tracker.cjs --include=scripts/validation
 ### Issue: Config file not loading
 
 **Solution:**
-1. Check file exists: `.lazy-coding-tracker.config.js`
+1. Check file exists: `.todo-tracker.config.js`
 2. Check syntax (valid JavaScript)
 3. Use `--config=` to specify custom path
 

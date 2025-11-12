@@ -8,7 +8,7 @@
 ## Current State
 
 ### ✅ What We Have:
-1. **File-level exclusions** via `.lazy-coding-tracker.config.js`
+1. **File-level exclusions** via `.todo-tracker.config.js`
 2. **Pattern-level exclusions** hardcoded in the script (for common false positives)
 3. **Config file support** for custom file patterns
 
@@ -27,29 +27,29 @@
 Allow users to exclude specific lines or blocks:
 
 ```typescript
-// lazy-coding-tracker-disable-next-line
+// todo-tracker-disable-next-line
 console.warn('Path validation has bypass opportunities'); // This is a security warning, not lazy coding
 
-// lazy-coding-tracker-disable-line
+// todo-tracker-disable-line
 const placeholderRegex = /## \{\{CUSTOM_HEADER\}\}/g; // Variable name, not lazy coding
 
-/* lazy-coding-tracker-disable */
+/* todo-tracker-disable */
 // This entire block is excluded
 function generateReport() {
   // ... code with intentional TODOs
 }
-/* lazy-coding-tracker-enable */
+/* todo-tracker-enable */
 ```
 
 **Syntax:**
-- `lazy-coding-tracker-disable-next-line` - Exclude next line
-- `lazy-coding-tracker-disable-line` - Exclude current line
-- `lazy-coding-tracker-disable` - Disable until `lazy-coding-tracker-enable`
-- `lazy-coding-tracker-disable-next-line: SIMPLIFIED` - Exclude specific pattern type
+- `todo-tracker-disable-next-line` - Exclude next line
+- `todo-tracker-disable-line` - Exclude current line
+- `todo-tracker-disable` - Disable until `todo-tracker-enable`
+- `todo-tracker-disable-next-line: SIMPLIFIED` - Exclude specific pattern type
 
 ### Layer 2: Pattern Exclusion File
 
-Create `.lazy-coding-tracker.exclusions.json`:
+Create `.todo-tracker.exclusions.json`:
 
 ```json
 {
@@ -91,7 +91,7 @@ Create `.lazy-coding-tracker.exclusions.json`:
 
 ### Layer 3: Config-Based Pattern Customization
 
-Extend `.todo-finder.config.js`:
+Extend `.todo-tracker.config.js`:
 
 ```javascript
 module.exports = {
@@ -178,10 +178,10 @@ module.exports = {
 
 ### Layer 4: Agent-Friendly Exclusion File
 
-Create `.todo-finder.exclude` (simple text format):
+Create `.todo-tracker.exclude` (simple text format):
 
 ```
-# Pattern exclusions for todo-finder
+# Pattern exclusions for todo-tracker
 # Format: file:line:pattern:reason
 
 # Intentional simplifications with TODOs
@@ -209,14 +209,14 @@ src/runtime/validator.ts:108:UNIMPLEMENTED_FEATURE:Documented limitation with fa
 ## Implementation Plan
 
 ### Phase 1: Inline Exclusions (High Priority)
-- [ ] Parse `lazy-coding-tracker-disable-*` comments
-- [ ] Support pattern-specific exclusions
-- [ ] Support block-level exclusions
+- [x] Parse `todo-tracker-disable-*` comments
+- [x] Support pattern-specific exclusions
+- [x] Support block-level exclusions
 
 ### Phase 2: Exclusion File (High Priority)
-- [ ] Support `.todo-finder.exclusions.json`
-- [ ] Support `.todo-finder.exclude` (simple format)
-- [ ] Merge exclusions from both sources
+- [x] Support `.todo-tracker.exclusions.json`
+- [x] Support `.todo-tracker.exclude` (simple format)
+- [x] Merge exclusions from both sources
 
 ### Phase 3: Config Customization (Medium Priority)
 - [ ] Extend config file with `patternExclusions`
@@ -243,7 +243,7 @@ export function jsonSchemaToZod(schema: JSONSchema7) {
 
 ### After (With Exclusions):
 ```typescript
-// todo-finder-disable-next-line: SIMPLIFIED
+// todo-tracker-disable-next-line: SIMPLIFIED
 // This is a simplified implementation. In a real-world scenario,
 // you'd want to use a more comprehensive library or handle more cases.
 export function jsonSchemaToZod(schema: JSONSchema7) {

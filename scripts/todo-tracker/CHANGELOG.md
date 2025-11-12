@@ -3,7 +3,7 @@
 ## [Unreleased]
 
 ### Added
-- ✅ **Config file support** - `.lazy-coding-tracker.config.js` for customization
+- ✅ **Config file support** - `.todo-tracker.config.js` for customization
 - ✅ **Self-exclusion** - Always excludes itself from scanning
 - ✅ **Gitignore support** - Respects `.gitignore` patterns by default
 - ✅ **--include flag** - Scan specific folders even if excluded by default
@@ -27,8 +27,8 @@
 ## Features
 
 ### Configuration System
-- Config file: `.lazy-coding-tracker.config.js`
-- Example config: `.lazy-coding-tracker.config.js.example`
+- Config file: `.todo-tracker.config.js`
+- Example config: `.todo-tracker.config.js.example`
 - Documentation: `CONFIG_GUIDE.md`
 
 ### Exclusion System

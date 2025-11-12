@@ -9,12 +9,12 @@
 
 ### 1. Self-Exclusion ✅
 - **Always excludes itself** - Cannot be overridden
-- Excludes: `scripts/todo-tracker/` and `lazy-coding-tracker/`
+- Excludes: `scripts/todo-tracker/` and `todo-tracker/` (if installed as package)
 - Works even with `--include` flag
 
 ### 2. Config File System ✅
-- **Config file:** `.lazy-coding-tracker.config.js`
-- **Example config:** `.lazy-coding-tracker.config.js.example`
+- **Config file:** `.todo-tracker.config.js`
+- **Example config:** `.todo-tracker.config.js.example`
 - **Documentation:** `CONFIG_GUIDE.md`
 - Users can customize without touching core code
 
@@ -56,7 +56,7 @@
 ## 📋 Configuration Example
 
 ```javascript
-// .lazy-coding-tracker.config.js
+// .todo-tracker.config.js
 module.exports = {
   exclude: {
     always: [
@@ -152,7 +152,7 @@ File → Self-exclusion? → Always excluded? → Gitignore? → Default exclude
 ## 📚 Documentation
 
 - **Config Guide:** `CONFIG_GUIDE.md` - Complete configuration reference
-- **Example Config:** `.lazy-coding-tracker.config.js.example` - Template
+- **Example Config:** `.todo-tracker.config.js.example` - Template
 - **Changelog:** `CHANGELOG.md` - Feature history
 
 ---

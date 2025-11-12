@@ -133,7 +133,7 @@ For more information, see scripts/todo-tracker/README.md
 
 const focusDir = args.find(arg => arg.startsWith('--focus='))?.split('=')[1]
 const includeDirs = args.filter(arg => arg.startsWith('--include=')).map(arg => arg.split('=')[1])
-const configPath = args.find(arg => arg.startsWith('--config='))?.split('=')[1] || '.lazy-coding-tracker.config.js'
+const configPath = args.find(arg => arg.startsWith('--config='))?.split('=')[1] || '.todo-tracker.config.js'
 const includeAll = args.includes('--all')
 const includeDebug = includeAll || args.includes('--debug')
 const includeConfigs = includeAll || args.includes('--configs')

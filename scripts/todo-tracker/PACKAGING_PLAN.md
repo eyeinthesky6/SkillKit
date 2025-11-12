@@ -7,14 +7,14 @@
 
 ## 1. Naming & Positioning
 
-### Option A: "lazy-coding-tracker" ⭐ **RECOMMENDED**
+### Option A: "todo-tracker" ⭐ **RECOMMENDED**
 - **Pros:** 
   - Clear value proposition
   - Memorable and descriptive
   - Emphasizes catching incomplete work
 - **Cons:** 
   - "Lazy" might be seen as negative branding
-- **Package name:** `@lazy-coding/tracker` or `lazy-coding-tracker`
+- **Package name:** `todo-tracker`
 
 ### Option B: "ai-code-quality-tracker"
 - **Pros:** 
@@ -42,7 +42,7 @@
   - Less catchy
 - **Package name:** `incomplete-code-detector`
 
-### 🎯 **RECOMMENDATION: "lazy-coding-tracker"**
+### 🎯 **RECOMMENDATION: "todo-tracker"**
 - Tagline: "Detect incomplete implementations, deceptive patterns, and lazy coding in AI-generated codebases"
 - Keywords: `ai-generated-code`, `code-quality`, `todo-detection`, `incomplete-implementation`, `deceptive-patterns`
 
@@ -94,7 +94,7 @@ critical: {
 
 #### A. Standalone CLI Tool (Primary)
 ```bash
-npx lazy-coding-tracker
+npx todo-tracker
 # or
 npx @lazy-coding/tracker
 ```
@@ -145,7 +145,7 @@ module.exports = {
 
 ### 3.3 Configuration System
 
-#### Config File: `.lazy-coding-tracker.config.js`
+#### Config File: `.todo-tracker.config.js`
 ```javascript
 module.exports = {
   // Pattern detection
@@ -234,13 +234,13 @@ module.exports = {
 #### D. CI/CD Integration
 ```bash
 # Fail build on blockers
-lazy-coding-tracker --fail-on=blocker
+todo-tracker --fail-on=blocker
 
 # Fail on threshold
-lazy-coding-tracker --max-issues=10
+todo-tracker --max-issues=10
 
 # JSON output for automation
-lazy-coding-tracker --format=json | jq '.blockers | length'
+todo-tracker --format=json | jq '.blockers | length'
 ```
 
 ---
@@ -251,9 +251,9 @@ lazy-coding-tracker --format=json | jq '.blockers | length'
 
 **Package Structure:**
 ```
-lazy-coding-tracker/
+todo-tracker/
 ├── bin/
-│   └── lazy-coding-tracker    # CLI entry point
+│   └── todo-tracker    # CLI entry point
 ├── src/
 │   ├── index.js               # Main entry
 │   ├── scanner.js             # Core scanning logic
@@ -274,12 +274,12 @@ lazy-coding-tracker/
 **package.json:**
 ```json
 {
-  "name": "lazy-coding-tracker",
+  "name": "todo-tracker",
   "version": "1.0.0",
   "description": "Detect incomplete implementations and deceptive patterns in AI-generated code",
   "bin": {
-    "lazy-coding-tracker": "./bin/lazy-coding-tracker",
-    "lct": "./bin/lazy-coding-tracker"
+    "todo-tracker": "./bin/todo-tracker",
+    "tt": "./bin/todo-tracker"
   },
   "keywords": [
     "ai-generated-code",

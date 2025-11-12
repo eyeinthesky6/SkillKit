@@ -76,7 +76,7 @@ node scripts/todo-tracker/todo-tracker.cjs --focus=src --configs
 |------|-------------|---------|
 | `--focus=<dir>` | Focus scan on specific directory | All directories |
 | `--include=<dir>` | Include directory that would normally be excluded | None |
-| `--config=<path>` | Path to config file | `.lazy-coding-tracker.config.js` |
+| `--config=<path>` | Path to config file | `.todo-tracker.config.js` |
 | `--debug` | Include debug statements in scan | **OFF** (not tracked) |
 | `--configs` | Scan config files (.yaml, .yml, .json, etc.) | **OFF** (code files only) |
 | `--help`, `-h` | Show help message | N/A |
