@@ -27,10 +27,11 @@ OPTIONS:
   --focus=<dir>           Focus scan on specific directory (e.g., --focus=src)
   --include=<dir>         Include directory that would normally be excluded (can be used multiple times)
   --config=<path>         Path to config file (default: .todo-tracker.config.js)
-  --all                   Scan everything: debug statements, configs, scripts, markdown files
+  --all                   Scan everything: debug statements, configs, scripts, markdown files, exclusion misuse, lazy configs
   --debug                 Include debug statements (console.log, debugger, etc.) in scan
   --configs               Scan config files (.yaml, .yml, .json, .toml, etc.) in addition to code files
   --scripts               Scan scripts folder/files (normally excluded)
+  --check-exclusions      Detect misuse of todo-tracker exclusions (agents bypassing issues)
   --format=<format>       Output format: markdown (default), json, or table
   --output=<path>         Custom output file path (default: docs/audit/Comprehensive_TODO_Analysis_YYYY-MM-DD.md)
   --priority=<level>      Filter by priority: blocker, critical, major, minor, or all (default: all)
@@ -67,8 +68,11 @@ EXAMPLES:
   # Scan everything including scripts, debug, and configs
   node scripts/todo-tracker/todo-tracker.cjs --scripts --debug --configs
 
-  # Scan everything with --all flag (equivalent to --scripts --debug --configs)
+  # Scan everything with --all flag (equivalent to --scripts --debug --configs --check-exclusions)
   node scripts/todo-tracker/todo-tracker.cjs --all
+
+  # Check for misuse of exclusions (agents bypassing issues)
+  node scripts/todo-tracker/todo-tracker.cjs --check-exclusions
 
   # Output as JSON format
   node scripts/todo-tracker/todo-tracker.cjs --format=json
@@ -138,6 +142,7 @@ const includeAll = args.includes('--all')
 const includeDebug = includeAll || args.includes('--debug')
 const includeConfigs = includeAll || args.includes('--configs')
 const includeScripts = includeAll || args.includes('--scripts')
+const checkExclusions = includeAll || args.includes('--check-exclusions')
 const includeMd = includeAll || args.includes('--md')
 
 // Parse format flag (markdown, json, table)
@@ -2129,6 +2134,122 @@ function scanCodeComprehensive() {
       
       if (matched) return // Skip other checks if code pattern found
 
+      // 5a. Check for misuse of todo-tracker exclusions (if --check-exclusions flag is set)
+      if (checkExclusions) {
+        // Detect suspicious exclusion usage patterns
+        const exclusionMisusePatterns = [
+          // Exclusion without proper reason/documentation
+          { regex: /\/\/\s*todo-tracker-disable-(?:next-line|line)(?!\s*:)/i, type: "EXCLUSION_WITHOUT_REASON", severity: "HIGH" },
+          // Multiple exclusions in quick succession (agents bypassing multiple issues)
+          { regex: /\/\/\s*todo-tracker-disable-(?:next-line|line)/i, type: "MULTIPLE_EXCLUSIONS", severity: "CRITICAL" },
+          // Exclusion of critical patterns (blockers) - suspicious
+          { regex: /\/\/\s*todo-tracker-disable-(?:next-line|line):\s*(COMMENTED_OUT_CODE|FOR_NOW|IN_PRODUCTION)/i, type: "EXCLUSION_OF_BLOCKER", severity: "CRITICAL" },
+          // Exclusion file entries without reasons
+          { regex: /^[^#].*:.*:.*:(?!.*[a-zA-Z])/i, type: "EXCLUSION_FILE_WITHOUT_REASON", severity: "HIGH" },
+        ]
+        
+        // Check if this line has exclusion and previous line also had exclusion (multiple exclusions)
+        if (index > 0) {
+          const prevLine = lines[index - 1]
+          const currentHasExclusion = /\/\/\s*todo-tracker-disable-(?:next-line|line)/i.test(line)
+          const prevHasExclusion = /\/\/\s*todo-tracker-disable-(?:next-line|line)/i.test(prevLine)
+          
+          if (currentHasExclusion && prevHasExclusion) {
+            const todoItem = addGitInfoToTodoItem({
+              file,
+              line: lineNumber,
+              type: "MULTIPLE_EXCLUSIONS",
+              text: trimmedLine,
+              priority: 1, // Blocker - agents bypassing multiple issues
+              category: "deceptive",
+              severity: "CRITICAL",
+              source: "exclusion_misuse"
+            }, file, lineNumber)
+            todos.deceptive.push(todoItem)
+            todos.byCategory.deceptive.push(todoItem)
+            todos.blocker.push(todoItem)
+            matched = true
+          }
+        }
+        
+        // Check for exclusion without reason
+        if (/\/\/\s*todo-tracker-disable-(?:next-line|line)(?!\s*:)/i.test(line)) {
+          const todoItem = addGitInfoToTodoItem({
+            file,
+            line: lineNumber,
+            type: "EXCLUSION_WITHOUT_REASON",
+            text: trimmedLine,
+            priority: 2, // Critical
+            category: "deceptive",
+            severity: "HIGH",
+            source: "exclusion_misuse"
+          }, file, lineNumber)
+          todos.deceptive.push(todoItem)
+          todos.byCategory.deceptive.push(todoItem)
+          todos.critical.push(todoItem)
+          matched = true
+        }
+        
+        // Check for exclusion of blocker patterns
+        if (/\/\/\s*todo-tracker-disable-(?:next-line|line):\s*(COMMENTED_OUT_CODE|FOR_NOW|IN_PRODUCTION)/i.test(line)) {
+          const todoItem = addGitInfoToTodoItem({
+            file,
+            line: lineNumber,
+            type: "EXCLUSION_OF_BLOCKER",
+            text: trimmedLine,
+            priority: 1, // Blocker - excluding blockers defeats the purpose
+            category: "deceptive",
+            severity: "CRITICAL",
+            source: "exclusion_misuse"
+          }, file, lineNumber)
+          todos.deceptive.push(todoItem)
+          todos.byCategory.deceptive.push(todoItem)
+          todos.blocker.push(todoItem)
+          matched = true
+        }
+      }
+
+      // 5b. Check for lazy config patterns (if --configs flag is set or --all)
+      if (includeConfigs) {
+        // ESLint disable comments
+        if (/eslint-disable(?:-next-line|-line)?/i.test(line)) {
+          const todoItem = addGitInfoToTodoItem({
+            file,
+            line: lineNumber,
+            type: "ESLINT_DISABLE",
+            text: trimmedLine,
+            priority: categorizeTodo(trimmedLine, "ESLINT_DISABLE", "HIGH"),
+            category: "technical_debt",
+            severity: "HIGH",
+            source: "lazy_config"
+          }, file, lineNumber)
+          todos.temporary.push(todoItem)
+          todos.byCategory.technical_debt.push(todoItem)
+          todos.critical.push(todoItem)
+          matched = true
+        }
+        
+        // TypeScript nocheck comments
+        if (/@ts-nocheck|@ts-ignore|@ts-expect-error/i.test(line)) {
+          const todoItem = addGitInfoToTodoItem({
+            file,
+            line: lineNumber,
+            type: "TS_NOCKECK",
+            text: trimmedLine,
+            priority: categorizeTodo(trimmedLine, "TS_NOCKECK", "CRITICAL"),
+            category: "technical_debt",
+            severity: "CRITICAL",
+            source: "lazy_config"
+          }, file, lineNumber)
+          todos.temporary.push(todoItem)
+          todos.byCategory.technical_debt.push(todoItem)
+          todos.blocker.push(todoItem)
+          matched = true
+        }
+      }
+
+      if (matched) return // Skip other checks if exclusion misuse or lazy config found
+
       // 5. Check for commented out code patterns (TOP BLOCKER)
       // Only flag actual executable code, not documentation
       for (const pattern of commentedCodePatterns) {
@@ -2156,6 +2277,315 @@ function scanCodeComprehensive() {
     })
   })
   log(`✅ Processed ${processedCount} files (excluded ${codeFiles.length - processedCount})`)
+  
+  // Scan config files for lazy patterns (if --configs or --all flag is set)
+  if (includeConfigs) {
+    scanConfigFilesForLazyPatterns(rootDir, codeFiles)
+  }
+  
+  // Check exclusion file for misuse (if --check-exclusions flag is set)
+  if (checkExclusions) {
+    checkExclusionFileMisuse(rootDir)
+  }
+}
+
+// Scan config files for lazy patterns (simplified ESLint/tsconfig)
+function scanConfigFilesForLazyPatterns(rootDir, codeFiles) {
+  log(`🔍 Scanning config files for lazy patterns...`)
+  
+  // Find ESLint config files
+  const eslintConfigFiles = codeFiles.filter(file => 
+    /\.eslintrc(?:\.(js|json|yaml|yml))?$|eslint\.config\.(js|mjs|cjs)$/i.test(file)
+  )
+  
+  // Find tsconfig files
+  const tsconfigFiles = codeFiles.filter(file => 
+    /tsconfig(?:\.\w+)?\.json$/i.test(file)
+  )
+  
+  // Scan ESLint configs
+  eslintConfigFiles.forEach(file => {
+    try {
+      const content = fs.readFileSync(file, 'utf8')
+      let config = null
+      
+      // Try to parse JSON
+      if (file.endsWith('.json')) {
+        try {
+          config = JSON.parse(content)
+        } catch (e) {
+          // Not valid JSON, might be JS
+        }
+      }
+      
+      // Try to require JS config
+      if (!config && (file.endsWith('.js') || file.endsWith('.mjs') || file.endsWith('.cjs'))) {
+        try {
+          delete require.cache[require.resolve(file)]
+          config = require(file)
+        } catch (e) {
+          // Can't require
+        }
+      }
+      
+      // Check for lazy patterns
+      if (config) {
+        // Check for disabled rules (lazy coding)
+        if (config.rules && typeof config.rules === 'object') {
+          const disabledRules = Object.entries(config.rules).filter(([rule, value]) => 
+            value === 'off' || value === 0 || (Array.isArray(value) && value[0] === 'off')
+          )
+          
+          if (disabledRules.length > 0) {
+            const todoItem = {
+              file,
+              line: 1,
+              type: "ESLINT_DISABLED_RULES",
+              text: `ESLint config has ${disabledRules.length} disabled rule(s): ${disabledRules.slice(0, 5).map(([r]) => r).join(', ')}${disabledRules.length > 5 ? '...' : ''}`,
+              priority: 2, // Critical
+              category: "technical_debt",
+              severity: "HIGH",
+              source: "lazy_config"
+            }
+            todos.temporary.push(todoItem)
+            todos.byCategory.technical_debt.push(todoItem)
+            todos.critical.push(todoItem)
+          }
+        }
+        
+        // Check for non-strict parser options
+        if (config.parserOptions) {
+          const hasLooseSettings = 
+            (config.parserOptions.ecmaVersion && config.parserOptions.ecmaVersion < 2020) ||
+            (config.parserOptions.sourceType === 'script') ||
+            (config.parserOptions.allowReserved === true)
+          
+          if (hasLooseSettings) {
+            const todoItem = {
+              file,
+              line: 1,
+              type: "ESLINT_LOOSE_PARSER_OPTIONS",
+              text: "ESLint config has loose/non-strict parser options",
+              priority: 3, // Major
+              category: "technical_debt",
+              severity: "MEDIUM",
+              source: "lazy_config"
+            }
+            todos.temporary.push(todoItem)
+            todos.byCategory.technical_debt.push(todoItem)
+            todos.major.push(todoItem)
+          }
+        }
+      }
+      
+      // Check content for lazy patterns even if not parseable
+      const lines = content.split('\n')
+      lines.forEach((line, index) => {
+        // Check for disabled rules in comments or strings
+        if (/"off"|'off'|0\s*,/i.test(line) && /rules/i.test(line)) {
+          const todoItem = {
+            file,
+            line: index + 1,
+            type: "ESLINT_DISABLED_RULE_IN_CONFIG",
+            text: line.trim(),
+            priority: 2, // Critical
+            category: "technical_debt",
+            severity: "HIGH",
+            source: "lazy_config"
+          }
+          todos.temporary.push(todoItem)
+          todos.byCategory.technical_debt.push(todoItem)
+          todos.critical.push(todoItem)
+        }
+      })
+    } catch (error) {
+      // Skip files that can't be read
+    }
+  })
+  
+  // Scan tsconfig files
+  tsconfigFiles.forEach(file => {
+    try {
+      const content = fs.readFileSync(file, 'utf8')
+      const config = JSON.parse(content)
+      
+      // Check for non-strict compiler options
+      if (config.compilerOptions) {
+        const looseSettings = []
+        
+        // Check for non-strict settings
+        if (config.compilerOptions.strict === false) {
+          looseSettings.push('strict: false')
+        }
+        if (config.compilerOptions.noImplicitAny === false) {
+          looseSettings.push('noImplicitAny: false')
+        }
+        if (config.compilerOptions.strictNullChecks === false) {
+          looseSettings.push('strictNullChecks: false')
+        }
+        if (config.compilerOptions.strictFunctionTypes === false) {
+          looseSettings.push('strictFunctionTypes: false')
+        }
+        if (config.compilerOptions.strictPropertyInitialization === false) {
+          looseSettings.push('strictPropertyInitialization: false')
+        }
+        if (config.compilerOptions.noImplicitReturns === false) {
+          looseSettings.push('noImplicitReturns: false')
+        }
+        if (config.compilerOptions.noUnusedLocals === false) {
+          looseSettings.push('noUnusedLocals: false')
+        }
+        if (config.compilerOptions.noUnusedParameters === false) {
+          looseSettings.push('noUnusedParameters: false')
+        }
+        if (config.compilerOptions.noImplicitThis === false) {
+          looseSettings.push('noImplicitThis: false')
+        }
+        if (config.compilerOptions.alwaysStrict === false) {
+          looseSettings.push('alwaysStrict: false')
+        }
+        if (config.compilerOptions.skipLibCheck === true) {
+          looseSettings.push('skipLibCheck: true (lazy - skips type checking)')
+        }
+        
+        if (looseSettings.length > 0) {
+          const todoItem = {
+            file,
+            line: 1,
+            type: "TSCONFIG_NON_STRICT",
+            text: `tsconfig has non-strict settings: ${looseSettings.join(', ')}`,
+            priority: config.compilerOptions.strict === false ? 1 : 2, // Blocker if strict: false, critical otherwise
+            category: "technical_debt",
+            severity: config.compilerOptions.strict === false ? "CRITICAL" : "HIGH",
+            source: "lazy_config"
+          }
+          todos.temporary.push(todoItem)
+          todos.byCategory.technical_debt.push(todoItem)
+          if (config.compilerOptions.strict === false) {
+            todos.blocker.push(todoItem)
+          } else {
+            todos.critical.push(todoItem)
+          }
+        }
+      }
+    } catch (error) {
+      // Skip files that can't be parsed
+    }
+  })
+}
+
+// Check exclusion file for misuse
+function checkExclusionFileMisuse(rootDir) {
+  log(`🔍 Checking exclusion files for misuse...`)
+  
+  const exclusionFile = path.join(rootDir, '.todo-tracker.exclude')
+  const exclusionFileJson = path.join(rootDir, '.todo-tracker.exclusions.json')
+  
+  // Check simple exclusion file
+  if (fs.existsSync(exclusionFile)) {
+    try {
+      const content = fs.readFileSync(exclusionFile, 'utf8')
+      const lines = content.split('\n')
+      
+      lines.forEach((line, index) => {
+        const trimmed = line.trim()
+        if (!trimmed || trimmed.startsWith('#')) return
+        
+        // Check for exclusion without reason (format: file:line:pattern:reason)
+        const parts = trimmed.split(':')
+        if (parts.length >= 3) {
+          const reason = parts.slice(3).join(':').trim()
+          
+          // No reason or very short reason (likely lazy exclusion)
+          if (!reason || reason.length < 10) {
+            const todoItem = {
+              file: exclusionFile,
+              line: index + 1,
+              type: "EXCLUSION_FILE_WITHOUT_REASON",
+              text: trimmed,
+              priority: 2, // Critical
+              category: "deceptive",
+              severity: "HIGH",
+              source: "exclusion_misuse"
+            }
+            todos.deceptive.push(todoItem)
+            todos.byCategory.deceptive.push(todoItem)
+            todos.critical.push(todoItem)
+          }
+          
+          // Check for exclusion of blocker patterns
+          const patternType = parts[2].trim()
+          if (['COMMENTED_OUT_CODE', 'FOR_NOW', 'IN_PRODUCTION'].includes(patternType)) {
+            const todoItem = {
+              file: exclusionFile,
+              line: index + 1,
+              type: "EXCLUSION_OF_BLOCKER_IN_FILE",
+              text: trimmed,
+              priority: 1, // Blocker
+              category: "deceptive",
+              severity: "CRITICAL",
+              source: "exclusion_misuse"
+            }
+            todos.deceptive.push(todoItem)
+            todos.byCategory.deceptive.push(todoItem)
+            todos.blocker.push(todoItem)
+          }
+        }
+      })
+    } catch (error) {
+      warn(`⚠️  Failed to check exclusion file ${exclusionFile}: ${error.message}`)
+    }
+  }
+  
+  // Check JSON exclusion file
+  if (fs.existsSync(exclusionFileJson)) {
+    try {
+      const exclusionData = JSON.parse(fs.readFileSync(exclusionFileJson, 'utf8'))
+      
+      if (exclusionData.patterns) {
+        exclusionData.patterns.forEach((exclusion, index) => {
+          const patternType = exclusion.pattern || exclusion.type
+          const reason = exclusion.reason || ''
+          
+          // Check for exclusion without reason
+          if (!reason || reason.length < 10) {
+            const todoItem = {
+              file: exclusionFileJson,
+              line: index + 1,
+              type: "EXCLUSION_FILE_WITHOUT_REASON",
+              text: JSON.stringify(exclusion),
+              priority: 2, // Critical
+              category: "deceptive",
+              severity: "HIGH",
+              source: "exclusion_misuse"
+            }
+            todos.deceptive.push(todoItem)
+            todos.byCategory.deceptive.push(todoItem)
+            todos.critical.push(todoItem)
+          }
+          
+          // Check for exclusion of blocker patterns
+          if (['COMMENTED_OUT_CODE', 'FOR_NOW', 'IN_PRODUCTION'].includes(patternType)) {
+            const todoItem = {
+              file: exclusionFileJson,
+              line: index + 1,
+              type: "EXCLUSION_OF_BLOCKER_IN_FILE",
+              text: JSON.stringify(exclusion),
+              priority: 1, // Blocker
+              category: "deceptive",
+              severity: "CRITICAL",
+              source: "exclusion_misuse"
+            }
+            todos.deceptive.push(todoItem)
+            todos.byCategory.deceptive.push(todoItem)
+            todos.blocker.push(todoItem)
+          }
+        })
+      }
+    } catch (error) {
+      warn(`⚠️  Failed to check JSON exclusion file ${exclusionFileJson}: ${error.message}`)
+    }
+  }
 }
 
 // Run comprehensive analysis
