@@ -1,32 +1,32 @@
 {
   "metadata": {
-    "timestamp": "2025-11-12T08-44-55",
+    "timestamp": "2025-11-12T08-46-41",
     "date": "2025-11-12",
     "format": "json",
     "version": "1.0.0"
   },
   "summary": {
-    "total": 21042,
+    "total": 21031,
     "bySource": {
       "explicit": 31,
-      "deceptive": 4342,
+      "deceptive": 4331,
       "temporary": 16669,
       "incomplete": 0,
       "commented_code": 0
     },
     "byPriority": {
-      "blocker": 108,
-      "critical": 2000,
+      "blocker": 103,
+      "critical": 1994,
       "major": 17828,
       "minor": 1106
     },
     "byCategory": {
-      "temporal": 89,
-      "incomplete": 1158,
+      "temporal": 88,
+      "incomplete": 1152,
       "deceptive": 1177,
       "technical_debt": 769,
       "explicit": 837,
-      "temporary": 17010,
+      "temporary": 17006,
       "commented_code": 0
     }
   },
@@ -1478,39 +1478,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 119,
-      "type": "FOR_NOW",
-      "text": "/\\/\\/.*\\b(workaround|work around)\\b.*\\b(until|for now)\\b/i,",
-      "priority": "blocker",
-      "category": "temporal",
-      "severity": "CRITICAL",
-      "source": "deceptive_language",
-      "guidance": "Implement production solution"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 120,
-      "type": "STUB_IMPLEMENTATION",
-      "text": "/\\/\\/.*\\b(placeholder|stub|mock)\\b.*\\b(implementation|data|function)\\b/i,",
-      "priority": "critical",
-      "category": "incomplete",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Complete stub with production code"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 127,
-      "type": "INCOMPLETE_ADMISSION",
-      "text": "/throw new Error\\s*\\(\\s*[\"'].*not implemented.*[\"']\\s*\\)/i,",
-      "priority": "blocker",
-      "category": "incomplete",
-      "severity": "CRITICAL",
-      "source": "deceptive_language",
-      "guidance": "Finish incomplete functionality"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 129,
       "type": "INCOMPLETE_WORK",
       "text": "/return null\\s*\\/\\/.*\\b(implement|add|complete)\\b/i,",
@@ -1533,72 +1500,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 131,
-      "type": "INCOMPLETE_ADMISSION",
-      "text": "/\\/\\/.*\\b(not implemented|not finished|incomplete)\\b/i,",
-      "priority": "blocker",
-      "category": "incomplete",
-      "severity": "CRITICAL",
-      "source": "deceptive_language",
-      "guidance": "Finish incomplete functionality"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 132,
-      "type": "STUB_IMPLEMENTATION",
-      "text": "/\\/\\/.*\\b(stub|placeholder)\\b.*\\b(replace|implement)\\b/i,",
-      "priority": "critical",
-      "category": "incomplete",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Complete stub with production code"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 209,
-      "type": "PLACEHOLDER_VALUES",
-      "text": "/placeholder.*[\"']Enter.*symbol|placeholder.*[\"']Enter.*quantity/i, // Form input guidance",
-      "priority": "critical",
-      "category": "temporary",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Replace with real data/service"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 210,
-      "type": "PLACEHOLDER_VALUES",
-      "text": "/placeholder.*[\"']Choose.*BUY.*SELL|placeholder.*[\"']Choose.*order.*type/i, // Select dropdown guidance",
-      "priority": "critical",
-      "category": "temporary",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Replace with real data/service"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 211,
-      "type": "PLACEHOLDER_VALUES",
-      "text": "/placeholder.*[\"']Select.*order.*side|placeholder.*[\"']Select.*order.*type/i, // Select component placeholders",
-      "priority": "critical",
-      "category": "temporary",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Replace with real data/service"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 213,
-      "type": "PLACEHOLDER_VALUES",
-      "text": "/placeholder.*[\"']Enter.*limit.*price/i, // Price input guidance",
-      "priority": "critical",
-      "category": "temporary",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Replace with real data/service"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 253,
       "type": "DEPRECATED_CODE",
       "text": "/packages\\/shared\\/architecture_check\\.js$/, // Deprecated utility guidance",
@@ -1607,17 +1508,6 @@
       "severity": "MEDIUM",
       "source": "deceptive_language",
       "guidance": "Update to modern patterns"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 259,
-      "type": "INCOMPLETE_ADMISSION",
-      "text": "triggers: [\"auth\", \"security\", \"database\", \"migration\", \"production\", \"not implemented\", \"FOR_NOW\", \"IN_PRODUCTION\", \"COMMENTED_OUT_CODE\"],",
-      "priority": "blocker",
-      "category": "incomplete",
-      "severity": "CRITICAL",
-      "source": "deceptive_language",
-      "guidance": "Finish incomplete functionality"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -1640,17 +1530,6 @@
       "severity": "MEDIUM",
       "source": "deceptive_language",
       "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 283,
-      "type": "INCOMPLETE_ADMISSION",
-      "text": "keywords: [\"auth\", \"security\", \"database\", \"migration\", \"production\", \"not implemented\", \"FOR_NOW\", \"IN_PRODUCTION\", \"COMMENTED_OUT_CODE\"],",
-      "priority": "blocker",
-      "category": "incomplete",
-      "severity": "CRITICAL",
-      "source": "deceptive_language",
-      "guidance": "Finish incomplete functionality"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -231501,36 +231380,6 @@
   "blockers": [
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 119,
-      "type": "FOR_NOW",
-      "text": "/\\/\\/.*\\b(workaround|work around)\\b.*\\b(until|for now)\\b/i,"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 127,
-      "type": "INCOMPLETE_ADMISSION",
-      "text": "/throw new Error\\s*\\(\\s*[\"'].*not implemented.*[\"']\\s*\\)/i,"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 131,
-      "type": "INCOMPLETE_ADMISSION",
-      "text": "/\\/\\/.*\\b(not implemented|not finished|incomplete)\\b/i,"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 259,
-      "type": "INCOMPLETE_ADMISSION",
-      "text": "triggers: [\"auth\", \"security\", \"database\", \"migration\", \"production\", \"not implemented\", \"FOR_NOW\", \"IN_PRODUCTION\", \"COMMENTED_OUT_CODE\"],"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 283,
-      "type": "INCOMPLETE_ADMISSION",
-      "text": "keywords: [\"auth\", \"security\", \"database\", \"migration\", \"production\", \"not implemented\", \"FOR_NOW\", \"IN_PRODUCTION\", \"COMMENTED_OUT_CODE\"],"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 310,
       "type": "MASKED_TODO",
       "text": "STUB_IMPLEMENTATION: \"Complete stub with production code\","
@@ -232214,42 +232063,6 @@
       "line": 91,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "// Unsafe assumptions and hardcoded values"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 120,
-      "type": "STUB_IMPLEMENTATION",
-      "text": "/\\/\\/.*\\b(placeholder|stub|mock)\\b.*\\b(implementation|data|function)\\b/i,"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 132,
-      "type": "STUB_IMPLEMENTATION",
-      "text": "/\\/\\/.*\\b(stub|placeholder)\\b.*\\b(replace|implement)\\b/i,"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 209,
-      "type": "PLACEHOLDER_VALUES",
-      "text": "/placeholder.*[\"']Enter.*symbol|placeholder.*[\"']Enter.*quantity/i, // Form input guidance"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 210,
-      "type": "PLACEHOLDER_VALUES",
-      "text": "/placeholder.*[\"']Choose.*BUY.*SELL|placeholder.*[\"']Choose.*order.*type/i, // Select dropdown guidance"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 211,
-      "type": "PLACEHOLDER_VALUES",
-      "text": "/placeholder.*[\"']Select.*order.*side|placeholder.*[\"']Select.*order.*type/i, // Select component placeholders"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 213,
-      "type": "PLACEHOLDER_VALUES",
-      "text": "/placeholder.*[\"']Enter.*limit.*price/i, // Price input guidance"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
