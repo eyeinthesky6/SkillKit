@@ -6,12 +6,181 @@
 
 const fs = require("fs")
 const path = require("path")
+const { execSync } = require("child_process")
 
 // Parse command line arguments
 const args = process.argv.slice(2)
+
+// Help flag
+if (args.includes('--help') || args.includes('-h')) {
+  console.log(`
+🔍 Enhanced Comprehensive TODO Tracker (Unified)
+
+DESCRIPTION:
+  Scans codebase for TODO markers, deceptive language patterns, incomplete implementations,
+  commented out code, and lazy coding patterns. Designed specifically for AI-generated codebases.
+
+USAGE:
+  node scripts/todo-tracker/todo-tracker.cjs [OPTIONS]
+
+OPTIONS:
+  --focus=<dir>           Focus scan on specific directory (e.g., --focus=src)
+  --include=<dir>         Include directory that would normally be excluded (can be used multiple times)
+  --config=<path>         Path to config file (default: .lazy-coding-tracker.config.js)
+  --all                   Scan everything: debug statements, configs, scripts, markdown files
+  --debug                 Include debug statements (console.log, debugger, etc.) in scan
+  --configs               Scan config files (.yaml, .yml, .json, .toml, etc.) in addition to code files
+  --scripts               Scan scripts folder/files (normally excluded)
+  --format=<format>       Output format: markdown (default), json, or table
+  --output=<path>         Custom output file path (default: docs/audit/Comprehensive_TODO_Analysis_YYYY-MM-DD.md)
+  --priority=<level>      Filter by priority: blocker, critical, major, minor, or all (default: all)
+  --category=<category>   Filter by category: temporal, incomplete, deceptive, technical_debt, explicit, temporary, commented_code, or all (default: all)
+  --since=<ref>           Only scan files changed since git ref (e.g., HEAD~1, main, <commit-hash>)
+  --blame                 Include git blame information (author, date) for each issue
+  --age                   Track TODO age (how long since introduced)
+  --exit-code=<level>     Exit code behavior: blocker (default), critical, all, never
+  --max-issues=<count>    Fail if more than N issues found
+  --max-blockers=<count>  Fail if more than N blockers found
+  --summary               Show only summary (no detailed list)
+  --no-console            Suppress console output (only write to file)
+  --help, -h              Show this help message
+
+EXAMPLES:
+  # Scan entire codebase
+  node scripts/todo-tracker/todo-tracker.cjs
+
+  # Scan only src directory
+  node scripts/todo-tracker/todo-tracker.cjs --focus=src
+
+  # Scan with debug statements included
+  node scripts/todo-tracker/todo-tracker.cjs --debug
+
+  # Scan config files too
+  node scripts/todo-tracker/todo-tracker.cjs --configs
+
+  # Scan src directory including debug statements and configs
+  node scripts/todo-tracker/todo-tracker.cjs --focus=src --debug --configs
+
+  # Scan scripts folder (normally excluded)
+  node scripts/todo-tracker/todo-tracker.cjs --scripts
+
+  # Scan everything including scripts, debug, and configs
+  node scripts/todo-tracker/todo-tracker.cjs --scripts --debug --configs
+
+  # Scan everything with --all flag (equivalent to --scripts --debug --configs)
+  node scripts/todo-tracker/todo-tracker.cjs --all
+
+  # Output as JSON format
+  node scripts/todo-tracker/todo-tracker.cjs --format=json
+
+  # Output as table format (console only)
+  node scripts/todo-tracker/todo-tracker.cjs --format=table
+
+  # Custom output path
+  node scripts/todo-tracker/todo-tracker.cjs --output=./reports/todos.json --format=json
+
+  # Filter by priority (only blockers)
+  node scripts/todo-tracker/todo-tracker.cjs --priority=blocker
+
+  # Filter by category (only commented code)
+  node scripts/todo-tracker/todo-tracker.cjs --category=commented_code
+
+  # Combine filters
+  node scripts/todo-tracker/todo-tracker.cjs --priority=critical --category=deceptive --format=json
+
+  # Git integration - scan only changed files
+  node scripts/todo-tracker/todo-tracker.cjs --since=HEAD~1
+
+  # Include git blame info
+  node scripts/todo-tracker/todo-tracker.cjs --blame --format=json
+
+  # Track TODO age
+  node scripts/todo-tracker/todo-tracker.cjs --age --format=json
+
+  # CI/CD - fail on any blockers
+  node scripts/todo-tracker/todo-tracker.cjs --exit-code=blocker --format=json
+
+  # CI/CD - fail if more than 10 issues
+  node scripts/todo-tracker/todo-tracker.cjs --max-issues=10 --format=json
+
+  # Summary only (no detailed list)
+  node scripts/todo-tracker/todo-tracker.cjs --summary
+
+  # Suppress console output (file only)
+  node scripts/todo-tracker/todo-tracker.cjs --no-console --format=json
+
+DETECTION CAPABILITIES:
+  ✅ Explicit TODOs (TODO, FIXME, HACK comments)
+  ✅ Deceptive language patterns (FOR_NOW, SIMPLIFIED, etc.)
+  ✅ Incomplete implementations (stubs, placeholders)
+  ✅ Commented out code (executable code that's commented)
+  ✅ Code patterns (empty returns, no-op async functions)
+  ✅ Error handling issues (generic errors, missing throws)
+  ✅ Zod validation issues (incomplete schemas)
+  ✅ Hardcoded dummy/fake data (test@example.com, John Doe, etc.)
+  ✅ Security vulnerabilities (hardcoded secrets, insecure input)
+
+OUTPUT:
+  - Console summary with priority breakdown
+  - Detailed report saved to docs/audit/Comprehensive_TODO_Analysis_YYYY-MM-DD.md (or custom path with --output)
+  - JSON format available with --format=json (CI/CD friendly)
+  - Table format available with --format=table (console only)
+
+For more information, see scripts/todo-tracker/README.md
+`)
+  process.exit(0)
+}
+
 const focusDir = args.find(arg => arg.startsWith('--focus='))?.split('=')[1]
 const includeDirs = args.filter(arg => arg.startsWith('--include=')).map(arg => arg.split('=')[1])
 const configPath = args.find(arg => arg.startsWith('--config='))?.split('=')[1] || '.lazy-coding-tracker.config.js'
+const includeAll = args.includes('--all')
+const includeDebug = includeAll || args.includes('--debug')
+const includeConfigs = includeAll || args.includes('--configs')
+const includeScripts = includeAll || args.includes('--scripts')
+const includeMd = includeAll || args.includes('--md')
+
+// Parse format flag (markdown, json, table)
+const formatArg = args.find(arg => arg.startsWith('--format='))?.split('=')[1] || 'markdown'
+const outputFormat = ['markdown', 'json', 'table'].includes(formatArg.toLowerCase()) 
+  ? formatArg.toLowerCase() 
+  : 'markdown'
+
+// Parse output path flag
+const outputArg = args.find(arg => arg.startsWith('--output='))?.split('=')[1]
+
+// Parse priority filter
+const priorityArg = args.find(arg => arg.startsWith('--priority='))?.split('=')[1]?.toLowerCase()
+const priorityFilter = ['blocker', 'critical', 'major', 'minor', 'all'].includes(priorityArg) 
+  ? priorityArg 
+  : 'all'
+
+// Parse category filter
+const categoryArg = args.find(arg => arg.startsWith('--category='))?.split('=')[1]?.toLowerCase()
+const categoryFilter = ['temporal', 'incomplete', 'deceptive', 'technical_debt', 'explicit', 'temporary', 'commented_code', 'all'].includes(categoryArg)
+  ? categoryArg
+  : 'all'
+
+// Parse git integration flags
+const sinceArg = args.find(arg => arg.startsWith('--since='))?.split('=')[1]
+const includeBlame = args.includes('--blame')
+const includeAge = args.includes('--age')
+
+// Parse CI/CD flags
+const exitCodeArg = args.find(arg => arg.startsWith('--exit-code='))?.split('=')[1]?.toLowerCase()
+const exitCodeLevel = ['blocker', 'critical', 'all', 'never'].includes(exitCodeArg)
+  ? exitCodeArg
+  : 'blocker'
+
+const maxIssuesArg = args.find(arg => arg.startsWith('--max-issues='))?.split('=')[1]
+const maxIssues = maxIssuesArg ? parseInt(maxIssuesArg, 10) : null
+
+const maxBlockersArg = args.find(arg => arg.startsWith('--max-blockers='))?.split('=')[1]
+const maxBlockers = maxBlockersArg ? parseInt(maxBlockersArg, 10) : null
+
+// Parse reporting flags
+const summaryOnly = args.includes('--summary')
+const noConsole = args.includes('--no-console')
 
 // Load configuration file
 let config = null
@@ -19,9 +188,9 @@ const configFile = path.join(process.cwd(), configPath)
 if (fs.existsSync(configFile)) {
   try {
     config = require(configFile)
-    console.log(`📋 Loaded config from: ${configPath}`)
+    log(`📋 Loaded config from: ${configPath}`)
   } catch (error) {
-    console.warn(`⚠️  Failed to load config from ${configPath}: ${error.message}`)
+    warn(`⚠️  Failed to load config from ${configPath}: ${error.message}`)
   }
 }
 
@@ -37,19 +206,45 @@ let scanStartTime = 0
 const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19)
 const dateOnly = new Date().toISOString().slice(0, 10)
 
-console.log("🔍 Enhanced Comprehensive TODO Tracker (Unified)")
-console.log(`📅 Analysis Date: ${timestamp}`)
+// Console output wrapper (suppress if --no-console)
+const log = noConsole ? () => {} : console.log.bind(console)
+const warn = noConsole ? () => {} : console.warn.bind(console)
+
+log("🔍 Enhanced Comprehensive TODO Tracker (Unified)")
+log(`📅 Analysis Date: ${timestamp}`)
 if (focusDir) {
-  console.log(`🎯 Focused scan: ${focusDir}`)
+  log(`🎯 Focused scan: ${focusDir}`)
 }
-console.log("=".repeat(80))
+log("=".repeat(80))
 
 const reportsDir = path.join(__dirname, '..', '..', 'docs', 'audit')
 if (!fs.existsSync(reportsDir)) {
   fs.mkdirSync(reportsDir, { recursive: true })
 }
 
-const reportFile = path.join(reportsDir, `Comprehensive_TODO_Analysis_${dateOnly}.md`)
+// Default report file (will be overridden if --output is specified)
+const defaultReportFile = path.join(reportsDir, `Comprehensive_TODO_Analysis_${dateOnly}.md`)
+
+// Set report file based on output flag and format
+let reportFile
+if (!outputArg) {
+  // Default: use format-specific extension
+  if (outputFormat === 'json') {
+    reportFile = path.join(reportsDir, `Comprehensive_TODO_Analysis_${dateOnly}.json`)
+  } else if (outputFormat === 'table') {
+    reportFile = null // Table format doesn't write to file
+  } else {
+    reportFile = defaultReportFile
+  }
+} else {
+  // Custom output path provided
+  reportFile = path.isAbsolute(outputArg) ? outputArg : path.join(process.cwd(), outputArg)
+  // Ensure directory exists
+  const outputDir = path.dirname(reportFile)
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true })
+  }
+}
 
 // === INTEGRATED PATTERN DETECTION ===
 // Combines deceptive language patterns with SEDI precision
@@ -193,7 +388,14 @@ const deceptivePatterns = [
   { regex: /password.*[:=]\s*['"]|token.*[:=]\s*['"]|secret.*[:=]\s*['"]/gi, type: "HARDCODED_SECRET", severity: "CRITICAL", category: "security" },
 
   // INSECURE INPUT HANDLING (dangerous functions without validation)
-  { regex: /\b(eval|exec|input|raw_input|query|unescape)\s*\(/gi, type: "INSECURE_INPUT", severity: "CRITICAL", category: "security" },
+  // Exclude regex.exec() - it's safe regex matching, not insecure
+  // Exclude eval in console.log/print statements (just printing instructions)
+  // Match eval/exec/input only when they're actually being called, not in strings/comments
+  { regex: /\b(eval\s*\([^)]*\)|exec\s*\([^)]*\)|input\s*\(|raw_input\s*\(|query\s*\(|unescape\s*\()/gi, type: "INSECURE_INPUT", severity: "CRITICAL", category: "security" },
+  // Exclude regex.exec() specifically - it's safe
+  { regex: /\.exec\s*\(/gi, type: "REGEX_EXEC", severity: "LOW", category: "explicit", exclude: true },
+  // Exclude eval in console.log/print (just printing shell instructions)
+  { regex: /console\.(log|warn|info|error)\s*\([^)]*eval[^)]*\)/gi, type: "PRINT_EVAL", severity: "LOW", category: "explicit", exclude: true }, // Exclude this pattern
 
   // CONDITIONAL SUCCESS (success with caveats)
   { regex: /works.*(?:but|however|except|unless|if)/gi, type: "CONDITIONAL_SUCCESS", severity: "HIGH", category: "deceptive" },
@@ -245,14 +447,20 @@ const deceptivePatterns = [
 ]
 
 // 3. TEMPORARY CODE PATTERNS (Enhanced with deceptive language detector patterns)
-// DEBUG STATEMENTS DISABLED - TypeScript/ESLint already handle these
 const temporaryCodePatterns = [
   /\/\/.*\b(temporarily disabled|temp disabled|disabled temporarily)\b/i,
   /\/\/.*\b(quick fix|quick hack|temporary fix)\b/i,
   /\/\/.*\b(workaround|work around)\b.*\b(until|for now)\b/i,
   /\/\/.*\b(placeholder|stub|mock)\b.*\b(implementation|data|function)\b/i,
   /temporary|temp |TEMP/gi, // From deceptive language detector
-  // DISABLED: console.log, console.error, debugger, alert - handled by TypeScript/ESLint
+]
+
+// DEBUG STATEMENT PATTERNS (only checked if --debug flag is set)
+const debugStatementPatterns = [
+  /console\.(log|error|warn|info|debug)\s*\(/gi,
+  /\bdebugger\s*;/gi,
+  /\balert\s*\(/gi,
+  /console\.(trace|dir|table|group|groupEnd)\s*\(/gi,
 ]
 
 // 4. INCOMPLETE IMPLEMENTATION PATTERNS (SEDI-style + Code Pattern Detection)
@@ -314,7 +522,8 @@ const commentedCodePatterns = [
   /^\s*\/\/\s*(export\s+)?(const|let|var)\s+\w+\s*=\s*\d+/i,
 
   // Commented out method calls (actual execution, not examples)
-  /^\s*\/\/\s*\w+\.\w+\s*\(/i,
+  // Exclude descriptive comments about files (e.g., "// pyproject.toml (Poetry)")
+  /^\s*\/\/\s*(?!\w+\.(toml|txt|py|js|ts|json|yaml|yml|md|makefile|cmake|gradle|pom|xml)\s*\()\w+\.\w+\s*\(/i,
   /^\s*\/\/\s*(await\s+)?\w+\s*\(/i,
 
   // Commented out control flow and error handling (only actual code)
@@ -636,9 +845,18 @@ const todos = {
   }
 }
 
-console.log("🔍 Phase 1: Scanning for explicit TODOs...")
-console.log("🔍 Phase 2: Scanning for deceptive language patterns...")
-console.log("🔍 Phase 3: Scanning for temporary code patterns...")
+log("🔍 Phase 1: Scanning for explicit TODOs...")
+log("🔍 Phase 2: Scanning for deceptive language patterns...")
+log("🔍 Phase 3: Scanning for temporary code patterns...")
+if (includeDebug) {
+  log("🐛 Debug mode: Including debug statements (console.log, debugger, etc.)")
+}
+if (includeConfigs) {
+  log("📋 Config mode: Including config files (.yaml, .yml, .json, .toml, etc.)")
+}
+if (includeScripts) {
+  log("📜 Scripts mode: Including scripts folder/files (normally excluded)")
+}
 
 // Helper function to check if line should be excluded
 function shouldExclude(line, file) {
@@ -673,6 +891,21 @@ function shouldExclude(line, file) {
 // Helper function to check if commented line is documentation/example vs actual code
 function isDocumentationComment(line) {
   const lowerLine = line.toLowerCase()
+
+  // Exclude descriptive comments (not commented out code)
+  // Pattern: // filename or // description (context)
+  if (/^\/\/\s*[a-z0-9_-]+\.(toml|txt|py|js|ts|json|yaml|yml|md|makefile|cmake|gradle|pom|xml)\s*\(/i.test(line)) {
+    return true // Descriptive comment like "// pyproject.toml (Poetry, Black, etc.)"
+  }
+  if (/^\/\/\s*[a-z0-9_-]+\.(toml|txt|py|js|ts|json|yaml|yml|md|makefile|cmake|gradle|pom|xml)\s*$/i.test(line.trim())) {
+    return true // Descriptive comment like "// requirements.txt (pip)"
+  }
+  if (/^\/\/\s*[A-Z][a-z]+file\s*\(/i.test(line.trim())) {
+    return true // Descriptive comment like "// Makefile (common in Python projects)"
+  }
+  if (/^\/\/\s*[A-Z][a-z]+\s*\(/i.test(line)) {
+    return true // Descriptive comment like "// PowerShell (default on Windows 10+)"
+  }
 
   // Exclude documentation and examples
   if (/import.*from.*\/\/|usage:|example:|```|note:|future:|todo:|fixme:|hack:|avoid.*dependency|circular.*dependency|duplicate.*export/i.test(lowerLine)) {
@@ -896,7 +1129,8 @@ function shouldExcludeFile(filePath, rootDir) {
       /build/,
       /coverage/,
       /docs/,
-      /scripts/,
+      /scripts/, // Excluded by default, unless --scripts flag is set
+      /examples/, // Exclude example/stub files
       /\.env/,
       /\.log$/,
       /\.lock$/,
@@ -904,6 +1138,15 @@ function shouldExcludeFile(filePath, rootDir) {
     
     for (const pattern of defaultExclusions) {
       if (pattern.test(relativePath) || pattern.test(filePath)) {
+        // Check --scripts flag (allows scripts folder)
+        if (includeScripts && /scripts/.test(relativePath)) {
+          // Still exclude the todo-tracker script itself
+          if (relativePath.startsWith('scripts/todo-tracker/')) {
+            return true
+          }
+          return false // Allow other scripts
+        }
+        
         // Check if explicitly included
         if (includeDirs.length > 0) {
           for (const includeDir of includeDirs) {
@@ -928,6 +1171,99 @@ function shouldExcludeFile(filePath, rootDir) {
   return false
 }
 
+// === GIT INTEGRATION FUNCTIONS ===
+
+// Get list of changed files since git ref
+function getChangedFilesSince(sinceRef) {
+  try {
+    const command = `git diff --name-only ${sinceRef}`
+    const output = execSync(command, { encoding: 'utf8', cwd: process.cwd() })
+    return output.split('\n').filter(file => file.trim().length > 0)
+  } catch (error) {
+    warn(`⚠️  Warning: Could not get changed files from git: ${error.message}`)
+    return null
+  }
+}
+
+// Get git blame info for a file and line
+function getGitBlame(file, line) {
+  if (!includeBlame && !includeAge) return null
+  
+  try {
+    const command = `git blame -L ${line},${line} --porcelain "${file}"`
+    const output = execSync(command, { encoding: 'utf8', cwd: process.cwd() })
+    const lines = output.split('\n')
+    
+    const blame = {
+      author: null,
+      authorEmail: null,
+      authorTime: null,
+      summary: null
+    }
+    
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].startsWith('author ')) {
+        blame.author = lines[i].substring(7)
+      } else if (lines[i].startsWith('author-mail ')) {
+        blame.authorEmail = lines[i].substring(12).replace(/[<>]/g, '')
+      } else if (lines[i].startsWith('author-time ')) {
+        blame.authorTime = parseInt(lines[i].substring(12), 10)
+        if (includeAge) {
+          const ageMs = Date.now() / 1000 - blame.authorTime
+          const ageDays = Math.floor(ageMs / 86400)
+          const ageMonths = Math.floor(ageDays / 30)
+          const ageYears = Math.floor(ageDays / 365)
+          
+          if (ageYears > 0) {
+            blame.age = `${ageYears} year${ageYears > 1 ? 's' : ''}`
+          } else if (ageMonths > 0) {
+            blame.age = `${ageMonths} month${ageMonths > 1 ? 's' : ''}`
+          } else {
+            blame.age = `${ageDays} day${ageDays !== 1 ? 's' : ''}`
+          }
+        }
+      } else if (lines[i].startsWith('summary ')) {
+        blame.summary = lines[i].substring(8)
+      }
+    }
+    
+    return blame.author ? blame : null
+  } catch (error) {
+    // File might not be in git, or git might not be available
+    return null
+  }
+}
+
+// Check if git is available
+function isGitAvailable() {
+  try {
+    execSync('git --version', { stdio: 'ignore' })
+    return true
+  } catch {
+    return false
+  }
+}
+
+// Add git blame/age info to todo item
+function addGitInfoToTodoItem(todoItem, file, line) {
+  if (includeBlame || includeAge) {
+    const blame = getGitBlame(file, line)
+    if (blame) {
+      if (includeBlame) {
+        todoItem.blame = {
+          author: blame.author,
+          authorEmail: blame.authorEmail,
+          date: blame.authorTime ? new Date(blame.authorTime * 1000).toISOString() : null
+        }
+      }
+      if (includeAge && blame.age) {
+        todoItem.age = blame.age
+      }
+    }
+  }
+  return todoItem
+}
+
 // SCAN CODE FOR COMPREHENSIVE ISSUES
 function scanCodeComprehensive() {
   scanStartTime = Date.now() // Set scan start time
@@ -935,11 +1271,18 @@ function scanCodeComprehensive() {
   const rootDir = process.cwd()
   
   // Get file extensions from config or use defaults
-  const extensions = config?.scan?.extensions || ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs']
+  let extensions = config?.scan?.extensions || ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs']
+  
+  // Add config file extensions if --configs flag is set
+  if (includeConfigs) {
+    const configExtensions = ['.yaml', '.yml', '.json', '.toml', '.ini', '.cfg', '.conf', '.config']
+    extensions = [...new Set([...extensions, ...configExtensions])] // Remove duplicates
+  }
+  
   const extensionRegex = new RegExp(`\\.(${extensions.map(ext => ext.slice(1)).join('|')})$`)
   
   // Build exclude directories list from config or defaults
-  const excludeDirs = config?.exclude?.always?.map(p => p.replace(/\*\*/g, '').replace(/\//g, '').replace(/\*/g, '')) || [
+  let excludeDirs = config?.exclude?.always?.map(p => p.replace(/\*\*/g, '').replace(/\//g, '').replace(/\*/g, '')) || [
     "node_modules",
     ".git",
     ".next",
@@ -947,7 +1290,8 @@ function scanCodeComprehensive() {
     "build",
     "coverage",
     "docs",
-    "scripts",
+    "scripts", // Excluded by default, unless --scripts flag is set
+    "examples", // Exclude example/stub files
     ".turbo",
     ".cache",
     ".vscode",
@@ -957,7 +1301,12 @@ function scanCodeComprehensive() {
     "temp",
   ]
   
-  // Always add script's own directory
+  // Remove scripts from exclusion if --scripts flag is set
+  if (includeScripts) {
+    excludeDirs = excludeDirs.filter(dir => dir !== "scripts")
+  }
+  
+  // Always add script's own directory (todo-tracker subfolder)
   const scriptDirName = path.basename(SCRIPT_DIR)
   if (!excludeDirs.includes(scriptDirName)) {
     excludeDirs.push(scriptDirName)
@@ -973,7 +1322,7 @@ function scanCodeComprehensive() {
 
       if (stat.isDirectory() && !excludeDirs.includes(file)) {
         scanDirectory(fullPath)
-      } else if (stat.isFile() && /\.(ts|tsx|js|jsx|json|yaml|yml|csv|config|cfg|ini|mjs|cjs)$/.test(file)) {
+      } else if (stat.isFile() && extensionRegex.test(file)) {
         // Scan ALL source code and config files - exclude docs, build outputs, dependencies
         codeFiles.push(fullPath)
       }
@@ -992,24 +1341,46 @@ function scanCodeComprehensive() {
     directories = ["apps", "packages", "src", "lib", "."]
   }
   
-  console.log(`📂 Scanning directories: ${directories.join(', ')}`)
+  log(`📂 Scanning directories: ${directories.join(', ')}`)
   if (includeDirs.length > 0) {
-    console.log(`➕ Including: ${includeDirs.join(', ')}`)
+    log(`➕ Including: ${includeDirs.join(', ')}`)
   }
 
   directories.forEach(dir => scanDirectory(dir))
 
+  // Filter files by --since if specified
+  let filesToScan = codeFiles
+  if (sinceArg) {
+    if (!isGitAvailable()) {
+      warn(`⚠️  Warning: Git not available, --since flag ignored`)
+    } else {
+      const changedFiles = getChangedFilesSince(sinceArg)
+      if (changedFiles && changedFiles.length > 0) {
+        // Convert to absolute paths for comparison
+        const changedFilesAbs = changedFiles.map(f => path.resolve(process.cwd(), f))
+        filesToScan = codeFiles.filter(file => {
+          const fileAbs = path.resolve(file)
+          return changedFilesAbs.some(changed => fileAbs === changed || fileAbs.startsWith(changed))
+        })
+        log(`📝 Git mode: Scanning ${filesToScan.length} changed files (from ${codeFiles.length} total)`)
+      } else {
+        log(`📝 Git mode: No changed files found since ${sinceArg}`)
+        filesToScan = []
+      }
+    }
+  }
+
   // Extract comprehensive issues from files
-  console.log(`🔍 Processing ${codeFiles.length} files...`)
+  log(`🔍 Processing ${filesToScan.length} files...`)
   let processedCount = 0
-  codeFiles.forEach((file) => {
+  filesToScan.forEach((file) => {
     // Double-check exclusion (should already be filtered, but be safe)
     if (shouldExcludeFile(file, rootDir)) return // Skip excluded files
     if (shouldExclude("", file)) return // Skip excluded files (legacy check)
 
     processedCount++
     if (file.includes('job-queue.adapter.ts') || file.includes('risk.service.ts')) {
-      console.log(`📄 Processing: ${file}`)
+      log(`📄 Processing: ${file}`)
     }
 
     const content = fs.readFileSync(file, "utf8")
@@ -1030,7 +1401,7 @@ function scanCodeComprehensive() {
       for (const pattern of explicitTodoPatterns) {
         if (pattern.test(line)) {
           const priority = categorizeTodo(trimmedLine, "EXPLICIT", "HIGH")
-          const todoItem = {
+          const todoItem = addGitInfoToTodoItem({
             file,
             line: lineNumber,
             type: "EXPLICIT_TODO",
@@ -1038,7 +1409,7 @@ function scanCodeComprehensive() {
             priority: priority,
             category: "explicit",
             source: "explicit_todo"
-          }
+          }, file, lineNumber)
 
 
           todos.explicit.push(todoItem)
@@ -1068,8 +1439,10 @@ function scanCodeComprehensive() {
 
       // 2. Check for deceptive language patterns
       for (const pattern of deceptivePatterns) {
+        // Skip excluded patterns (like regex.exec)
+        if (pattern.exclude) continue
         if (pattern.regex.test(line)) {
-          const todoItem = {
+          const todoItem = addGitInfoToTodoItem({
             file,
             line: lineNumber,
             type: pattern.type,
@@ -1078,7 +1451,7 @@ function scanCodeComprehensive() {
             category: pattern.category,
             severity: pattern.severity,
             source: "deceptive_language"
-          }
+          }, file, lineNumber)
           todos.deceptive.push(todoItem)
           todos.byCategory[pattern.category].push(todoItem)
 
@@ -1106,7 +1479,7 @@ function scanCodeComprehensive() {
       // 3. Check for temporary code patterns
       for (const pattern of temporaryCodePatterns) {
         if (pattern.test(line)) {
-          const todoItem = {
+          const todoItem = addGitInfoToTodoItem({
             file,
             line: lineNumber,
             type: "TEMPORARY_CODE",
@@ -1114,7 +1487,7 @@ function scanCodeComprehensive() {
             priority: categorizeTodo(trimmedLine, "TEMPORARY", "MEDIUM"),
             category: "temporary",
             source: "temporary_code"
-          }
+          }, file, lineNumber)
           todos.temporary.push(todoItem)
           todos.byCategory.temporary.push(todoItem)
 
@@ -1133,16 +1506,55 @@ function scanCodeComprehensive() {
               break
           }
           matched = true
-          break // Only match first pattern
+          break
         }
       }
 
       if (matched) return // Skip other checks if temporary pattern found
 
+      // 3b. Check for debug statements (only if --debug flag is set)
+      if (includeDebug) {
+        for (const pattern of debugStatementPatterns) {
+          if (pattern.test(line)) {
+            const todoItem = {
+              file,
+              line: lineNumber,
+              type: "DEBUG_STATEMENT",
+              text: trimmedLine,
+              priority: categorizeTodo(trimmedLine, "DEBUG", "LOW"),
+              category: "temporary",
+              source: "debug_statement"
+            }
+            todos.temporary.push(todoItem)
+            todos.byCategory.temporary.push(todoItem)
+            todos.debugging.push(todoItem)
+
+            switch (todoItem.priority) {
+              case 1:
+                todos.critical.push(todoItem)
+                break
+              case 2:
+                todos.high.push(todoItem)
+                break
+              case 3:
+                todos.medium.push(todoItem)
+                break
+              case 4:
+                todos.low.push(todoItem)
+                break
+            }
+            matched = true
+            break // Only match first pattern
+          }
+        }
+      }
+
+      if (matched) return // Skip other checks if debug pattern found
+
       // 4. Check for incomplete implementations
       for (const pattern of incompletePatterns) {
         if (pattern.test(line)) {
-          const todoItem = {
+          const todoItem = addGitInfoToTodoItem({
             file,
             line: lineNumber,
             type: "INCOMPLETE_IMPLEMENTATION",
@@ -1150,7 +1562,7 @@ function scanCodeComprehensive() {
             priority: categorizeTodo(trimmedLine, "INCOMPLETE", "HIGH"),
             category: "incomplete",
             source: "incomplete_implementation"
-          }
+          }, file, lineNumber)
           todos.incomplete.push(todoItem)
           todos.byCategory.incomplete.push(todoItem)
 
@@ -1181,7 +1593,7 @@ function scanCodeComprehensive() {
       
       // Functions that always return empty array (no comment needed - code pattern)
       if (/function\s+\w+(?:Data|List|Items|Results|Records|Users)\w*\s*\([^)]*\)\s*\{[^}]*return\s+\[\]\s*;?\s*\}/gi.test(trimmedLineForCode)) {
-        const todoItem = {
+        const todoItem = addGitInfoToTodoItem({
           file,
           line: lineNumber,
           type: "EMPTY_RETURN_PATTERN",
@@ -1189,7 +1601,7 @@ function scanCodeComprehensive() {
           priority: categorizeTodo(trimmedLine, "EMPTY_RETURN", "HIGH"),
           category: "incomplete",
           source: "code_pattern"
-        }
+        }, file, lineNumber)
         todos.incomplete.push(todoItem)
         todos.byCategory.incomplete.push(todoItem)
         matched = true
@@ -1197,7 +1609,7 @@ function scanCodeComprehensive() {
       
       // Functions that always return empty object
       if (/function\s+\w+(?:Data|Result|Response|Object|Config)\w*\s*\([^)]*\)\s*\{[^}]*return\s+\{\}\s*;?\s*\}/gi.test(trimmedLineForCode)) {
-        const todoItem = {
+        const todoItem = addGitInfoToTodoItem({
           file,
           line: lineNumber,
           type: "EMPTY_RETURN_PATTERN",
@@ -1205,7 +1617,7 @@ function scanCodeComprehensive() {
           priority: categorizeTodo(trimmedLine, "EMPTY_RETURN", "HIGH"),
           category: "incomplete",
           source: "code_pattern"
-        }
+        }, file, lineNumber)
         todos.incomplete.push(todoItem)
         todos.byCategory.incomplete.push(todoItem)
         matched = true
@@ -1213,7 +1625,7 @@ function scanCodeComprehensive() {
       
       // Async functions that immediately resolve (no-op async)
       if (/async\s+function\s+\w+\s*\([^)]*\)\s*\{[^}]*return\s+Promise\.resolve/gi.test(trimmedLineForCode)) {
-        const todoItem = {
+        const todoItem = addGitInfoToTodoItem({
           file,
           line: lineNumber,
           type: "NO_OP_ASYNC",
@@ -1221,7 +1633,7 @@ function scanCodeComprehensive() {
           priority: categorizeTodo(trimmedLine, "NO_OP_ASYNC", "HIGH"),
           category: "incomplete",
           source: "code_pattern"
-        }
+        }, file, lineNumber)
         todos.incomplete.push(todoItem)
         todos.byCategory.incomplete.push(todoItem)
         matched = true
@@ -1229,7 +1641,7 @@ function scanCodeComprehensive() {
       
       // Validation functions that always return true/false (no validation logic)
       if (/function\s+(?:validate|check|verify|isValid|canAccess|hasPermission)\w*\s*\([^)]*\)\s*\{[^}]*return\s+(?:true|false)\s*;?\s*\}/gi.test(trimmedLineForCode)) {
-        const todoItem = {
+        const todoItem = addGitInfoToTodoItem({
           file,
           line: lineNumber,
           type: "ALWAYS_RETURNS_BOOLEAN",
@@ -1237,7 +1649,7 @@ function scanCodeComprehensive() {
           priority: categorizeTodo(trimmedLine, "ALWAYS_RETURNS", "HIGH"),
           category: "incomplete",
           source: "code_pattern"
-        }
+        }, file, lineNumber)
         todos.incomplete.push(todoItem)
         todos.byCategory.incomplete.push(todoItem)
         matched = true
@@ -1249,7 +1661,7 @@ function scanCodeComprehensive() {
       // Only flag actual executable code, not documentation
       for (const pattern of commentedCodePatterns) {
         if (pattern.test(line) && !isDocumentationComment(line)) {
-          const todoItem = {
+          const todoItem = addGitInfoToTodoItem({
             file,
             line: lineNumber,
             type: "COMMENTED_OUT_CODE",
@@ -1257,7 +1669,7 @@ function scanCodeComprehensive() {
             priority: 1, // Always blocker priority for commented code
             category: "commented_code",
             source: "commented_code"
-          }
+          }, file, lineNumber)
           todos.commented_code.push(todoItem)
           todos.byCategory.commented_code.push(todoItem)
           todos.critical.push(todoItem) // Add to critical since it's a blocker
@@ -1268,17 +1680,17 @@ function scanCodeComprehensive() {
       }
     })
   })
-  console.log(`✅ Processed ${processedCount} files (excluded ${codeFiles.length - processedCount})`)
+  log(`✅ Processed ${processedCount} files (excluded ${codeFiles.length - processedCount})`)
 }
 
 // Run comprehensive analysis
 scanCodeComprehensive()
 
 const scanDuration = Date.now() - scanStartTime
-console.log(`⏱️  Scan completed in ${(scanDuration / 1000).toFixed(2)} seconds`)
+log(`⏱️  Scan completed in ${(scanDuration / 1000).toFixed(2)} seconds`)
 
 // Transfer items from todos to analysis.byPriority for reporting
-console.log("🔄 Transferring items to priority buckets...")
+log("🔄 Transferring items to priority buckets...")
 // Priority mapping: 1=blocker, 2=critical, 3=high→major, 4=medium→minor
 analysis.byPriority.blocker = [...todos.critical, ...todos.high, ...todos.medium, ...todos.low].filter(item => item.priority === 1)
 analysis.byPriority.critical = [...todos.critical, ...todos.high, ...todos.medium, ...todos.low].filter(item => item.priority === 2)
@@ -1287,7 +1699,7 @@ analysis.byPriority.minor = [...todos.critical, ...todos.high, ...todos.medium, 
 
 // LEARNING FUNCTIONS (from profitpilot version)
 function learnFromAnalysis() {
-  console.log("🧠 Learning from analysis results...")
+  log("🧠 Learning from analysis results...")
 
   // For now, we'll track basic patterns
   // In a real implementation, this could be used to improve future detection
@@ -1305,12 +1717,12 @@ function learnFromAnalysis() {
     learningRate: learningRate
   })
 
-  console.log(`  - Analysis stored for future pattern improvement`)
-  console.log(`  - Current learning rate: ${learningRate}% actionable tasks`)
+  log(`  - Analysis stored for future pattern improvement`)
+  log(`  - Current learning rate: ${learningRate}% actionable tasks`)
 }
 
 function checkForMissedCriticalIssues() {
-  console.log("🔍 Checking for potentially missed critical issues...")
+  log("🔍 Checking for potentially missed critical issues...")
 
   const potentiallyMissed = []
 
@@ -1344,15 +1756,15 @@ function checkForMissedCriticalIssues() {
     }
   }
 
-  console.log(`  - Potentially missed critical issues: ${potentiallyMissed.length}`)
+  log(`  - Potentially missed critical issues: ${potentiallyMissed.length}`)
 
   if (potentiallyMissed.length > 0) {
-    console.log("\n⚠️  POTENTIALLY MISSED CRITICAL ISSUES:")
+    log("\n⚠️  POTENTIALLY MISSED CRITICAL ISSUES:")
     for (const missed of potentiallyMissed.slice(0, 5)) {
-      console.log(`  - ${missed.issue.file}:${missed.issue.line} - ${missed.pattern} (${missed.severity})`)
+      log(`  - ${missed.issue.file}:${missed.issue.line} - ${missed.pattern} (${missed.severity})`)
     }
     if (potentiallyMissed.length > 5) {
-      console.log(`  - ... and ${potentiallyMissed.length - 5} more issues`)
+      log(`  - ... and ${potentiallyMissed.length - 5} more issues`)
     }
   }
 
@@ -1385,13 +1797,205 @@ learnFromAnalysis()
 // CHECK FOR POTENTIALLY MISSED CRITICAL ISSUES
 const potentiallyMissed = checkForMissedCriticalIssues()
 
+// === FILTERING FUNCTIONS ===
+
+// Filter issues by priority and category
+function filterIssues(issues, priorityFilter, categoryFilter) {
+  return issues.filter(issue => {
+    // Priority filter
+    if (priorityFilter !== 'all') {
+      const issuePriority = issue.priority === 1 ? 'blocker' :
+                           issue.priority === 2 ? 'critical' :
+                           issue.priority === 3 ? 'major' : 'minor'
+      if (issuePriority !== priorityFilter) {
+        return false
+      }
+    }
+    
+    // Category filter
+    if (categoryFilter !== 'all') {
+      if (issue.category !== categoryFilter) {
+        return false
+      }
+    }
+    
+    return true
+  })
+}
+
+// Apply filters to all issue collections
+function applyFilters() {
+  if (priorityFilter !== 'all' || categoryFilter !== 'all') {
+    todos.explicit = filterIssues(todos.explicit, priorityFilter, categoryFilter)
+    todos.deceptive = filterIssues(todos.deceptive, priorityFilter, categoryFilter)
+    todos.temporary = filterIssues(todos.temporary, priorityFilter, categoryFilter)
+    todos.incomplete = filterIssues(todos.incomplete, priorityFilter, categoryFilter)
+    todos.commented_code = filterIssues(todos.commented_code, priorityFilter, categoryFilter)
+    
+    // Rebuild priority buckets
+    todos.critical = []
+    todos.high = []
+    todos.medium = []
+    todos.low = []
+    
+    const allFiltered = [...todos.explicit, ...todos.deceptive, ...todos.temporary, ...todos.incomplete, ...todos.commented_code]
+    allFiltered.forEach(item => {
+      switch (item.priority) {
+        case 1: todos.critical.push(item); break
+        case 2: todos.high.push(item); break
+        case 3: todos.medium.push(item); break
+        case 4: todos.low.push(item); break
+      }
+    })
+    
+    // Rebuild category buckets
+    todos.byCategory = {
+      temporal: todos.deceptive.filter(i => i.category === 'temporal'),
+      incomplete: [...todos.incomplete, ...todos.deceptive.filter(i => i.category === 'incomplete')],
+      deceptive: todos.deceptive.filter(i => i.category === 'deceptive'),
+      technical_debt: todos.deceptive.filter(i => i.category === 'technical_debt'),
+      explicit: todos.explicit,
+      temporary: todos.temporary,
+      commented_code: todos.commented_code
+    }
+    
+    // Rebuild priority analysis buckets
+    analysis.byPriority.blocker = allFiltered.filter(item => item.priority === 1)
+    analysis.byPriority.critical = allFiltered.filter(item => item.priority === 2)
+    analysis.byPriority.major = allFiltered.filter(item => item.priority === 3)
+    analysis.byPriority.minor = allFiltered.filter(item => item.priority === 4)
+  }
+}
+
+// === FORMATTER FUNCTIONS ===
+
+// Generate JSON report
+function generateJSONReport() {
+  const allIssues = [...todos.explicit, ...todos.deceptive, ...todos.temporary, ...todos.incomplete, ...todos.commented_code]
+  
+  return JSON.stringify({
+    metadata: {
+      timestamp: timestamp,
+      date: dateOnly,
+      format: 'json',
+      version: '1.0.0'
+    },
+    summary: {
+      total: allIssues.length,
+      bySource: {
+        explicit: todos.explicit.length,
+        deceptive: todos.deceptive.length,
+        temporary: todos.temporary.length,
+        incomplete: todos.incomplete.length,
+        commented_code: todos.commented_code.length
+      },
+      byPriority: {
+        blocker: analysis.byPriority.blocker.length,
+        critical: analysis.byPriority.critical.length,
+        major: analysis.byPriority.major.length,
+        minor: analysis.byPriority.minor.length
+      },
+      byCategory: {
+        temporal: todos.byCategory.temporal.length,
+        incomplete: todos.byCategory.incomplete.length,
+        deceptive: todos.byCategory.deceptive.length,
+        technical_debt: todos.byCategory.technical_debt.length,
+        explicit: todos.byCategory.explicit.length,
+        temporary: todos.byCategory.temporary.length,
+        commented_code: todos.byCategory.commented_code.length
+      }
+    },
+    filters: {
+      priority: priorityFilter,
+      category: categoryFilter
+    },
+    issues: allIssues.map(issue => ({
+      file: issue.file,
+      line: issue.line,
+      type: issue.type,
+      text: issue.text,
+      priority: issue.priority === 1 ? 'blocker' : issue.priority === 2 ? 'critical' : issue.priority === 3 ? 'major' : 'minor',
+      category: issue.category,
+      severity: issue.severity || 'MEDIUM',
+      source: issue.source,
+      guidance: getIssueGuidance(issue.type),
+      ...(issue.blame ? { blame: issue.blame } : {}),
+      ...(issue.age ? { age: issue.age } : {})
+    })),
+    blockers: analysis.byPriority.blocker.map(issue => ({
+      file: issue.file,
+      line: issue.line,
+      type: issue.type,
+      text: issue.text
+    })),
+    critical: analysis.byPriority.critical.map(issue => ({
+      file: issue.file,
+      line: issue.line,
+      type: issue.type,
+      text: issue.text
+    }))
+  }, null, 2)
+}
+
+// Generate table report (console only)
+function generateTableReport() {
+  const allIssues = [...todos.explicit, ...todos.deceptive, ...todos.temporary, ...todos.incomplete, ...todos.commented_code]
+  
+  if (allIssues.length === 0) {
+    return "✅ No issues found!\n"
+  }
+  
+  let table = "\n📊 TODO Tracker Results\n"
+  table += "=".repeat(100) + "\n\n"
+  
+  // Summary section
+  table += "SUMMARY:\n"
+  table += `  Total Issues: ${allIssues.length}\n`
+  table += `  Blockers: ${analysis.byPriority.blocker.length}\n`
+  table += `  Critical: ${analysis.byPriority.critical.length}\n`
+  table += `  Major: ${analysis.byPriority.major.length}\n`
+  table += `  Minor: ${analysis.byPriority.minor.length}\n\n`
+  
+  // Top issues table
+  table += "TOP ISSUES:\n"
+  table += "-".repeat(100) + "\n"
+  table += "Priority | File | Line | Type | Text\n"
+  table += "-".repeat(100) + "\n"
+  
+  // Show top 20 issues
+  const topIssues = allIssues
+    .sort((a, b) => a.priority - b.priority)
+    .slice(0, 20)
+  
+  topIssues.forEach(issue => {
+    const priority = issue.priority === 1 ? 'BLOCKER' : issue.priority === 2 ? 'CRITICAL' : issue.priority === 3 ? 'MAJOR' : 'MINOR'
+    const fileShort = issue.file.length > 40 ? '...' + issue.file.slice(-37) : issue.file
+    const textShort = issue.text.length > 50 ? issue.text.slice(0, 47) + '...' : issue.text
+    table += `${priority.padEnd(8)} | ${fileShort.padEnd(40)} | ${String(issue.line).padEnd(4)} | ${issue.type.padEnd(20)} | ${textShort}\n`
+  })
+  
+  if (allIssues.length > 20) {
+    table += `\n... and ${allIssues.length - 20} more issues\n`
+  }
+  
+  table += "\n" + "=".repeat(100) + "\n"
+  
+  return table
+}
+
 // Calculate totals
 const totalIssues = todos.explicit.length + todos.deceptive.length + todos.temporary.length + todos.incomplete.length + todos.commented_code.length
+
+// Apply filters before generating report
+applyFilters()
+
+// Recalculate totals after filtering
+const filteredTotalIssues = todos.explicit.length + todos.deceptive.length + todos.temporary.length + todos.incomplete.length + todos.commented_code.length
 
 // Generate comprehensive report
 report += `## Comprehensive Issue Analysis Results
 
-**Total Issues Found:** ${totalIssues}
+**Total Issues Found:** ${filteredTotalIssues}${priorityFilter !== 'all' || categoryFilter !== 'all' ? ` (filtered from ${totalIssues} total)` : ''}
 - **Explicit TODOs:** ${todos.explicit.length} (TODO/FIXME/HACK comments)
 - **Deceptive Language:** ${todos.deceptive.length} (broad pattern detection)
 - **Temporary Code:** ${todos.temporary.length} (console.log, workarounds, etc.)
@@ -1417,28 +2021,40 @@ report += `## Comprehensive Issue Analysis Results
 
 `
 
-// Add blocker issues section (from profitpilot version)
-if (analysis.byPriority.blocker.length > 0) {
+// Add blocker issues section (from profitpilot version) - skip if summary only
+if (!summaryOnly && analysis.byPriority.blocker.length > 0) {
   report += `## 🚫 Blocker Issues (${analysis.byPriority.blocker.length})\n\n`
   analysis.byPriority.blocker.forEach((item, idx) => {
     report += `${idx + 1}. **${item.file}:${item.line}** (${item.type})\n`
     report += `   \`${item.text}\`\n`
+    if (item.blame) {
+      report += `   *Author: ${item.blame.author} | Date: ${item.blame.date}*\n`
+    }
+    if (item.age) {
+      report += `   *Age: ${item.age}*\n`
+    }
     report += `   *Priority: Blocker | Impact: ${priorityLevels.blocker.impact}*\n\n`
   })
 }
 
-// Add critical issues section
-if (analysis.byPriority.critical.length > 0) {
+// Add critical issues section - skip if summary only
+if (!summaryOnly && analysis.byPriority.critical.length > 0) {
   report += `## 🚨 Critical Issues (${analysis.byPriority.critical.length})\n\n`
   todos.critical.forEach((item, idx) => {
     report += `${idx + 1}. **${item.file}:${item.line}** (${item.type})\n`
     report += `   \`${item.text}\`\n`
+    if (item.blame) {
+      report += `   *Author: ${item.blame.author} | Date: ${item.blame.date}*\n`
+    }
+    if (item.age) {
+      report += `   *Age: ${item.age}*\n`
+    }
     report += `   *Priority: Critical | Category: ${item.category} | Source: ${item.source}*\n\n`
   })
 }
 
-// Add high priority issues with concise actions
-if (todos.high.length > 0) {
+// Add high priority issues with concise actions - skip if summary only
+if (!summaryOnly && todos.high.length > 0) {
   report += `## 🎯 High Priority Issues\n\n`
 
   // Show top 20 issues with concise file listings
@@ -1446,6 +2062,12 @@ if (todos.high.length > 0) {
     const guidance = getIssueGuidance(item.type)
     report += `${idx + 1}. **${item.file}:${item.line}** (${item.type})\n`
     report += `   \`${item.text}\`\n`
+    if (item.blame) {
+      report += `   *Author: ${item.blame.author}*\n`
+    }
+    if (item.age) {
+      report += `   *Age: ${item.age}*\n`
+    }
     report += `   *${guidance}*\n\n`
   })
 
@@ -1454,28 +2076,21 @@ if (todos.high.length > 0) {
   }
 }
 
-// Add debugging statements section
-const debugStatements = todos.temporary.filter(
-  (item) =>
-    item.text.includes("console.log") ||
-    item.text.includes("console.error") ||
-    item.text.includes("debugger") ||
-    item.text.includes("alert(")
-)
-
-if (debugStatements.length > 0) {
-  report += `## 🐛 Debugging Statements to Remove (${debugStatements.length})\n\n`
-  debugStatements.slice(0, 10).forEach((item, idx) => {
+// Add debugging statements section (only if --debug flag was used) - skip if summary only
+if (!summaryOnly && includeDebug && todos.debugging && todos.debugging.length > 0) {
+  report += `## 🐛 Debugging Statements to Remove (${todos.debugging.length})\n\n`
+  todos.debugging.slice(0, 10).forEach((item, idx) => {
     report += `${idx + 1}. **${item.file}:${item.line}**\n`
     report += `   \`${item.text}\`\n\n`
   })
-  if (debugStatements.length > 10) {
-    report += `... and ${debugStatements.length - 10} more debugging statements\n\n`
+  if (todos.debugging.length > 10) {
+    report += `... and ${todos.debugging.length - 10} more debugging statements\n\n`
   }
 }
 
-// Add category guidance with one-liners
-report += `## 📋 Action Guide
+// Add category guidance with one-liners - skip if summary only
+if (!summaryOnly) {
+  report += `## 📋 Action Guide
 
 ### ${todos.byCategory.deceptive.length} Deceptive Patterns
 **READ:** Product docs, technical foundation
@@ -1508,6 +2123,7 @@ report += `## 📋 Action Guide
 ---
 
 `
+  } // End of summary-only check
 
 // Add summary and recommendations
 report += `## 📈 Summary & Recommendations
@@ -1527,8 +2143,8 @@ if (analysis.byPriority.major.length > 0) {
   report += `- **${analysis.byPriority.major.length} MAJOR issues** should be addressed in current sprint\n`
 }
 
-if (debugStatements.length > 0) {
-  report += `- **${debugStatements.length} debugging statements** should be removed for production\n`
+if (includeDebug && todos.debugging && todos.debugging.length > 0) {
+  report += `- **${todos.debugging.length} debugging statements** should be removed for production\n`
 }
 
 if (todos.byCategory.deceptive.length > 0) {
@@ -1546,67 +2162,134 @@ if (totalIssues === 0) {
 report += `\n**Report:** ${reportFile}
 `
 
-// Write comprehensive report
-fs.writeFileSync(reportFile, report)
+// Generate output based on format
+let outputContent
+if (outputFormat === 'json') {
+  outputContent = generateJSONReport()
+} else if (outputFormat === 'table') {
+  outputContent = generateTableReport()
+  // Table format: print to console, don't write file
+  log(outputContent)
+  if (reportFile) {
+    // If output path specified, write markdown summary instead
+    fs.writeFileSync(reportFile, report)
+    log(`📄 Summary report saved: ${reportFile}`)
+  }
+  // Exit early for table format (console only)
+  // Use exit code logic below
+} else {
+  // Markdown format (default)
+  outputContent = report
+}
+
+// Write report to file (unless table format)
+if (reportFile && outputFormat !== 'table') {
+  fs.writeFileSync(reportFile, outputContent)
+}
 
 // Console summary with enhanced details
-console.log("\n✅ Comprehensive TODO Analysis Complete!")
-console.log(`📄 Report saved: ${reportFile}`)
-console.log("\n📊 Comprehensive Summary:")
+log("\n✅ Comprehensive TODO Analysis Complete!")
+if (reportFile && outputFormat !== 'table') {
+  log(`📄 Report saved: ${reportFile}`)
+}
+if (priorityFilter !== 'all' || categoryFilter !== 'all') {
+  log(`🔍 Filters applied: priority=${priorityFilter}, category=${categoryFilter}`)
+  log(`📊 Filtered results: ${filteredTotalIssues} issues (from ${totalIssues} total)`)
+}
+log("\n📊 Comprehensive Summary:")
 
 // Show breakdown by source
-console.log(`\n🔍 Detection Sources:`)
-console.log(`   Explicit TODOs: ${todos.explicit.length}`)
-console.log(`   Deceptive Language: ${todos.deceptive.length}`)
-console.log(`   Temporary Code: ${todos.temporary.length}`)
-console.log(`   Incomplete Implementation: ${todos.incomplete.length}`)
-console.log(`   Commented Out Code: ${todos.commented_code.length}`)
-console.log(`   **TOTAL: ${totalIssues}**`)
+log(`\n🔍 Detection Sources:`)
+log(`   Explicit TODOs: ${todos.explicit.length}`)
+log(`   Deceptive Language: ${todos.deceptive.length}`)
+log(`   Temporary Code: ${todos.temporary.length}`)
+log(`   Incomplete Implementation: ${todos.incomplete.length}`)
+log(`   Commented Out Code: ${todos.commented_code.length}`)
+log(`   **TOTAL: ${filteredTotalIssues}**`)
 
 // Show priority breakdown
-console.log(`\n🎯 Priority Breakdown:`)
-console.log(`   Blockers: ${analysis.byPriority.blocker.length} (${priorityLevels.blocker.impact})`)
-console.log(`   Critical: ${analysis.byPriority.critical.length} (${priorityLevels.critical.impact})`)
-console.log(`   Major: ${analysis.byPriority.major.length} (${priorityLevels.major.impact})`)
-console.log(`   Minor: ${analysis.byPriority.minor.length} (${priorityLevels.minor.impact})`)
+log(`\n🎯 Priority Breakdown:`)
+log(`   Blockers: ${analysis.byPriority.blocker.length} (${priorityLevels.blocker.impact})`)
+log(`   Critical: ${analysis.byPriority.critical.length} (${priorityLevels.critical.impact})`)
+log(`   Major: ${analysis.byPriority.major.length} (${priorityLevels.major.impact})`)
+log(`   Minor: ${analysis.byPriority.minor.length} (${priorityLevels.minor.impact})`)
 
 // Show category breakdown
-console.log(`\n📂 Category Breakdown:`)
-console.log(`   Temporal: ${todos.byCategory.temporal.length}`)
-console.log(`   Incomplete: ${todos.byCategory.incomplete.length}`)
-console.log(`   Deceptive: ${todos.byCategory.deceptive.length}`)
-console.log(`   Technical Debt: ${todos.byCategory.technical_debt.length}`)
-console.log(`   Explicit: ${todos.byCategory.explicit.length}`)
-console.log(`   Temporary: ${todos.byCategory.temporary.length}`)
-console.log(`   Commented Code: ${todos.byCategory.commented_code.length} (TOP BLOCKER)`)
+log(`\n📂 Category Breakdown:`)
+log(`   Temporal: ${todos.byCategory.temporal.length}`)
+log(`   Incomplete: ${todos.byCategory.incomplete.length}`)
+log(`   Deceptive: ${todos.byCategory.deceptive.length}`)
+log(`   Technical Debt: ${todos.byCategory.technical_debt.length}`)
+log(`   Explicit: ${todos.byCategory.explicit.length}`)
+log(`   Temporary: ${todos.byCategory.temporary.length}`)
+log(`   Commented Code: ${todos.byCategory.commented_code.length} (TOP BLOCKER)`)
 
 if (analysis.byPriority.blocker.length > 0) {
-  console.log("\n🚫 BLOCKER ISSUES FOUND:")
+  log("\n🚫 BLOCKER ISSUES FOUND:")
   analysis.byPriority.blocker.slice(0, 3).forEach((item, idx) => {
-    console.log(`   ${idx + 1}. ${item.file}:${item.line} - ${item.type}`)
+    log(`   ${idx + 1}. ${item.file}:${item.line} - ${item.type}`)
   })
 } else if (analysis.byPriority.critical.length > 0) {
-  console.log("\n🚨 CRITICAL ISSUES FOUND:")
+  log("\n🚨 CRITICAL ISSUES FOUND:")
   analysis.byPriority.critical.slice(0, 3).forEach((item, idx) => {
-    console.log(`   ${idx + 1}. ${item.file}:${item.line} - ${item.type}`)
+    log(`   ${idx + 1}. ${item.file}:${item.line} - ${item.type}`)
   })
 }
 
-if (debugStatements.length > 0) {
-  console.log(`\n🐛 DEBUGGING STATEMENTS: ${debugStatements.length} found`)
+const debugStatements = todos.temporary.filter(
+  (item) =>
+    item.text.includes("console.log") ||
+    item.text.includes("console.error") ||
+    item.text.includes("debugger") ||
+    item.text.includes("alert(")
+)
+
+if (includeDebug && debugStatements.length > 0) {
+  log(`\n🐛 DEBUGGING STATEMENTS: ${debugStatements.length} found`)
 }
 
-if (totalIssues === 0) {
-  console.log("\n✅ Codebase is clean - no issues found!")
+if (filteredTotalIssues === 0) {
+  log("\n✅ Codebase is clean - no issues found!")
 } else if (analysis.byPriority.blocker.length === 0 && analysis.byPriority.critical.length === 0) {
-  console.log("\n✅ No blocking issues - ready for development workflow")
+  log("\n✅ No blocking issues - ready for development workflow")
 } else if (analysis.byPriority.blocker.length > 0) {
-  console.log("\n🚫 Blocker issues require immediate attention")
+  log("\n🚫 Blocker issues require immediate attention")
 } else {
-  console.log("\n⚠️ Critical issues require attention before production")
+  log("\n⚠️ Critical issues require attention before production")
 }
 
-console.log(`\n📋 Full comprehensive report: ${reportFile}`)
+if (reportFile && outputFormat !== 'table') {
+  log(`\n📋 Full comprehensive report: ${reportFile}`)
+}
 
-// Exit with appropriate code (from profitpilot version)
-process.exit(analysis.byPriority.blocker.length > 0 ? 1 : 0)
+// === EXIT CODE LOGIC ===
+
+// Check max-issues limit
+if (maxIssues !== null && filteredTotalIssues > maxIssues) {
+  if (!noConsole) {
+    console.error(`❌ Error: Found ${filteredTotalIssues} issues, exceeds limit of ${maxIssues}`)
+  }
+  process.exit(1)
+}
+
+// Check max-blockers limit
+if (maxBlockers !== null && analysis.byPriority.blocker.length > maxBlockers) {
+  if (!noConsole) {
+    console.error(`❌ Error: Found ${analysis.byPriority.blocker.length} blockers, exceeds limit of ${maxBlockers}`)
+  }
+  process.exit(1)
+}
+
+// Determine exit code based on --exit-code flag
+let exitCode = 0
+if (exitCodeLevel === 'never') {
+  exitCode = 0
+} else if (exitCodeLevel === 'all') {
+  exitCode = filteredTotalIssues > 0 ? 1 : 0
+} else if (exitCodeLevel === 'critical') {
+  exitCode = (analysis.byPriority.blocker.length > 0 || analysis.byPriority.critical.length > 0) ? 1 : 0
+} else { // 'blocker' (default)
+  exitCode = analysis.byPriority.blocker.length > 0 ? 1 : 0
+}
+
+process.exit(exitCode)
