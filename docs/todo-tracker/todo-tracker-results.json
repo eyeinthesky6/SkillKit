@@ -1,32 +1,32 @@
 {
   "metadata": {
-    "timestamp": "2025-11-12T08-35-22",
+    "timestamp": "2025-11-12T08-43-25",
     "date": "2025-11-12",
     "format": "json",
     "version": "1.0.0"
   },
   "summary": {
-    "total": 21123,
+    "total": 21070,
     "bySource": {
       "explicit": 31,
-      "deceptive": 4400,
-      "temporary": 16692,
+      "deceptive": 4353,
+      "temporary": 16686,
       "incomplete": 0,
       "commented_code": 0
     },
     "byPriority": {
-      "blocker": 116,
-      "critical": 2038,
-      "major": 17863,
+      "blocker": 109,
+      "critical": 2010,
+      "major": 17845,
       "minor": 1106
     },
     "byCategory": {
-      "temporal": 90,
-      "incomplete": 1167,
-      "deceptive": 1205,
-      "technical_debt": 774,
-      "explicit": 845,
-      "temporary": 17040,
+      "temporal": 89,
+      "incomplete": 1158,
+      "deceptive": 1181,
+      "technical_debt": 769,
+      "explicit": 841,
+      "temporary": 17030,
       "commented_code": 0
     }
   },
@@ -653,34 +653,12 @@
     },
     {
       "file": "src\\cli-commands\\init.ts",
-      "line": 803,
-      "type": "AI_OVERCONFIDENCE",
-      "text": "- No errors: Ready for any work",
-      "priority": "blocker",
-      "category": "deceptive",
-      "severity": "CRITICAL",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
       "line": 836,
       "type": "INCOMPLETE_MARKER",
       "text": "This runs diagnostics and presents task menu.",
       "priority": "major",
       "category": "incomplete",
       "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
-      "line": 843,
-      "type": "AI_OVERCONFIDENCE",
-      "text": "- No errors: Ready for any work",
-      "priority": "blocker",
-      "category": "deceptive",
-      "severity": "CRITICAL",
       "source": "deceptive_language",
       "guidance": "Fix per requirements"
     },
@@ -821,17 +799,6 @@
       "line": 109,
       "type": "INCOMPLETE_WORK",
       "text": "console.error(chalk.cyan(`  tsk skills:add ${source} --force`));",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\validate-workflow.ts",
-      "line": 74,
-      "type": "INCOMPLETE_WORK",
-      "text": "fix: 'Add workflow content'",
       "priority": "major",
       "category": "incomplete",
       "severity": "MEDIUM",
@@ -1411,17 +1378,6 @@
       "guidance": "Fix per requirements"
     },
     {
-      "file": "src\\workflow\\router.ts",
-      "line": 221,
-      "type": "AI_OVERCONFIDENCE",
-      "text": "suggestions.push('deploy-prep - Ready for deployment');",
-      "priority": "blocker",
-      "category": "deceptive",
-      "severity": "CRITICAL",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
       "file": ".eslintrc.js",
       "line": 63,
       "type": "FUTURE_FEATURE",
@@ -1500,28 +1456,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 60,
-      "type": "WOULD_NEED",
-      "text": "{ regex: /would need|This would need/gi, type: \"WOULD_NEED\", severity: \"HIGH\", category: \"incomplete\" },",
-      "priority": "critical",
-      "category": "incomplete",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Add missing service integration"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 61,
-      "type": "SHOULD_BE_IMPLEMENTED",
-      "text": "{ regex: /should be|Should be/gi, type: \"SHOULD_BE_IMPLEMENTED\", severity: \"MEDIUM\", category: \"incomplete\" },",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Complete planned feature"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 65,
       "type": "SIMPLIFIED",
       "text": "// Deceptive/simplified implementations",
@@ -1530,160 +1464,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Replace simplified code with full implementation"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 66,
-      "type": "SIMPLIFIED",
-      "text": "{ regex: /simplified/gi, type: \"SIMPLIFIED\", severity: \"HIGH\", category: \"deceptive\" },",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Replace simplified code with full implementation"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 67,
-      "type": "SIMPLIFIED_FOR",
-      "text": "{ regex: /simplified for/gi, type: \"SIMPLIFIED_FOR\", severity: \"HIGH\", category: \"deceptive\" },",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Implement complete solution per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 68,
-      "type": "SIMPLIFIED",
-      "text": "{ regex: /approximat/gi, type: \"SIMPLIFIED\", severity: \"HIGH\", category: \"deceptive\" },",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Replace simplified code with full implementation"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 69,
-      "type": "WORKAROUND",
-      "text": "{ regex: /workaround|Workaround/gi, type: \"WORKAROUND\", severity: \"HIGH\", category: \"deceptive\" },",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Replace workaround with proper integration"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 70,
-      "type": "STUB_IMPLEMENTATION",
-      "text": "{ regex: /stub|Stub/gi, type: \"STUB_IMPLEMENTATION\", severity: \"HIGH\", category: \"incomplete\" },",
-      "priority": "critical",
-      "category": "incomplete",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Complete stub with production code"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 71,
-      "type": "MINIMAL_IMPLEMENTATION",
-      "text": "{ regex: /minimal|Minimal/gi, type: \"MINIMAL_IMPLEMENTATION\", severity: \"HIGH\", category: \"deceptive\" },",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Expand to full feature implementation"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 72,
-      "type": "QUICK_FIX",
-      "text": "{ regex: /hack|Hack/gi, type: \"QUICK_HACK\", severity: \"HIGH\", category: \"deceptive\" },",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Apply proper fix with testing"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 73,
-      "type": "BYPASS_SOLUTION",
-      "text": "{ regex: /bypass|Bypass/gi, type: \"BYPASS_SOLUTION\", severity: \"HIGH\", category: \"deceptive\" },",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Implement proper business logic"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 74,
-      "type": "SHORTCUT_SOLUTION",
-      "text": "{ regex: /shortcut|Shortcut/gi, type: \"SHORTCUT_SOLUTION\", severity: \"HIGH\", category: \"deceptive\" },",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Use standard implementation patterns"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 76,
-      "type": "PARTIAL_IMPLEMENTATION",
-      "text": "{ regex: /partial.*implementation|partial.*feature|Partial.*implementation|Partial.*feature/gi, type: \"PARTIAL_IMPLEMENTATION\", severity: \"HIGH\", category: \"incomplete\" },",
-      "priority": "critical",
-      "category": "incomplete",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Complete missing functionality"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 77,
-      "type": "ACCEPTABLE_EXCEEDED",
-      "text": "{ regex: /acceptable.*exceed|exceed.*acceptable/gi, type: \"ACCEPTABLE_EXCEEDED\", severity: \"HIGH\", category: \"deceptive\" },",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Add proper validation & error handling"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 80,
-      "type": "FALSE_SUCCESS",
-      "text": "{ regex: /completed successfully.*(?:but|however|actually|really)/gi, type: \"FALSE_SUCCESS\", severity: \"HIGH\", category: \"deceptive\" },",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 81,
-      "type": "FALSE_SUCCESS",
-      "text": "{ regex: /success.*silent.*fail/gi, type: \"FALSE_SUCCESS\", severity: \"HIGH\", category: \"deceptive\" },",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 82,
-      "type": "FALSE_SUCCESS",
-      "text": "{ regex: /return.*success.*(?:mock|fake|dummy|placeholder)/gi, type: \"FALSE_SUCCESS\", severity: \"HIGH\", category: \"deceptive\" },",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -1698,61 +1478,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 85,
-      "type": "PLACEHOLDER_VALUES",
-      "text": "{ regex: /placeholder|Placeholder/gi, type: \"PLACEHOLDER_VALUES\", severity: \"HIGH\", category: \"temporary\" },",
-      "priority": "critical",
-      "category": "temporary",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Replace with real data/service"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 86,
-      "type": "RETURN_BASIC",
-      "text": "{ regex: /return.*basic|return basic/gi, type: \"RETURN_BASIC\", severity: \"HIGH\", category: \"deceptive\" },",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Add proper error handling"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 87,
-      "type": "TEMPORARY_SOLUTION",
-      "text": "{ regex: /temporary.*solution|temporary.*fix|Temporary.*solution|Temporary.*fix/gi, type: \"TEMPORARY_SOLUTION\", severity: \"HIGH\", category: \"temporary\" },",
-      "priority": "critical",
-      "category": "temporary",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Replace with permanent solution"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 88,
-      "type": "EMPTY_FALLBACK",
-      "text": "{ regex: /return.*empty.*array|return.*empty.*object|return.*null.*for.*now|return.*undefined.*for.*now|return.*zero.*for.*now/gi, type: \"EMPTY_FALLBACK\", severity: \"MEDIUM\", category: \"temporary\" },",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 89,
-      "type": "MOCK_DATA",
-      "text": "{ regex: /mock|dummy|MOCK|DUMMY/gi, type: \"MOCK_DATA\", severity: \"MEDIUM\", category: \"temporary\" },",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 91,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "// Unsafe assumptions and hardcoded values",
@@ -1761,160 +1486,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 92,
-      "type": "UNSAFE_ASSUMPTIONS",
-      "text": "{ regex: /assume|assumed|Assume|Assumed/gi, type: \"UNSAFE_ASSUMPTIONS\", severity: \"HIGH\", category: \"deceptive\" },",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 93,
-      "type": "UNSAFE_ASSUMPTIONS",
-      "text": "{ regex: /assuming|assumption|presume|presumption/gi, type: \"UNSAFE_ASSUMPTIONS\", severity: \"HIGH\", category: \"deceptive\" },",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 94,
-      "type": "HARDCODED_VALUES",
-      "text": "{ regex: /hardcoded|Hardcoded|magic.*number|arbitrary.*value/gi, type: \"HARDCODED_VALUES\", severity: \"HIGH\", category: \"technical_debt\" },",
-      "priority": "critical",
-      "category": "technical_debt",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Move to config/contract"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 97,
-      "type": "ACCEPTED_LIMITATIONS",
-      "text": "{ regex: /limitation|Limitation/gi, type: \"ACCEPTED_LIMITATIONS\", severity: \"MEDIUM\", category: \"deceptive\" },",
-      "priority": "major",
-      "category": "deceptive",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 98,
-      "type": "SILENT_FAILURES",
-      "text": "{ regex: /silently.*ignore|silently.*fail|swallow.*exception|swallow.*error/gi, type: \"SILENT_FAILURES\", severity: \"HIGH\", category: \"technical_debt\" },",
-      "priority": "critical",
-      "category": "technical_debt",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Add error logging"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 99,
-      "type": "DEPRECATED_CODE",
-      "text": "{ regex: /deprecated|Deprecated|obsolete|legacy.*code/gi, type: \"DEPRECATED_CODE\", severity: \"MEDIUM\", category: \"technical_debt\" },",
-      "priority": "major",
-      "category": "technical_debt",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Update to modern patterns"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 102,
-      "type": "STUB_IMPLEMENTATION",
-      "text": "{ regex: /STUB|XXX|\\bBUG\\b|incomplete\\b|Incomplete\\b/gi, type: \"EXPLICIT_MARKERS\", severity: \"HIGH\", category: \"explicit\" },",
-      "priority": "critical",
-      "category": "incomplete",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Complete stub with production code"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 103,
-      "type": "EXPLICIT_MARKERS",
-      "text": "{ regex: /TBD|TBC|NYI|WIP|tbd|tbc|nyi|wip/gi, type: \"EXPLICIT_MARKERS\", severity: \"HIGH\", category: \"explicit\" },",
-      "priority": "critical",
-      "category": "explicit",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 104,
-      "type": "MINIMAL_IMPLEMENTATION",
-      "text": "{ regex: /quick.*fix|quick.*solution|until we can|when we have|later|Later|bypass|Bypass|minimal|Minimal/gi, type: \"TEMPORAL_LANGUAGE\", severity: \"HIGH\", category: \"temporal\" },",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Expand to full feature implementation"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 105,
-      "type": "BACKWARDS_COMPATIBILITY",
-      "text": "{ regex: /backwards.*compatibility|backward.*compatibility|legacy.*support|Legacy.*support/gi, type: \"BACKWARDS_COMPATIBILITY\", severity: \"MEDIUM\", category: \"technical_debt\" },",
-      "priority": "major",
-      "category": "technical_debt",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Plan migration"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 106,
-      "type": "INCOMPLETE_MARKER",
-      "text": "{ regex: /coming soon|future.*version|planned|prototype|experimental|beta|alpha|proof.*concept/gi, type: \"FUTURE_FEATURE\", severity: \"MEDIUM\", category: \"incomplete\" },",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 107,
-      "type": "HIDDEN_LANGUAGE",
-      "text": "{ regex: /in a real implementation|production would use|proper implementation would|temporary for build/gi, type: \"HIDDEN_LANGUAGE\", severity: \"HIGH\", category: \"deceptive\" },",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 110,
-      "type": "IMPORTANT_NOTES",
-      "text": "{ regex: /NOTE:|IMPORTANT:|WARNING:|CAUTION:|ATTENTION:/gi, type: \"IMPORTANT_NOTES\", severity: \"MEDIUM\", category: \"explicit\" },",
-      "priority": "major",
-      "category": "explicit",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Address noted requirement"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 111,
-      "type": "DEPRECATED_CODE",
-      "text": "{ regex: /remove.*me|delete.*me|clean.*up.*needed|obsolete|deprecated|legacy/gi, type: \"CLEANUP_NEEDED\", severity: \"MEDIUM\", category: \"technical_debt\" },",
-      "priority": "major",
-      "category": "technical_debt",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Update to modern patterns"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -1948,17 +1519,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Complete stub with production code"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 125,
-      "type": "EXPLICIT_MARKERS",
-      "text": "// 4. INCOMPLETE IMPLEMENTATION PATTERNS (SEDI-style)",
-      "priority": "critical",
-      "category": "explicit",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -2523,17 +2083,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 786,
-      "type": "EXPLICIT_MARKERS",
-      "text": "if (matched) return // Skip other checks if incomplete pattern found",
-      "priority": "critical",
-      "category": "explicit",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 803,
       "type": "INCOMPLETE_WORK",
       "text": "todos.critical.push(todoItem) // Add to critical since it's a blocker",
@@ -2551,28 +2100,6 @@
       "priority": "blocker",
       "category": "deceptive",
       "severity": "CRITICAL",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 832,
-      "type": "FOR_NOW",
-      "text": "// For now, we'll track basic patterns",
-      "priority": "blocker",
-      "category": "temporal",
-      "severity": "CRITICAL",
-      "source": "deceptive_language",
-      "guidance": "Implement production solution"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 833,
-      "type": "INCOMPLETE_MARKER",
-      "text": "// In a real implementation, this could be used to improve future detection",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
       "source": "deceptive_language",
       "guidance": "Fix per requirements"
     },
@@ -3172,34 +2699,12 @@
     },
     {
       "file": "src\\cli-commands\\init.ts",
-      "line": 803,
-      "type": "AI_OVERCONFIDENCE",
-      "text": "- No errors: Ready for any work",
-      "priority": "blocker",
-      "category": "deceptive",
-      "severity": "CRITICAL",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
       "line": 836,
       "type": "INCOMPLETE_MARKER",
       "text": "This runs diagnostics and presents task menu.",
       "priority": "major",
       "category": "incomplete",
       "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
-      "line": 843,
-      "type": "AI_OVERCONFIDENCE",
-      "text": "- No errors: Ready for any work",
-      "priority": "blocker",
-      "category": "deceptive",
-      "severity": "CRITICAL",
       "source": "deceptive_language",
       "guidance": "Fix per requirements"
     },
@@ -3340,17 +2845,6 @@
       "line": 109,
       "type": "INCOMPLETE_WORK",
       "text": "console.error(chalk.cyan(`  tsk skills:add ${source} --force`));",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\validate-workflow.ts",
-      "line": 74,
-      "type": "INCOMPLETE_WORK",
-      "text": "fix: 'Add workflow content'",
       "priority": "major",
       "category": "incomplete",
       "severity": "MEDIUM",
@@ -3926,17 +3420,6 @@
       "priority": "major",
       "category": "incomplete",
       "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\workflow\\router.ts",
-      "line": 221,
-      "type": "AI_OVERCONFIDENCE",
-      "text": "suggestions.push('deploy-prep - Ready for deployment');",
-      "priority": "blocker",
-      "category": "deceptive",
-      "severity": "CRITICAL",
       "source": "deceptive_language",
       "guidance": "Fix per requirements"
     },
@@ -51220,17 +50703,6 @@
     },
     {
       "file": "src\\cli-commands\\meta-customize.ts",
-      "line": 135,
-      "type": "TEMPORARY_CODE",
-      "text": "const templateHash = Buffer.from(templateContent).toString('base64').substring(0, 32);",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\meta-customize.ts",
       "line": 138,
       "type": "TEMPORARY_CODE",
       "text": "if (templateHash !== workflowHash) {",
@@ -53497,28 +52969,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 55,
-      "type": "TEMPORARY_CODE",
-      "text": "// Core deceptive patterns (temporal)",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 114,
-      "type": "TEMPORARY_CODE",
-      "text": "// 3. TEMPORARY CODE PATTERNS (Enhanced with deceptive language detector patterns)",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 117,
       "type": "TEMPORARY_CODE",
       "text": "/\\/\\/.*\\b(temporarily disabled|temp disabled|disabled temporarily)\\b/i,",
@@ -53566,17 +53016,6 @@
       "line": 338,
       "type": "TEMPORARY_CODE",
       "text": "TEMPORAL_LANGUAGE: \"Replace temporary with permanent code\",",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 397,
-      "type": "TEMPORARY_CODE",
-      "text": "temporary: [], // Temporary code patterns",
       "priority": "major",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -53673,9 +53112,9 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 716,
+      "line": 717,
       "type": "TEMPORARY_CODE",
-      "text": "// 3. Check for temporary code patterns",
+      "text": "for (const pattern of temporaryCodePatterns) {",
       "priority": "major",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -53720,17 +53159,6 @@
       "line": 729,
       "type": "TEMPORARY_CODE",
       "text": "todos.byCategory.temporary.push(todoItem)",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 750,
-      "type": "TEMPORARY_CODE",
-      "text": "if (matched) return // Skip other checks if temporary pattern found",
       "priority": "major",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -56470,17 +55898,6 @@
       "line": 132,
       "type": "TEMPORARY_CODE",
       "text": "const templateContent = fs.readFileSync(templatePath, 'utf-8');",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\meta-customize.ts",
-      "line": 135,
-      "type": "TEMPORARY_CODE",
-      "text": "const templateHash = Buffer.from(templateContent).toString('base64').substring(0, 32);",
       "priority": "major",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -232391,24 +231808,6 @@
   ],
   "blockers": [
     {
-      "file": "src\\cli-commands\\init.ts",
-      "line": 803,
-      "type": "AI_OVERCONFIDENCE",
-      "text": "- No errors: Ready for any work"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
-      "line": 843,
-      "type": "AI_OVERCONFIDENCE",
-      "text": "- No errors: Ready for any work"
-    },
-    {
-      "file": "src\\workflow\\router.ts",
-      "line": 221,
-      "type": "AI_OVERCONFIDENCE",
-      "text": "suggestions.push('deploy-prep - Ready for deployment');"
-    },
-    {
       "file": "scripts\\todo-tracker.cjs",
       "line": 119,
       "type": "FOR_NOW",
@@ -232476,12 +231875,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 832,
-      "type": "FOR_NOW",
-      "text": "// For now, we'll track basic patterns"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 860,
       "type": "HARDCODED_DUMMY_PASSWORD",
       "text": "'password', 'token', 'secret', 'key', 'credential',"
@@ -232539,24 +231932,6 @@
       "line": 1046,
       "type": "AI_OVERCONFIDENCE",
       "text": "**MAKE PRODUCTION READY:** Uncomment code and wire up with corresponding consumers"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
-      "line": 803,
-      "type": "AI_OVERCONFIDENCE",
-      "text": "- No errors: Ready for any work"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
-      "line": 843,
-      "type": "AI_OVERCONFIDENCE",
-      "text": "- No errors: Ready for any work"
-    },
-    {
-      "file": "src\\workflow\\router.ts",
-      "line": 221,
-      "type": "AI_OVERCONFIDENCE",
-      "text": "suggestions.push('deploy-prep - Ready for deployment');"
     },
     {
       "file": "todo-tracker-final8.json",
@@ -233144,99 +232519,9 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 60,
-      "type": "WOULD_NEED",
-      "text": "{ regex: /would need|This would need/gi, type: \"WOULD_NEED\", severity: \"HIGH\", category: \"incomplete\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 65,
       "type": "SIMPLIFIED",
       "text": "// Deceptive/simplified implementations"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 66,
-      "type": "SIMPLIFIED",
-      "text": "{ regex: /simplified/gi, type: \"SIMPLIFIED\", severity: \"HIGH\", category: \"deceptive\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 67,
-      "type": "SIMPLIFIED_FOR",
-      "text": "{ regex: /simplified for/gi, type: \"SIMPLIFIED_FOR\", severity: \"HIGH\", category: \"deceptive\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 68,
-      "type": "SIMPLIFIED",
-      "text": "{ regex: /approximat/gi, type: \"SIMPLIFIED\", severity: \"HIGH\", category: \"deceptive\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 69,
-      "type": "WORKAROUND",
-      "text": "{ regex: /workaround|Workaround/gi, type: \"WORKAROUND\", severity: \"HIGH\", category: \"deceptive\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 70,
-      "type": "STUB_IMPLEMENTATION",
-      "text": "{ regex: /stub|Stub/gi, type: \"STUB_IMPLEMENTATION\", severity: \"HIGH\", category: \"incomplete\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 71,
-      "type": "MINIMAL_IMPLEMENTATION",
-      "text": "{ regex: /minimal|Minimal/gi, type: \"MINIMAL_IMPLEMENTATION\", severity: \"HIGH\", category: \"deceptive\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 72,
-      "type": "QUICK_FIX",
-      "text": "{ regex: /hack|Hack/gi, type: \"QUICK_HACK\", severity: \"HIGH\", category: \"deceptive\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 73,
-      "type": "BYPASS_SOLUTION",
-      "text": "{ regex: /bypass|Bypass/gi, type: \"BYPASS_SOLUTION\", severity: \"HIGH\", category: \"deceptive\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 74,
-      "type": "SHORTCUT_SOLUTION",
-      "text": "{ regex: /shortcut|Shortcut/gi, type: \"SHORTCUT_SOLUTION\", severity: \"HIGH\", category: \"deceptive\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 76,
-      "type": "PARTIAL_IMPLEMENTATION",
-      "text": "{ regex: /partial.*implementation|partial.*feature|Partial.*implementation|Partial.*feature/gi, type: \"PARTIAL_IMPLEMENTATION\", severity: \"HIGH\", category: \"incomplete\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 77,
-      "type": "ACCEPTABLE_EXCEEDED",
-      "text": "{ regex: /acceptable.*exceed|exceed.*acceptable/gi, type: \"ACCEPTABLE_EXCEEDED\", severity: \"HIGH\", category: \"deceptive\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 80,
-      "type": "FALSE_SUCCESS",
-      "text": "{ regex: /completed successfully.*(?:but|however|actually|really)/gi, type: \"FALSE_SUCCESS\", severity: \"HIGH\", category: \"deceptive\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 81,
-      "type": "FALSE_SUCCESS",
-      "text": "{ regex: /success.*silent.*fail/gi, type: \"FALSE_SUCCESS\", severity: \"HIGH\", category: \"deceptive\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 82,
-      "type": "FALSE_SUCCESS",
-      "text": "{ regex: /return.*success.*(?:mock|fake|dummy|placeholder)/gi, type: \"FALSE_SUCCESS\", severity: \"HIGH\", category: \"deceptive\" },"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -233246,75 +232531,9 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 85,
-      "type": "PLACEHOLDER_VALUES",
-      "text": "{ regex: /placeholder|Placeholder/gi, type: \"PLACEHOLDER_VALUES\", severity: \"HIGH\", category: \"temporary\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 86,
-      "type": "RETURN_BASIC",
-      "text": "{ regex: /return.*basic|return basic/gi, type: \"RETURN_BASIC\", severity: \"HIGH\", category: \"deceptive\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 87,
-      "type": "TEMPORARY_SOLUTION",
-      "text": "{ regex: /temporary.*solution|temporary.*fix|Temporary.*solution|Temporary.*fix/gi, type: \"TEMPORARY_SOLUTION\", severity: \"HIGH\", category: \"temporary\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 91,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "// Unsafe assumptions and hardcoded values"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 92,
-      "type": "UNSAFE_ASSUMPTIONS",
-      "text": "{ regex: /assume|assumed|Assume|Assumed/gi, type: \"UNSAFE_ASSUMPTIONS\", severity: \"HIGH\", category: \"deceptive\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 93,
-      "type": "UNSAFE_ASSUMPTIONS",
-      "text": "{ regex: /assuming|assumption|presume|presumption/gi, type: \"UNSAFE_ASSUMPTIONS\", severity: \"HIGH\", category: \"deceptive\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 94,
-      "type": "HARDCODED_VALUES",
-      "text": "{ regex: /hardcoded|Hardcoded|magic.*number|arbitrary.*value/gi, type: \"HARDCODED_VALUES\", severity: \"HIGH\", category: \"technical_debt\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 98,
-      "type": "SILENT_FAILURES",
-      "text": "{ regex: /silently.*ignore|silently.*fail|swallow.*exception|swallow.*error/gi, type: \"SILENT_FAILURES\", severity: \"HIGH\", category: \"technical_debt\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 102,
-      "type": "STUB_IMPLEMENTATION",
-      "text": "{ regex: /STUB|XXX|\\bBUG\\b|incomplete\\b|Incomplete\\b/gi, type: \"EXPLICIT_MARKERS\", severity: \"HIGH\", category: \"explicit\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 103,
-      "type": "EXPLICIT_MARKERS",
-      "text": "{ regex: /TBD|TBC|NYI|WIP|tbd|tbc|nyi|wip/gi, type: \"EXPLICIT_MARKERS\", severity: \"HIGH\", category: \"explicit\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 104,
-      "type": "MINIMAL_IMPLEMENTATION",
-      "text": "{ regex: /quick.*fix|quick.*solution|until we can|when we have|later|Later|bypass|Bypass|minimal|Minimal/gi, type: \"TEMPORAL_LANGUAGE\", severity: \"HIGH\", category: \"temporal\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 107,
-      "type": "HIDDEN_LANGUAGE",
-      "text": "{ regex: /in a real implementation|production would use|proper implementation would|temporary for build/gi, type: \"HIDDEN_LANGUAGE\", severity: \"HIGH\", category: \"deceptive\" },"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -233327,12 +232546,6 @@
       "line": 120,
       "type": "STUB_IMPLEMENTATION",
       "text": "/\\/\\/.*\\b(placeholder|stub|mock)\\b.*\\b(implementation|data|function)\\b/i,"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 125,
-      "type": "EXPLICIT_MARKERS",
-      "text": "// 4. INCOMPLETE IMPLEMENTATION PATTERNS (SEDI-style)"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -233483,12 +232696,6 @@
       "line": 765,
       "type": "EXPLICIT_MARKERS",
       "text": "todos.byCategory.incomplete.push(todoItem)"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 786,
-      "type": "EXPLICIT_MARKERS",
-      "text": "if (matched) return // Skip other checks if incomplete pattern found"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
