@@ -1,32 +1,32 @@
 {
   "metadata": {
-    "timestamp": "2025-11-12T08-25-49",
+    "timestamp": "2025-11-12T08-35-22",
     "date": "2025-11-12",
     "format": "json",
     "version": "1.0.0"
   },
   "summary": {
-    "total": 21114,
+    "total": 21123,
     "bySource": {
       "explicit": 31,
-      "deceptive": 4391,
+      "deceptive": 4400,
       "temporary": 16692,
       "incomplete": 0,
       "commented_code": 0
     },
     "byPriority": {
-      "blocker": 103,
-      "critical": 2041,
-      "major": 17864,
+      "blocker": 116,
+      "critical": 2038,
+      "major": 17863,
       "minor": 1106
     },
     "byCategory": {
       "temporal": 90,
       "incomplete": 1167,
-      "deceptive": 1193,
-      "technical_debt": 775,
+      "deceptive": 1205,
+      "technical_debt": 774,
       "explicit": 845,
-      "temporary": 17042,
+      "temporary": 17040,
       "commented_code": 0
     }
   },
@@ -653,12 +653,34 @@
     },
     {
       "file": "src\\cli-commands\\init.ts",
+      "line": 803,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "- No errors: Ready for any work",
+      "priority": "blocker",
+      "category": "deceptive",
+      "severity": "CRITICAL",
+      "source": "deceptive_language",
+      "guidance": "Fix per requirements"
+    },
+    {
+      "file": "src\\cli-commands\\init.ts",
       "line": 836,
       "type": "INCOMPLETE_MARKER",
       "text": "This runs diagnostics and presents task menu.",
       "priority": "major",
       "category": "incomplete",
       "severity": "MEDIUM",
+      "source": "deceptive_language",
+      "guidance": "Fix per requirements"
+    },
+    {
+      "file": "src\\cli-commands\\init.ts",
+      "line": 843,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "- No errors: Ready for any work",
+      "priority": "blocker",
+      "category": "deceptive",
+      "severity": "CRITICAL",
       "source": "deceptive_language",
       "guidance": "Fix per requirements"
     },
@@ -1385,6 +1407,17 @@
       "priority": "major",
       "category": "incomplete",
       "severity": "MEDIUM",
+      "source": "deceptive_language",
+      "guidance": "Fix per requirements"
+    },
+    {
+      "file": "src\\workflow\\router.ts",
+      "line": 221,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "suggestions.push('deploy-prep - Ready for deployment');",
+      "priority": "blocker",
+      "category": "deceptive",
+      "severity": "CRITICAL",
       "source": "deceptive_language",
       "guidance": "Fix per requirements"
     },
@@ -2325,6 +2358,17 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
+      "line": 364,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "This comprehensive analysis combines:",
+      "priority": "blocker",
+      "category": "deceptive",
+      "severity": "CRITICAL",
+      "source": "deceptive_language",
+      "guidance": "Fix per requirements"
+    },
+    {
+      "file": "scripts\\todo-tracker.cjs",
       "line": 379,
       "type": "EXPLICIT_MARKERS",
       "text": "incomplete: [],",
@@ -2496,6 +2540,17 @@
       "priority": "major",
       "category": "incomplete",
       "severity": "MEDIUM",
+      "source": "deceptive_language",
+      "guidance": "Fix per requirements"
+    },
+    {
+      "file": "scripts\\todo-tracker.cjs",
+      "line": 814,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "// Run comprehensive analysis",
+      "priority": "blocker",
+      "category": "deceptive",
+      "severity": "CRITICAL",
       "source": "deceptive_language",
       "guidance": "Fix per requirements"
     },
@@ -2722,13 +2777,13 @@
     {
       "file": "scripts\\todo-tracker.cjs",
       "line": 1022,
-      "type": "WORKAROUND",
+      "type": "AI_OVERCONFIDENCE",
       "text": "**MAKE PRODUCTION READY:** Replace workarounds with proper implementations",
-      "priority": "critical",
+      "priority": "blocker",
       "category": "deceptive",
-      "severity": "HIGH",
+      "severity": "CRITICAL",
       "source": "deceptive_language",
-      "guidance": "Replace workaround with proper integration"
+      "guidance": "Fix per requirements"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -2755,22 +2810,22 @@
     {
       "file": "scripts\\todo-tracker.cjs",
       "line": 1030,
-      "type": "TEMPORARY_SOLUTION",
+      "type": "AI_OVERCONFIDENCE",
       "text": "**MAKE PRODUCTION READY:** Replace temporary code with permanent solutions",
-      "priority": "critical",
-      "category": "temporary",
-      "severity": "HIGH",
+      "priority": "blocker",
+      "category": "deceptive",
+      "severity": "CRITICAL",
       "source": "deceptive_language",
-      "guidance": "Replace with permanent solution"
+      "guidance": "Fix per requirements"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
       "line": 1038,
-      "type": "CLEANUP_NEEDED",
+      "type": "AI_OVERCONFIDENCE",
       "text": "**MAKE PRODUCTION READY:** Complete TODOs and remove comments",
-      "priority": "major",
-      "category": "technical_debt",
-      "severity": "MEDIUM",
+      "priority": "blocker",
+      "category": "deceptive",
+      "severity": "CRITICAL",
       "source": "deceptive_language",
       "guidance": "Fix per requirements"
     },
@@ -2788,13 +2843,24 @@
     {
       "file": "scripts\\todo-tracker.cjs",
       "line": 1042,
-      "type": "PLACEHOLDER_VALUES",
+      "type": "AI_OVERCONFIDENCE",
       "text": "**MAKE PRODUCTION READY:** Replace placeholders with real implementations",
-      "priority": "critical",
-      "category": "temporary",
-      "severity": "HIGH",
+      "priority": "blocker",
+      "category": "deceptive",
+      "severity": "CRITICAL",
       "source": "deceptive_language",
-      "guidance": "Replace with real data/service"
+      "guidance": "Fix per requirements"
+    },
+    {
+      "file": "scripts\\todo-tracker.cjs",
+      "line": 1046,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "**MAKE PRODUCTION READY:** Uncomment code and wire up with corresponding consumers",
+      "priority": "blocker",
+      "category": "deceptive",
+      "severity": "CRITICAL",
+      "source": "deceptive_language",
+      "guidance": "Fix per requirements"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -3106,12 +3172,34 @@
     },
     {
       "file": "src\\cli-commands\\init.ts",
+      "line": 803,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "- No errors: Ready for any work",
+      "priority": "blocker",
+      "category": "deceptive",
+      "severity": "CRITICAL",
+      "source": "deceptive_language",
+      "guidance": "Fix per requirements"
+    },
+    {
+      "file": "src\\cli-commands\\init.ts",
       "line": 836,
       "type": "INCOMPLETE_MARKER",
       "text": "This runs diagnostics and presents task menu.",
       "priority": "major",
       "category": "incomplete",
       "severity": "MEDIUM",
+      "source": "deceptive_language",
+      "guidance": "Fix per requirements"
+    },
+    {
+      "file": "src\\cli-commands\\init.ts",
+      "line": 843,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "- No errors: Ready for any work",
+      "priority": "blocker",
+      "category": "deceptive",
+      "severity": "CRITICAL",
       "source": "deceptive_language",
       "guidance": "Fix per requirements"
     },
@@ -3838,6 +3926,17 @@
       "priority": "major",
       "category": "incomplete",
       "severity": "MEDIUM",
+      "source": "deceptive_language",
+      "guidance": "Fix per requirements"
+    },
+    {
+      "file": "src\\workflow\\router.ts",
+      "line": 221,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "suggestions.push('deploy-prep - Ready for deployment');",
+      "priority": "blocker",
+      "category": "deceptive",
+      "severity": "CRITICAL",
       "source": "deceptive_language",
       "guidance": "Fix per requirements"
     },
@@ -53420,9 +53519,9 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 116,
+      "line": 117,
       "type": "TEMPORARY_CODE",
-      "text": "const temporaryCodePatterns = [",
+      "text": "/\\/\\/.*\\b(temporarily disabled|temp disabled|disabled temporarily)\\b/i,",
       "priority": "major",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -53431,9 +53530,9 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 117,
+      "line": 121,
       "type": "TEMPORARY_CODE",
-      "text": "/\\/\\/.*\\b(temporarily disabled|temp disabled|disabled temporarily)\\b/i,",
+      "text": "/temporary|temp |TEMP/gi, // From deceptive language detector",
       "priority": "major",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -232292,6 +232391,24 @@
   ],
   "blockers": [
     {
+      "file": "src\\cli-commands\\init.ts",
+      "line": 803,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "- No errors: Ready for any work"
+    },
+    {
+      "file": "src\\cli-commands\\init.ts",
+      "line": 843,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "- No errors: Ready for any work"
+    },
+    {
+      "file": "src\\workflow\\router.ts",
+      "line": 221,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "suggestions.push('deploy-prep - Ready for deployment');"
+    },
+    {
       "file": "scripts\\todo-tracker.cjs",
       "line": 119,
       "type": "FOR_NOW",
@@ -232335,6 +232452,12 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
+      "line": 364,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "This comprehensive analysis combines:"
+    },
+    {
+      "file": "scripts\\todo-tracker.cjs",
       "line": 434,
       "type": "INCOMPLETE_ADMISSION",
       "text": "if (isTestFile && /incomplete|not.*implemented|not.*yet.*implemented|AI analysis not yet implemented|AI assessment not yet implemented|ML training not yet implemented/i.test(line)) {"
@@ -232344,6 +232467,12 @@
       "line": 439,
       "type": "INCOMPLETE_ADMISSION",
       "text": "const hasTodoOrError = /(TODO|FIXME|HACK|error|Error|fail|Fail|exception|Exception|throw|return null|return undefined|not implemented|incomplete)/i.test(line)"
+    },
+    {
+      "file": "scripts\\todo-tracker.cjs",
+      "line": 814,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "// Run comprehensive analysis"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -232377,9 +232506,57 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
+      "line": 1022,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "**MAKE PRODUCTION READY:** Replace workarounds with proper implementations"
+    },
+    {
+      "file": "scripts\\todo-tracker.cjs",
       "line": 1026,
       "type": "MASKED_TODO",
       "text": "**MAKE PRODUCTION READY:** Complete missing integrations and placeholders"
+    },
+    {
+      "file": "scripts\\todo-tracker.cjs",
+      "line": 1030,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "**MAKE PRODUCTION READY:** Replace temporary code with permanent solutions"
+    },
+    {
+      "file": "scripts\\todo-tracker.cjs",
+      "line": 1038,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "**MAKE PRODUCTION READY:** Complete TODOs and remove comments"
+    },
+    {
+      "file": "scripts\\todo-tracker.cjs",
+      "line": 1042,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "**MAKE PRODUCTION READY:** Replace placeholders with real implementations"
+    },
+    {
+      "file": "scripts\\todo-tracker.cjs",
+      "line": 1046,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "**MAKE PRODUCTION READY:** Uncomment code and wire up with corresponding consumers"
+    },
+    {
+      "file": "src\\cli-commands\\init.ts",
+      "line": 803,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "- No errors: Ready for any work"
+    },
+    {
+      "file": "src\\cli-commands\\init.ts",
+      "line": 843,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "- No errors: Ready for any work"
+    },
+    {
+      "file": "src\\workflow\\router.ts",
+      "line": 221,
+      "type": "AI_OVERCONFIDENCE",
+      "text": "suggestions.push('deploy-prep - Ready for deployment');"
     },
     {
       "file": "todo-tracker-final8.json",
@@ -233351,33 +233528,15 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 1022,
-      "type": "WORKAROUND",
-      "text": "**MAKE PRODUCTION READY:** Replace workarounds with proper implementations"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 1024,
       "type": "EXPLICIT_MARKERS",
       "text": "### ${todos.byCategory.incomplete.length} Incomplete Features"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 1030,
-      "type": "TEMPORARY_SOLUTION",
-      "text": "**MAKE PRODUCTION READY:** Replace temporary code with permanent solutions"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 1040,
       "type": "TEMPORARY_SOLUTION",
       "text": "### ${todos.byCategory.temporary.length} Temporary Solutions"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 1042,
-      "type": "PLACEHOLDER_VALUES",
-      "text": "**MAKE PRODUCTION READY:** Replace placeholders with real implementations"
     },
     {
       "file": "src\\cli-commands\\init.ts",
