@@ -13,6 +13,7 @@ import ora from 'ora';
 import { Command } from 'commander';
 import fs from 'fs-extra';
 import path from 'path';
+import inquirer from 'inquirer';
 
 interface WorkflowFile {
   name: string;
@@ -154,10 +155,27 @@ export function createDedupeWorkflowsCommand(): Command {
           console.log(chalk.yellow('⚠️  This will delete the files above'));
           console.log(chalk.dim('Run with --force to skip this confirmation\n'));
           
-          // For now, just show instructions (we can add inquirer later)
-          console.log(chalk.cyan('To proceed, run:'));
-          console.log(chalk.cyan('  tsk dedupe-workflows --force\n'));
-          return;
+          // Interactive prompt for confirmation
+          try {
+            const { confirm } = await inquirer.prompt([
+              {
+                type: 'confirm',
+                name: 'confirm',
+                message: `Delete ${duplicates.length} duplicate workflow file(s)?`,
+                default: false,
+              },
+            ]);
+
+            if (!confirm) {
+              console.log(chalk.yellow('\n❌ Cancelled. No files deleted.'));
+              return;
+            }
+          } catch (error) {
+            // Fallback if inquirer fails (non-interactive terminal)
+            console.log(chalk.cyan('To proceed, run:'));
+            console.log(chalk.cyan('  tsk dedupe-workflows --force\n'));
+            return;
+          }
         }
         
         // Delete duplicates

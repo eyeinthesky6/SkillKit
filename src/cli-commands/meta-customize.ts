@@ -27,6 +27,69 @@ interface SkillKitVersion {
   }[];
 }
 
+/**
+ * Detect how a file was customized (META_CUSTOMIZE vs manual)
+ * Uses heuristics: git history, modification time, file patterns
+ */
+function detectCustomizationMethod(filePath: string, projectRoot: string): 'META_CUSTOMIZE' | 'manual' {
+  try {
+    const fullPath = path.join(projectRoot, filePath);
+    if (!fs.existsSync(fullPath)) {
+      return 'manual';
+    }
+
+    // Check 1: Git history - look for META_CUSTOMIZE in recent commits
+    try {
+      const { execSync } = require('child_process');
+      const gitLog = execSync(
+        `git log --oneline --all -10 -- "${filePath}" 2>/dev/null || echo ""`,
+        { cwd: projectRoot, encoding: 'utf8', stdio: 'pipe' }
+      );
+      
+      if (gitLog.includes('META_CUSTOMIZE') || gitLog.includes('META:') || gitLog.includes('customize')) {
+        return 'META_CUSTOMIZE';
+      }
+    } catch {
+      // Git not available or not a git repo - continue with other checks
+    }
+
+    // Check 2: File modification time - if very recent (< 5 minutes), likely META_CUSTOMIZE
+    const stats = fs.statSync(fullPath);
+    const now = Date.now();
+    const modifiedTime = stats.mtime.getTime();
+    const fiveMinutesAgo = now - (5 * 60 * 1000);
+    
+    if (modifiedTime > fiveMinutesAgo) {
+      // Very recently modified - check if META_CUSTOMIZE workflow exists
+      const metaWorkflowPath = path.join(projectRoot, '.cursor', 'commands', 'META_CUSTOMIZE.md');
+      if (fs.existsSync(metaWorkflowPath)) {
+        const metaStats = fs.statSync(metaWorkflowPath);
+        const metaModified = metaStats.mtime.getTime();
+        // If META_CUSTOMIZE was modified around the same time, likely related
+        if (Math.abs(modifiedTime - metaModified) < 10 * 60 * 1000) { // Within 10 minutes
+          return 'META_CUSTOMIZE';
+        }
+      }
+    }
+
+    // Check 3: File content patterns - look for META_CUSTOMIZE markers
+    try {
+      const content = fs.readFileSync(fullPath, 'utf8');
+      if (content.includes('META_CUSTOMIZE') || content.includes('Customized via META')) {
+        return 'META_CUSTOMIZE';
+      }
+    } catch {
+      // Can't read file - default to manual
+    }
+
+    // Default: assume manual customization
+    return 'manual';
+  } catch {
+    // Error in detection - default to manual
+    return 'manual';
+  }
+}
+
 export function createMetaCustomizeCommand(): Command {
   const command = new Command('meta-customize:mark');
   
@@ -116,10 +179,8 @@ export function createMetaCustomizeCommand(): Command {
               const fullPath = path.join(projectRoot, filePath);
               if (fs.existsSync(fullPath)) {
                 const stats = fs.statSync(fullPath);
-                const customizedVia: 'META_CUSTOMIZE' | 'manual' = 'manual';
+                const customizedVia = detectCustomizationMethod(fullPath, projectRoot);
                 
-                // Try to detect: if file was recently modified and matches META_CUSTOMIZE pattern
-                // For now, default to manual (user can specify)
                 versionData.customizations.push({
                   file: filePath,
                   customizedAt: stats.mtime.toISOString(),
