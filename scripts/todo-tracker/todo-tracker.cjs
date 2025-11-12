@@ -899,9 +899,15 @@ function shouldExclude(line, file) {
     return true
   }
   
-  // Exclude warning/error messages that contain keywords (not lazy code, just warnings)
-  // Pattern: console.warn/error with strings containing keywords
-  if (/console\.(warn|error|log)\s*\([^)]*(?:in production|deprecated|hack|TODO|FIXME)/i.test(line)) {
+  // Exclude console statements that explain functionality (not lazy code)
+  // Pattern: console.log/warn/error with strings that explain what code does
+  if (/console\.(warn|error|log)\s*\([^)]*(?:in production|deprecated|hack|TODO|FIXME|appears|explains|shows|displays|indicates|means|represents|describes|tells|informs)/i.test(line)) {
+    return true
+  }
+  
+  // Exclude console statements that are informational messages
+  // Pattern: console.log with explanatory text (not lazy coding indicators)
+  if (/console\.(log|warn|error)\s*\([^)]*(?:This appears|This shows|This indicates|This means|This represents|Note:|Warning:|Info:)/i.test(line)) {
     return true
   }
   
@@ -910,6 +916,38 @@ function shouldExclude(line, file) {
   if (/\.exec\s*\(/.test(line) && 
       (/\w+Pattern\.exec|regex\w*\.exec|RegExp.*\.exec|pattern.*\.exec/i.test(line) ||
        /skillLoadPattern|workflowPattern|filePattern|matchPattern/i.test(line))) {
+    return true
+  }
+  
+  // Exclude comments that explain what code does (not lazy coding)
+  // Pattern: Comments like "// Replace X" or "// Remove Y" - these explain actions, not lazy code
+  // But only if they don't contain lazy coding keywords
+  if (/\/\/\s*(Replace|Remove|Add|Update|Set|Get|Check|Validate|Handle|Process|Create|Delete|Find|Search|Detect|Parse|Format|Convert|Transform|Generate|Build|Compile|Execute|Run|Call|Invoke|Return|Throw|Catch|Log|Print|Display|Show|Output|Input|Read|Write|Save|Load|Import|Export|Include|Exclude|Skip|Ignore|Filter|Sort|Map|Reduce|Iterate|Loop|Traverse|Navigate|Access|Modify|Change|Edit|Fix|Repair|Restore|Backup|Copy|Move|Rename|Delete|Clear|Reset|Initialize|Setup|Configure|Install|Uninstall|Enable|Disable|Activate|Deactivate|Start|Stop|Pause|Resume|Continue|Break|Exit|Quit|Abort|Cancel|Confirm|Prompt|Ask|Request|Response|Send|Receive|Connect|Disconnect|Open|Close|Lock|Unlock|Encrypt|Decrypt|Encode|Decode|Hash|Verify|Sign|Validate|Check|Test|Debug|Trace|Monitor|Watch|Listen|Observe|Notify|Alert|Warn|Error|Info|Success|Fail|Pass|Skip|Retry|Timeout|Wait|Sleep|Delay|Schedule|Queue|Stack|Heap|Cache|Store|Retrieve|Fetch|Pull|Push|Pop|Peek|Insert|Append|Prepend|Remove|Delete|Clear|Empty|Fill|Drain|Flush|Sync|Async|Await|Promise|Resolve|Reject|Then|Catch|Finally|Try|Catch|Finally|Throw|Raise|Handle|Process|Manage|Control|Govern|Regulate|Limit|Restrict|Allow|Permit|Deny|Block|Unblock|Grant|Revoke|Approve|Reject|Accept|Decline|Confirm|Cancel|Commit|Rollback|Abort|Finish|Complete|Done|Ready|Pending|Waiting|Processing|Running|Stopped|Paused|Resumed|Started|Initialized|Configured|Setup|Installed|Enabled|Disabled|Activated|Deactivated|Opened|Closed|Locked|Unlocked|Connected|Disconnected|Sent|Received|Loaded|Saved|Created|Updated|Deleted|Modified|Changed|Edited|Fixed|Repaired|Restored|Backed|Copied|Moved|Renamed|Cleared|Reset)\s+(custom|header|footer|template|pattern|regex|expression|rule|validation|check|verify|test|debug|trace|monitor|watch|listen|observe|notify|alert|warn|error|info|success|fail|pass|skip|retry|timeout|wait|sleep|delay|schedule|queue|stack|heap|cache|store|retrieve|fetch|pull|push|pop|peek|insert|append|prepend|remove|delete|clear|empty|fill|drain|flush|sync|async|await|promise|resolve|reject|then|catch|finally|try|catch|finally|throw|raise|handle|process|manage|control|govern|regulate|limit|restrict|allow|permit|deny|block|unblock|grant|revoke|approve|reject|accept|decline|confirm|cancel|commit|rollback|abort|finish|complete|done|ready|pending|waiting|processing|running|stopped|paused|resumed|started|initialized|configured|setup|installed|enabled|disabled|activated|deactivated|opened|closed|locked|unlocked|connected|disconnected|sent|received|loaded|saved|created|updated|deleted|modified|changed|edited|fixed|repaired|restored|backed|copied|moved|renamed|cleared|reset|skipped|ignored|filtered|sorted|mapped|reduced|iterated|looped|traversed|navigated|accessed)\s+placeholder/i.test(line) &&
+      !/\/\/\s*(Replace|Remove|Add|Update|Set|Get|Check|Validate|Handle|Process|Create|Delete|Find|Search|Detect|Parse|Format|Convert|Transform|Generate|Build|Compile|Execute|Run|Call|Invoke|Return|Throw|Catch|Log|Print|Display|Show|Output|Input|Read|Write|Save|Load|Import|Export|Include|Exclude|Skip|Ignore|Filter|Sort|Map|Reduce|Iterate|Loop|Traverse|Navigate|Access|Modify|Change|Edit|Fix|Repair|Restore|Backup|Copy|Move|Rename|Delete|Clear|Reset|Initialize|Setup|Configure|Install|Uninstall|Enable|Disable|Activate|Deactivate|Start|Stop|Pause|Resume|Continue|Break|Exit|Quit|Abort|Cancel|Confirm|Prompt|Ask|Request|Response|Send|Receive|Connect|Disconnect|Open|Close|Lock|Unlock|Encrypt|Decrypt|Encode|Decode|Hash|Verify|Sign|Validate|Check|Test|Debug|Trace|Monitor|Watch|Listen|Observe|Notify|Alert|Warn|Error|Info|Success|Fail|Pass|Skip|Retry|Timeout|Wait|Sleep|Delay|Schedule|Queue|Stack|Heap|Cache|Store|Retrieve|Fetch|Pull|Push|Pop|Peek|Insert|Append|Prepend|Remove|Delete|Clear|Empty|Fill|Drain|Flush|Sync|Async|Await|Promise|Resolve|Reject|Then|Catch|Finally|Try|Catch|Finally|Throw|Raise|Handle|Process|Manage|Control|Govern|Regulate|Limit|Restrict|Allow|Permit|Deny|Block|Unblock|Grant|Revoke|Approve|Reject|Accept|Decline|Confirm|Cancel|Commit|Rollback|Abort|Finish|Complete|Done|Ready|Pending|Waiting|Processing|Running|Stopped|Paused|Resumed|Started|Initialized|Configured|Setup|Installed|Enabled|Disabled|Activated|Deactivated|Opened|Closed|Locked|Unlocked|Connected|Disconnected|Sent|Received|Loaded|Saved|Created|Updated|Deleted|Modified|Changed|Edited|Fixed|Repaired|Restored|Backed|Copied|Moved|Renamed|Cleared|Reset)\s+(placeholder|stub|mock|temporary|temp|for now|TODO|FIXME|HACK|XXX|TBD|NYI|WIP|incomplete|not implemented|not finished|unfinished|broken|fixme|hack|workaround|quick fix|quick hack|temporary fix|temporary solution|simplified|minimal|partial|incomplete|unimplemented|missing|needed|required|should|must|will|would|can|could|may|might|maybe|perhaps|probably|likely|unlikely|possibly|potentially)/i.test(line)) {
+    return true
+  }
+  
+  // Exclude comments that explain code behavior (not lazy coding indicators)
+  // Pattern: Comments explaining defaults, heuristics, or reasonable assumptions
+  if (/\/\/\s*(Default|Fallback|Heuristic|Detection method|Detection logic):\s*(assume|assumed|assuming|assumption)/i.test(line)) {
+    return true
+  }
+  
+  // Exclude comments about placeholders when code actually handles them
+  // Pattern: "// Replace/Remove custom header placeholder" - code is handling the placeholder
+  if (/\/\/\s*(Replace|Remove|Add|Update|Set|Get|Check|Validate|Handle|Process|Create|Delete|Find|Search|Detect|Parse|Format|Convert|Transform|Generate|Build|Compile|Execute|Run|Call|Invoke|Return|Throw|Catch|Log|Print|Display|Show|Output|Input|Read|Write|Save|Load|Import|Export|Include|Exclude|Skip|Ignore|Filter|Sort|Map|Reduce|Iterate|Loop|Traverse|Navigate|Access|Modify|Change|Edit|Fix|Repair|Restore|Backup|Copy|Move|Rename|Delete|Clear|Reset|Initialize|Setup|Configure|Install|Uninstall|Enable|Disable|Activate|Deactivate|Start|Stop|Pause|Resume|Continue|Break|Exit|Quit|Abort|Cancel|Confirm|Prompt|Ask|Request|Response|Send|Receive|Connect|Disconnect|Open|Close|Lock|Unlock|Encrypt|Decrypt|Encode|Decode|Hash|Verify|Sign|Validate|Check|Test|Debug|Trace|Monitor|Watch|Listen|Observe|Notify|Alert|Warn|Error|Info|Success|Fail|Pass|Skip|Retry|Timeout|Wait|Sleep|Delay|Schedule|Queue|Stack|Heap|Cache|Store|Retrieve|Fetch|Pull|Push|Pop|Peek|Insert|Append|Prepend|Remove|Delete|Clear|Empty|Fill|Drain|Flush|Sync|Async|Await|Promise|Resolve|Reject|Then|Catch|Finally|Try|Catch|Finally|Throw|Raise|Handle|Process|Manage|Control|Govern|Regulate|Limit|Restrict|Allow|Permit|Deny|Block|Unblock|Grant|Revoke|Approve|Reject|Accept|Decline|Confirm|Cancel|Commit|Rollback|Abort|Finish|Complete|Done|Ready|Pending|Waiting|Processing|Running|Stopped|Paused|Resumed|Started|Initialized|Configured|Setup|Installed|Enabled|Disabled|Activated|Deactivated|Opened|Closed|Locked|Unlocked|Connected|Disconnected|Sent|Received|Loaded|Saved|Created|Updated|Deleted|Modified|Changed|Edited|Fixed|Repaired|Restored|Backed|Copied|Moved|Renamed|Cleared|Reset)\s+(custom|header|footer|template)\s+placeholder/i.test(line)) {
+    return true
+  }
+  
+  // Exclude variable names containing "placeholder" (not lazy coding, just naming)
+  // Pattern: const placeholderRegex, placeholderPattern, etc.
+  if (/\b\w*placeholder\w*\s*[=:]/i.test(line) && !/\/\/.*placeholder.*(?:TODO|FIXME|HACK|XXX|TBD|NYI|WIP|incomplete|not implemented|not finished|unfinished|broken|fixme|hack|workaround|quick fix|quick hack|temporary fix|temporary solution|simplified|minimal|partial|incomplete|unimplemented|missing|needed|required|should|must|will|would|can|could|may|might|maybe|perhaps|probably|likely|unlikely|possibly|potentially)/i.test(line)) {
+    return true
+  }
+  
+  // Exclude code that handles/replaces placeholders (not lazy coding, actual implementation)
+  // Pattern: .replace(placeholderRegex, ...) or .test(placeholderRegex) - code is handling placeholders
+  if (/\.(replace|test|match|exec|search|split)\s*\(\s*\w*placeholder\w*/i.test(line)) {
     return true
   }
   
