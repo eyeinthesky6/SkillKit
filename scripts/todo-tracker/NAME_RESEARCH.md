@@ -1,8 +1,8 @@
-# Package Name Research: todo-finder
+# Package Name Research: todo-tracker
 
 **Date:** 12-11-2025  
-**Proposed Name:** `todo-finder`  
-**Rationale:** "Finder" accurately describes the tool's purpose - finding TODOs and code quality issues. "Tracker" implies analytics/tracking, which this tool does not do.
+**Final Name:** `todo-tracker`  
+**Rationale:** "Tracker" accurately describes the tool's purpose - tracking TODOs and code quality issues across the codebase. This name was chosen over alternatives after research.
 
 ---
 
@@ -72,36 +72,30 @@
 
 ---
 
-## Recommendation
+## Final Decision
 
-**Use `todo-finder`** as the package name.
+**Using `todo-tracker`** as the package name.
 
 **Rationale:**
-1. ✅ Available on npm
+1. ✅ Available on npm (no conflicts)
 2. ✅ Clear and descriptive
-3. ✅ "Finder" accurately describes the tool
+3. ✅ "Tracker" accurately describes tracking issues across codebase
 4. ✅ Short and memorable
 5. ✅ Distinct from existing tools
 6. ✅ Not limited to AI-only use cases
+7. ✅ Consistent with existing tool naming
 
 ---
 
 ## File Naming Convention
 
-With `todo-finder-ai` as the package name:
+With `todo-tracker` as the package name:
 
-- **Config file:** `.todo-finder-ai.config.js` (or `.todo-finder.config.js` for shorter)
-- **Exclusion file:** `.todo-finder-ai.exclude` (or `.todo-finder.exclude` for shorter)
-- **Inline comments:** `// todo-finder-disable-next-line` (shorter, cleaner)
-- **CLI command:** `todo-finder-ai` or `tfind-ai`
-- **Binary:** `bin/todo-finder-ai.js`
-
-**Note:** For user convenience, we could use shorter names in config/exclusion files:
-- `.todo-finder.config.js` (instead of `.todo-finder-ai.config.js`)
-- `.todo-finder.exclude` (instead of `.todo-finder-ai.exclude`)
-- `// todo-finder-disable-next-line` (instead of `// todo-finder-ai-disable-next-line`)
-
-This keeps the package name distinct while making user-facing files shorter.
+- **Config file:** `.todo-tracker.config.js`
+- **Exclusion file:** `.todo-tracker.exclude` or `.todo-tracker.exclusions.json`
+- **Inline comments:** `// todo-tracker-disable-next-line`
+- **CLI command:** `todo-tracker` or `tt`
+- **Binary:** `bin/todo-tracker.js`
 
 ---
 

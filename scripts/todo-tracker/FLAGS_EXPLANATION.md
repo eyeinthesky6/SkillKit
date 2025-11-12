@@ -182,7 +182,7 @@ node scripts/todo-tracker/todo-tracker.cjs --include=scripts --include=tests
 
 **Purpose:** Specify config file path
 
-**Default:** `.lazy-coding-tracker.config.js`
+**Default:** `.todo-tracker.config.js`
 
 **Example:**
 ```bash
@@ -366,7 +366,7 @@ node scripts/todo-tracker/todo-tracker.cjs --focus=src --priority=blocker --cate
 | `--category` | Filter by category | `all` |
 | `--focus` | Focus directory | All |
 | `--include` | Include directory | None |
-| `--config` | Config file path | `.lazy-coding-tracker.config.js` |
+| `--config` | Config file path | `.todo-tracker.config.js` |
 | `--debug` | Include debug statements | OFF |
 | `--configs` | Scan config files | OFF |
 | `--scripts` | Scan scripts | OFF |
