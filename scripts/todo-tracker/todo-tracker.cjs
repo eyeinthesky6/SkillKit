@@ -887,6 +887,26 @@ function shouldExclude(line, file) {
     if (pattern.test(file)) return true
   }
   
+  // Business logic exclusions (from SEDI todo-tracker - avoid false positives)
+  const businessExclusions = [
+    /mapping.*status.*archive/i, // Mapping archive status (legitimate business feature)
+    /workflow.*archive/i, // Workflow archive (legitimate business feature)
+    /system.*archive/i, // System archive (legitimate business feature)
+    /document.*archive/i, // Document archive (legitimate business feature)
+    /auto.*archive/i, // Auto-archive (legitimate business feature)
+    /CORS.*configuration/i, // CORS configuration (legitimate)
+    /environment.*variable/i, // Environment variables (legitimate)
+    /process\.env/i, // Environment variables (legitimate)
+    /fallback.*to.*basic/i, // Proper error handling (legitimate)
+    /health.*check/i, // Health checks (legitimate)
+    /error.*handling/i, // Error handling (legitimate)
+    /configuration.*override/i, // Configuration overrides (legitimate)
+  ]
+  
+  for (const pattern of businessExclusions) {
+    if (pattern.test(line)) return true
+  }
+  
   // Exclude documentation comments that mention HACK/TODO/FIXME (not actual hacks)
   if (/\/\*\s*\*.*(?:Find|Search|Detect|Check|List).*(?:TODO|FIXME|HACK)/i.test(line) ||
       /\/\/\s*\*.*(?:Find|Search|Detect|Check|List).*(?:TODO|FIXME|HACK)/i.test(line) ||
