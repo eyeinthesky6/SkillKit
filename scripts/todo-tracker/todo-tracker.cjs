@@ -1144,7 +1144,17 @@ function determinePriority(text) {
 function categorizeTodo(text, type, severity) {
   const lowerText = text.toLowerCase()
 
-  // Check severity-based priority first
+  // Check config-based priority overrides first
+  if (config && config.priorityOverrides && config.priorityOverrides[type]) {
+    const override = config.priorityOverrides[type]
+    if (typeof override === 'number') return override
+    if (typeof override === 'string') {
+      const priorityMap = { blocker: 1, critical: 2, major: 3, minor: 4 }
+      return priorityMap[override.toLowerCase()] || 2
+    }
+  }
+
+  // Check severity-based priority
   if (severity === "CRITICAL") return 1
   if (severity === "HIGH") return 2
   if (severity === "MEDIUM") return 3
@@ -1537,6 +1547,97 @@ function scanCodeComprehensive() {
     }
   }
 
+  // Load exclusion file if it exists
+  const exclusionFile = path.join(rootDir, '.todo-tracker.exclude')
+  const exclusionFileJson = path.join(rootDir, '.todo-tracker.exclusions.json')
+  let lineExclusions = new Map() // Map of "file:line" -> Set of pattern types to exclude
+  let filePatternExclusions = [] // Array of { filePattern, patternType, reason }
+  let globalPatternExclusions = [] // Array of { patternType, match, reason }
+  
+  // Load simple exclusion file (.todo-tracker.exclude)
+  if (fs.existsSync(exclusionFile)) {
+    try {
+      const exclusionContent = fs.readFileSync(exclusionFile, 'utf8')
+      const exclusionLines = exclusionContent.split('\n')
+      exclusionLines.forEach((exclusionLine, idx) => {
+        const trimmed = exclusionLine.trim()
+        // Skip comments and empty lines
+        if (!trimmed || trimmed.startsWith('#')) return
+        
+        // Format: file:line:pattern:reason
+        // Format: file:*:pattern:reason (all lines in file)
+        // Format: **/*.ts:*:pattern:reason (glob pattern)
+        const parts = trimmed.split(':')
+        if (parts.length >= 3) {
+          const filePattern = parts[0].trim()
+          const linePattern = parts[1].trim()
+          const patternType = parts[2].trim()
+          const reason = parts.slice(3).join(':').trim() || 'User exclusion'
+          
+          if (linePattern === '*') {
+            // File-level exclusion
+            filePatternExclusions.push({ filePattern, patternType, reason })
+          } else {
+            // Line-specific exclusion
+            const key = `${filePattern}:${linePattern}`
+            if (!lineExclusions.has(key)) {
+              lineExclusions.set(key, new Set())
+            }
+            lineExclusions.get(key).add(patternType)
+          }
+        }
+      })
+      log(`📋 Loaded ${lineExclusions.size} line exclusions and ${filePatternExclusions.length} file pattern exclusions from .todo-tracker.exclude`)
+    } catch (error) {
+      warn(`⚠️  Failed to load exclusion file ${exclusionFile}: ${error.message}`)
+    }
+  }
+  
+  // Load JSON exclusion file (.todo-tracker.exclusions.json)
+  if (fs.existsSync(exclusionFileJson)) {
+    try {
+      const exclusionData = JSON.parse(fs.readFileSync(exclusionFileJson, 'utf8'))
+      
+      // Process pattern exclusions
+      if (exclusionData.patterns) {
+        exclusionData.patterns.forEach((exclusion) => {
+          const filePattern = exclusion.file || exclusion.files
+          const linePattern = exclusion.line || '*'
+          const patternType = exclusion.pattern || exclusion.type
+          const reason = exclusion.reason || 'User exclusion'
+          
+          if (linePattern === '*' || !linePattern) {
+            filePatternExclusions.push({ filePattern, patternType, reason })
+          } else {
+            const key = `${filePattern}:${linePattern}`
+            if (!lineExclusions.has(key)) {
+              lineExclusions.set(key, new Set())
+            }
+            lineExclusions.get(key).add(patternType)
+          }
+        })
+      }
+      
+      // Process global exclusions
+      if (exclusionData.globalExclusions && exclusionData.globalExclusions.patterns) {
+        exclusionData.globalExclusions.patterns.forEach((exclusion) => {
+          globalPatternExclusions.push({
+            patternType: exclusion.type || exclusion.pattern,
+            match: exclusion.match ? new RegExp(exclusion.match) : null,
+            reason: exclusion.reason || 'Global exclusion'
+          })
+        })
+      }
+      
+      log(`📋 Loaded exclusions from .todo-tracker.exclusions.json`)
+    } catch (error) {
+      warn(`⚠️  Failed to load JSON exclusion file ${exclusionFileJson}: ${error.message}`)
+    }
+  }
+  
+  // Track inline exclusion state (for block-level exclusions)
+  const inlineExclusionState = new Map() // Map of file -> { disabled: boolean, disabledPatterns: Set }
+  
   // Extract comprehensive issues from files
   log(`🔍 Processing ${filesToScan.length} files...`)
   let processedCount = 0
@@ -1552,13 +1653,104 @@ function scanCodeComprehensive() {
 
     const content = fs.readFileSync(file, "utf8")
     const lines = content.split("\n")
+    
+    // Initialize inline exclusion state for this file
+    const relativePath = path.relative(rootDir, file).replace(/\\/g, '/')
+    inlineExclusionState.set(file, { disabled: false, disabledPatterns: new Set() })
 
     lines.forEach((line, index) => {
       const lineNumber = index + 1
       const trimmedLine = line.trim()
-
+      const fileState = inlineExclusionState.get(file)
+      
+      // Check for inline exclusion comments
+      // Format: // todo-tracker-disable-next-line
+      // Format: // todo-tracker-disable-next-line: SIMPLIFIED
+      // Format: // todo-tracker-disable-line
+      // Format: /* todo-tracker-disable */
+      // Format: /* todo-tracker-enable */
+      const disableNextLineMatch = line.match(/\/\/\s*todo-tracker-disable-next-line(?::\s*(\w+))?/i)
+      const disableLineMatch = line.match(/\/\/\s*todo-tracker-disable-line(?::\s*(\w+))?/i)
+      const disableBlockMatch = line.match(/\/\*\s*todo-tracker-disable(?::\s*(\w+))?\s*\*\//i)
+      const enableBlockMatch = line.match(/\/\*\s*todo-tracker-enable\s*\*\//i)
+      
+      if (disableBlockMatch) {
+        const patternType = disableBlockMatch[1]
+        if (patternType) {
+          fileState.disabledPatterns.add(patternType.toUpperCase())
+        } else {
+          fileState.disabled = true
+        }
+      } else if (enableBlockMatch) {
+        fileState.disabled = false
+        fileState.disabledPatterns.clear()
+      }
+      
+      // Check if previous line had disable-next-line
+      if (index > 0) {
+        const prevLine = lines[index - 1]
+        const prevDisableMatch = prevLine.match(/\/\/\s*todo-tracker-disable-next-line(?::\s*(\w+))?/i)
+        if (prevDisableMatch) {
+          const patternType = prevDisableMatch[1]
+          if (patternType) {
+            fileState.disabledPatterns.add(patternType.toUpperCase())
+          } else {
+            fileState.disabled = true
+          }
+        }
+      }
 
       if (shouldExclude(line, file)) return // Skip excluded lines
+      
+      // Check inline exclusions
+      if (fileState.disabled) return // Skip if block is disabled
+      if (disableLineMatch) {
+        const patternType = disableLineMatch[1]
+        if (patternType) {
+          fileState.disabledPatterns.add(patternType.toUpperCase())
+        } else {
+          return // Skip this line entirely
+        }
+      }
+      
+      // Merge previous line disabled patterns with current state for this line only
+      const prevLineDisabledPatterns = new Set()
+      if (index > 0) {
+        const prevLine = lines[index - 1]
+        const prevDisableMatch = prevLine.match(/\/\/\s*todo-tracker-disable-next-line(?::\s*(\w+))?/i)
+        if (prevDisableMatch && prevDisableMatch[1]) {
+          prevLineDisabledPatterns.add(prevDisableMatch[1].toUpperCase())
+        }
+      }
+      const allDisabledPatterns = new Set([...fileState.disabledPatterns, ...prevLineDisabledPatterns])
+      
+      // Check exclusion file exclusions
+      const exclusionKey = `${relativePath}:${lineNumber}`
+      const fileExclusionKey = `${relativePath}:*`
+      
+      // Helper to check if pattern should be excluded
+      const isPatternExcluded = (patternType) => {
+        // Check inline exclusions (from current line or previous line disable-next-line)
+        if (allDisabledPatterns.has(patternType)) return true
+        
+        // Check line-specific exclusions
+        if (lineExclusions.has(exclusionKey) && lineExclusions.get(exclusionKey).has(patternType)) return true
+        
+        // Check file pattern exclusions
+        for (const exclusion of filePatternExclusions) {
+          const regex = new RegExp(exclusion.filePattern.replace(/\*\*/g, '.*').replace(/\*/g, '[^/]*'))
+          if (regex.test(relativePath) && exclusion.patternType === patternType) return true
+        }
+        
+        // Check global pattern exclusions
+        for (const exclusion of globalPatternExclusions) {
+          if (exclusion.patternType === patternType) {
+            if (!exclusion.match || exclusion.match.test(line)) return true
+          }
+        }
+        
+        return false
+      }
 
       if (!trimmedLine || trimmedLine.length < 3) return // Skip empty/short lines
 
@@ -1567,6 +1759,9 @@ function scanCodeComprehensive() {
       // 1. Check for explicit TODO patterns
       for (const pattern of explicitTodoPatterns) {
         if (pattern.test(line)) {
+          // Check if EXPLICIT_TODO is excluded
+          if (isPatternExcluded("EXPLICIT_TODO")) continue
+          
           const priority = categorizeTodo(trimmedLine, "EXPLICIT", "HIGH")
           const todoItem = addGitInfoToTodoItem({
             file,
@@ -1608,6 +1803,9 @@ function scanCodeComprehensive() {
       for (const pattern of deceptivePatterns) {
         // Skip excluded patterns (like regex.exec)
         if (pattern.exclude) continue
+        
+        // Check if this pattern is excluded via inline comment or exclusion file
+        if (isPatternExcluded(pattern.type)) continue
         
         // Skip QUICK_HACK if it's in documentation or searching for HACK
         if (pattern.type === "QUICK_HACK" && 
@@ -1747,6 +1945,9 @@ function scanCodeComprehensive() {
       // 3. Check for temporary code patterns
       for (const pattern of temporaryCodePatterns) {
         if (pattern.test(line)) {
+          // Check if TEMPORARY_CODE is excluded
+          if (isPatternExcluded("TEMPORARY_CODE")) continue
+          
           const todoItem = addGitInfoToTodoItem({
             file,
             line: lineNumber,
@@ -1822,6 +2023,9 @@ function scanCodeComprehensive() {
       // 4. Check for incomplete implementations
       for (const pattern of incompletePatterns) {
         if (pattern.test(line)) {
+          // Check if INCOMPLETE_IMPLEMENTATION is excluded
+          if (isPatternExcluded("INCOMPLETE_IMPLEMENTATION")) continue
+          
           const todoItem = addGitInfoToTodoItem({
             file,
             line: lineNumber,
@@ -1929,6 +2133,9 @@ function scanCodeComprehensive() {
       // Only flag actual executable code, not documentation
       for (const pattern of commentedCodePatterns) {
         if (pattern.test(line) && !isDocumentationComment(line)) {
+          // Check if COMMENTED_OUT_CODE is excluded
+          if (isPatternExcluded("COMMENTED_OUT_CODE")) continue
+          
           const todoItem = addGitInfoToTodoItem({
             file,
             line: lineNumber,
