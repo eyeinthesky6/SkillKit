@@ -26,7 +26,7 @@ USAGE:
 OPTIONS:
   --focus=<dir>           Focus scan on specific directory (e.g., --focus=src)
   --include=<dir>         Include directory that would normally be excluded (can be used multiple times)
-  --config=<path>         Path to config file (default: .lazy-coding-tracker.config.js)
+  --config=<path>         Path to config file (default: .todo-tracker.config.js)
   --all                   Scan everything: debug statements, configs, scripts, markdown files
   --debug                 Include debug statements (console.log, debugger, etc.) in scan
   --configs               Scan config files (.yaml, .yml, .json, .toml, etc.) in addition to code files
