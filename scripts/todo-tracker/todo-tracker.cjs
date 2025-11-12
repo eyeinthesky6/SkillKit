@@ -33,7 +33,7 @@ OPTIONS:
   --scripts               Scan scripts folder/files (normally excluded)
   --check-exclusions      Detect misuse of todo-tracker exclusions (agents bypassing issues)
   --format=<format>       Output format: markdown (default), json, or table
-  --output=<path>         Custom output file path (default: docs/audit/Comprehensive_TODO_Analysis_YYYY-MM-DD.md)
+  --output=<path>         Custom output file path (default: docs/todo-tracker/Comprehensive_TODO_Analysis_YYYY-MM-DD.md)
   --priority=<level>      Filter by priority: blocker, critical, major, minor, or all (default: all)
   --category=<category>   Filter by category: temporal, incomplete, deceptive, technical_debt, explicit, temporary, commented_code, or all (default: all)
   --since=<ref>           Only scan files changed since git ref (e.g., HEAD~1, main, <commit-hash>)
@@ -126,7 +126,7 @@ DETECTION CAPABILITIES:
 
 OUTPUT:
   - Console summary with priority breakdown
-  - Detailed report saved to docs/audit/Comprehensive_TODO_Analysis_YYYY-MM-DD.md (or custom path with --output)
+  - Detailed report saved to docs/todo-tracker/Comprehensive_TODO_Analysis_YYYY-MM-DD.md (or custom path with --output)
   - JSON format available with --format=json (CI/CD friendly)
   - Table format available with --format=table (console only)
 
@@ -222,7 +222,7 @@ if (focusDir) {
 }
 log("=".repeat(80))
 
-const reportsDir = path.join(__dirname, '..', '..', 'docs', 'audit')
+const reportsDir = path.join(__dirname, '..', '..', 'docs', 'todo-tracker')
 if (!fs.existsSync(reportsDir)) {
   fs.mkdirSync(reportsDir, { recursive: true })
 }
@@ -274,11 +274,23 @@ const deceptivePatterns = [
   { regex: /for now|For now/gi, type: "FOR_NOW", severity: "CRITICAL", category: "temporal" },
   { regex: /in production|In production/gi, type: "IN_PRODUCTION", severity: "CRITICAL", category: "temporal" },
 
-  // Incomplete/missing functionality (enhanced from deceptive language detector)
+  // Incomplete/missing functionality (enhanced from deceptive language detector + SEDI patterns)
   { regex: /would need|This would need/gi, type: "WOULD_NEED", severity: "HIGH", category: "incomplete" },
   { regex: /should be|Should be/gi, type: "SHOULD_BE_IMPLEMENTED", severity: "MEDIUM", category: "incomplete" },
   { regex: /NOT hardcoded|not yet implemented|needs to be implemented|this needs real implementation|not fully implemented|not implemented/gi, type: "INCOMPLETE_ADMISSION", severity: "CRITICAL", category: "incomplete" },
   { regex: /unimplemented|not.*supported|feature.*not.*supported|method.*not.*supported/gi, type: "UNIMPLEMENTED_FEATURE", severity: "HIGH", category: "incomplete" },
+  
+  // Additional incomplete patterns from SEDI todo-verifier
+  { regex: /\b(task|pending|defer|enhance|improve|future|planned|expand|refactor|optimi)\b/gi, type: "INCOMPLETE_MARKER", severity: "MEDIUM", category: "incomplete" },
+  { regex: /\b(basic version|first version|MVP|initial implementation)\b/gi, type: "BASIC_VERSION", severity: "HIGH", category: "incomplete" },
+  { regex: /\b(work finished|work complete|needs|add|left|remain|next step|follow up)\b/gi, type: "INCOMPLETE_WORK", severity: "MEDIUM", category: "incomplete" },
+  { regex: /\b(to be done|to do|not yet|not finished|not complete|not ready)\b/gi, type: "INCOMPLETE_STATE", severity: "HIGH", category: "incomplete" },
+  { regex: /\b(scheduled|planned|future release|future sprint|future work|future enhancement|future improvement|future expansion|future refactor|future optimization|future feature|future addition|future change|future update|future upgrade)\b/gi, type: "DEFERRED_TO_FUTURE", severity: "MEDIUM", category: "incomplete" },
+  
+  // Masked/underreported TODO patterns (from SEDI todo-verifier)
+  { regex: /\b(done|complete|finished|implemented|ready)\b.*\b(future|enhance|expand|improve|plan|pending|scheduled|add|next step|follow up|not yet|not finished|not complete|not ready|not implemented|incomplete|partial|stub|workaround|WIP|hack|fixme|bug|placeholder|dummy|mock|unfinished|ignore|bypass|skip|missing|lazy|mask|misreport|audit|action plan|open|issue|problem|risk|gap|limitation|improvement|enhancement|feature|expansion|carry out|scheduled|planned|future release|future sprint|future work|future enhancement|future improvement|future expansion|future refactor|future optimization|future feature|future addition|future change|future update|future upgrade)\b/gi, type: "MASKED_TODO", severity: "CRITICAL", category: "deceptive" },
+  { regex: /\b(future|enhance|expand|improve|plan|pending|scheduled|add|next step|follow up|not yet|not finished|not complete|not ready|not implemented|incomplete|partial|stub|workaround|WIP|hack|fixme|bug|placeholder|dummy|mock|unfinished|ignore|bypass|skip|missing|lazy|mask|misreport|audit|action plan|open|issue|problem|risk|gap|limitation|improvement|enhancement|feature|expansion|carry out|scheduled|planned|future release|future sprint|future work|future enhancement|future improvement|future expansion|future refactor|future optimization|future feature|future addition|future change|future update|future upgrade)\b.*\b(done|complete|finished|implemented|ready)\b/gi, type: "MASKED_TODO", severity: "CRITICAL", category: "deceptive" },
+  { regex: /\b(enhancement opportunities identified|minor enhancements recommended|feature expansion needed|scheduled for future sprint|initial implementation, optimization pending|MVP complete, needs refactor|basic version done, feature expansion needed|work finished but enhancements to be carried out in future|production-ready, but minor recommendations for enhancement|no critical issues found but|no critical issues found, however|done but|complete but|finished but|work complete but|work finished but|initial findings|comprehensive error analysis|code quality analysis)\b/gi, type: "MASKED_TODO", severity: "CRITICAL", category: "deceptive" },
 
   // Deceptive/simplified implementations
   { regex: /simplified/gi, type: "SIMPLIFIED", severity: "HIGH", category: "deceptive" },
