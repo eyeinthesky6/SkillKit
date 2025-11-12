@@ -1,32 +1,32 @@
 {
   "metadata": {
-    "timestamp": "2025-11-12T08-23-41",
+    "timestamp": "2025-11-12T08-25-49",
     "date": "2025-11-12",
     "format": "json",
     "version": "1.0.0"
   },
   "summary": {
-    "total": 21331,
+    "total": 21114,
     "bySource": {
       "explicit": 31,
-      "deceptive": 4592,
-      "temporary": 16708,
+      "deceptive": 4391,
+      "temporary": 16692,
       "incomplete": 0,
       "commented_code": 0
     },
     "byPriority": {
-      "blocker": 108,
-      "critical": 2046,
-      "major": 18055,
-      "minor": 1122
+      "blocker": 103,
+      "critical": 2041,
+      "major": 17864,
+      "minor": 1106
     },
     "byCategory": {
-      "temporal": 92,
-      "incomplete": 1360,
-      "deceptive": 1195,
+      "temporal": 90,
+      "incomplete": 1167,
+      "deceptive": 1193,
       "technical_debt": 775,
-      "explicit": 849,
-      "temporary": 17058,
+      "explicit": 845,
+      "temporary": 17042,
       "commented_code": 0
     }
   },
@@ -375,17 +375,6 @@
       "severity": "MEDIUM",
       "source": "explicit_todo",
       "guidance": "Complete TODO and remove comment"
-    },
-    {
-      "file": "src\\cli-commands\\audit.ts",
-      "line": 132,
-      "type": "MASKED_TODO",
-      "text": "spinner.succeed(chalk.green('Audit complete'));",
-      "priority": "blocker",
-      "category": "deceptive",
-      "severity": "CRITICAL",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "src\\cli-commands\\audit.ts",
@@ -744,17 +733,6 @@
       "line": 237,
       "type": "INCOMPLETE_WORK",
       "text": "// Add new entry for detected customization",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\skill-load.ts",
-      "line": 57,
-      "type": "INCOMPLETE_MARKER",
-      "text": "console.log(chalk.dim('   Follow the instructions above to complete your task.\\n'));",
       "priority": "major",
       "category": "incomplete",
       "severity": "MEDIUM",
@@ -1489,39 +1467,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 56,
-      "type": "FOR_NOW",
-      "text": "{ regex: /for now|For now/gi, type: \"FOR_NOW\", severity: \"CRITICAL\", category: \"temporal\" },",
-      "priority": "blocker",
-      "category": "temporal",
-      "severity": "CRITICAL",
-      "source": "deceptive_language",
-      "guidance": "Implement production solution"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 57,
-      "type": "IN_PRODUCTION",
-      "text": "{ regex: /in production|In production/gi, type: \"IN_PRODUCTION\", severity: \"CRITICAL\", category: \"temporal\" },",
-      "priority": "blocker",
-      "category": "temporal",
-      "severity": "CRITICAL",
-      "source": "deceptive_language",
-      "guidance": "Fix production deployment issues"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 59,
-      "type": "EXPLICIT_MARKERS",
-      "text": "// Incomplete/missing functionality (enhanced from deceptive language detector)",
-      "priority": "critical",
-      "category": "explicit",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 60,
       "type": "WOULD_NEED",
       "text": "{ regex: /would need|This would need/gi, type: \"WOULD_NEED\", severity: \"HIGH\", category: \"incomplete\" },",
@@ -1541,28 +1486,6 @@
       "severity": "MEDIUM",
       "source": "deceptive_language",
       "guidance": "Complete planned feature"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 62,
-      "type": "INCOMPLETE_ADMISSION",
-      "text": "{ regex: /NOT hardcoded|not yet implemented|needs to be implemented|this needs real implementation|not fully implemented|not implemented/gi, type: \"INCOMPLETE_ADMISSION\", severity: \"CRITICAL\", category: \"incomplete\" },",
-      "priority": "blocker",
-      "category": "incomplete",
-      "severity": "CRITICAL",
-      "source": "deceptive_language",
-      "guidance": "Finish incomplete functionality"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 63,
-      "type": "UNIMPLEMENTED_FEATURE",
-      "text": "{ regex: /unimplemented|not.*supported|feature.*not.*supported|method.*not.*supported/gi, type: \"UNIMPLEMENTED_FEATURE\", severity: \"HIGH\", category: \"incomplete\" },",
-      "priority": "critical",
-      "category": "incomplete",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Implement missing feature"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -2270,17 +2193,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 317,
-      "type": "INCOMPLETE_WORK",
-      "text": "ACCEPTABLE_EXCEEDED: \"Add proper validation & error handling\",",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 319,
       "type": "EXPLICIT_MARKERS",
       "text": "// Incomplete features - IMPLEMENT MISSING PARTS",
@@ -2336,17 +2248,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 325,
-      "type": "INCOMPLETE_WORK",
-      "text": "RETURN_BASIC: \"Add proper error handling\",",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 326,
       "type": "TEMPORARY_SOLUTION",
       "text": "TEMPORARY_SOLUTION: \"Replace with permanent solution\",",
@@ -2380,9 +2281,9 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 330,
+      "line": 331,
       "type": "INCOMPLETE_WORK",
-      "text": "UNSAFE_ASSUMPTIONS: \"Add validation & error handling\",",
+      "text": "SILENT_FAILURES: \"Add error logging\",",
       "priority": "major",
       "category": "incomplete",
       "severity": "MEDIUM",
@@ -2622,28 +2523,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 835,
-      "type": "EXPLICIT_MARKERS",
-      "text": "const totalIssues = analysis.tasks.length + analysis.debug.length + analysis.incomplete.length",
-      "priority": "critical",
-      "category": "explicit",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 843,
-      "type": "EXPLICIT_MARKERS",
-      "text": "incompleteFound: analysis.incomplete.length,",
-      "priority": "critical",
-      "category": "explicit",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 848,
       "type": "INCOMPLETE_MARKER",
       "text": "console.log(`  - Analysis stored for future pattern improvement`)",
@@ -2685,17 +2564,6 @@
       "severity": "MEDIUM",
       "source": "deceptive_language",
       "guidance": "Update to modern patterns"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 870,
-      "type": "EXPLICIT_MARKERS",
-      "text": "const allIssues = [...analysis.tasks, ...analysis.debug, ...analysis.incomplete]",
-      "priority": "critical",
-      "category": "explicit",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -2897,17 +2765,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 1034,
-      "type": "INCOMPLETE_MARKER",
-      "text": "**MAKE PRODUCTION READY:** Refactor hardcoded values, add error handling",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 1038,
       "type": "CLEANUP_NEEDED",
       "text": "**MAKE PRODUCTION READY:** Complete TODOs and remove comments",
@@ -2971,17 +2828,6 @@
       "severity": "MEDIUM",
       "source": "deceptive_language",
       "guidance": "Complete planned feature"
-    },
-    {
-      "file": "src\\cli-commands\\audit.ts",
-      "line": 132,
-      "type": "MASKED_TODO",
-      "text": "spinner.succeed(chalk.green('Audit complete'));",
-      "priority": "blocker",
-      "category": "deceptive",
-      "severity": "CRITICAL",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "src\\cli-commands\\audit.ts",
@@ -3340,17 +3186,6 @@
       "line": 237,
       "type": "INCOMPLETE_WORK",
       "text": "// Add new entry for detected customization",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\skill-load.ts",
-      "line": 57,
-      "type": "INCOMPLETE_MARKER",
-      "text": "console.log(chalk.dim('   Follow the instructions above to complete your task.\\n'));",
       "priority": "major",
       "category": "incomplete",
       "severity": "MEDIUM",
@@ -4492,17 +4327,6 @@
     },
     {
       "file": "todo-tracker-after-critical-fixes.json",
-      "line": 333,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-after-critical-fixes.json",
       "line": 338,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -4511,17 +4335,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-after-critical-fixes.json",
-      "line": 344,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-after-critical-fixes.json",
@@ -5306,17 +5119,6 @@
     },
     {
       "file": "todo-tracker-after-critical-fixes.json",
-      "line": 861,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-after-critical-fixes.json",
       "line": 866,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -5325,17 +5127,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-after-critical-fixes.json",
-      "line": 872,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-after-critical-fixes.json",
@@ -6439,17 +6230,6 @@
     },
     {
       "file": "todo-tracker-after-fixes.json",
-      "line": 179,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-after-fixes.json",
       "line": 185,
       "type": "SHOULD_BE_IMPLEMENTED",
       "text": "\"text\": \"// Backup customizations if updating (all customizations should be backed up for safety)\",",
@@ -6560,17 +6340,6 @@
     },
     {
       "file": "todo-tracker-after-fixes.json",
-      "line": 289,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-after-fixes.json",
       "line": 294,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -6593,17 +6362,6 @@
     },
     {
       "file": "todo-tracker-after-fixes.json",
-      "line": 300,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-after-fixes.json",
       "line": 305,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -6612,17 +6370,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-after-fixes.json",
-      "line": 311,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-after-fixes.json",
@@ -6714,17 +6461,6 @@
     },
     {
       "file": "todo-tracker-after-fixes.json",
-      "line": 377,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-after-fixes.json",
       "line": 382,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -6733,17 +6469,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-after-fixes.json",
-      "line": 388,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-after-fixes.json",
@@ -6824,17 +6549,6 @@
     },
     {
       "file": "todo-tracker-after-fixes.json",
-      "line": 443,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-after-fixes.json",
       "line": 448,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -6843,17 +6557,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-after-fixes.json",
-      "line": 454,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-after-fixes.json",
@@ -7407,17 +7110,6 @@
     },
     {
       "file": "todo-tracker-after-fixes.json",
-      "line": 817,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-after-fixes.json",
       "line": 823,
       "type": "SHOULD_BE_IMPLEMENTED",
       "text": "\"text\": \"// Backup customizations if updating (all customizations should be backed up for safety)\",",
@@ -7528,17 +7220,6 @@
     },
     {
       "file": "todo-tracker-after-fixes.json",
-      "line": 927,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-after-fixes.json",
       "line": 932,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -7561,17 +7242,6 @@
     },
     {
       "file": "todo-tracker-after-fixes.json",
-      "line": 938,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-after-fixes.json",
       "line": 943,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -7580,17 +7250,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-after-fixes.json",
-      "line": 949,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-after-fixes.json",
@@ -7682,17 +7341,6 @@
     },
     {
       "file": "todo-tracker-after-fixes.json",
-      "line": 1015,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-after-fixes.json",
       "line": 1020,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -7701,17 +7349,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-after-fixes.json",
-      "line": 1026,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-after-fixes.json",
@@ -7792,17 +7429,6 @@
     },
     {
       "file": "todo-tracker-after-fixes.json",
-      "line": 1081,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-after-fixes.json",
       "line": 1086,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -7811,17 +7437,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-after-fixes.json",
-      "line": 1092,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-after-fixes.json",
@@ -9200,17 +8815,6 @@
     },
     {
       "file": "todo-tracker-final-exclusions.json",
-      "line": 245,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-final-exclusions.json",
       "line": 250,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -9219,17 +8823,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-final-exclusions.json",
-      "line": 256,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-final-exclusions.json",
@@ -9321,17 +8914,6 @@
     },
     {
       "file": "todo-tracker-final-exclusions.json",
-      "line": 322,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-final-exclusions.json",
       "line": 327,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -9340,17 +8922,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-final-exclusions.json",
-      "line": 333,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-final-exclusions.json",
@@ -9431,17 +9002,6 @@
     },
     {
       "file": "todo-tracker-final-exclusions.json",
-      "line": 388,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-final-exclusions.json",
       "line": 393,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -9450,17 +9010,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-final-exclusions.json",
-      "line": 399,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-final-exclusions.json",
@@ -10113,17 +9662,6 @@
     },
     {
       "file": "todo-tracker-final-exclusions.json",
-      "line": 828,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-final-exclusions.json",
       "line": 833,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -10132,17 +9670,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-final-exclusions.json",
-      "line": 839,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-final-exclusions.json",
@@ -10234,17 +9761,6 @@
     },
     {
       "file": "todo-tracker-final-exclusions.json",
-      "line": 905,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-final-exclusions.json",
       "line": 910,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -10253,17 +9769,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-final-exclusions.json",
-      "line": 916,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-final-exclusions.json",
@@ -10344,17 +9849,6 @@
     },
     {
       "file": "todo-tracker-final-exclusions.json",
-      "line": 971,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-final-exclusions.json",
       "line": 976,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -10363,17 +9857,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-final-exclusions.json",
-      "line": 982,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-final-exclusions.json",
@@ -11818,17 +11301,6 @@
     },
     {
       "file": "todo-tracker-final2.json",
-      "line": 333,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-final2.json",
       "line": 338,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -11837,17 +11309,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-final2.json",
-      "line": 344,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-final2.json",
@@ -12632,17 +12093,6 @@
     },
     {
       "file": "todo-tracker-final2.json",
-      "line": 861,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-final2.json",
       "line": 866,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -12651,17 +12101,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-final2.json",
-      "line": 872,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-final2.json",
@@ -13996,17 +13435,6 @@
     },
     {
       "file": "todo-tracker-final3.json",
-      "line": 333,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-final3.json",
       "line": 338,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -14015,17 +13443,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-final3.json",
-      "line": 344,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-final3.json",
@@ -14810,17 +14227,6 @@
     },
     {
       "file": "todo-tracker-final3.json",
-      "line": 861,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-final3.json",
       "line": 866,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -14829,17 +14235,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-final3.json",
-      "line": 872,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-final3.json",
@@ -16152,17 +15547,6 @@
     },
     {
       "file": "todo-tracker-final4.json",
-      "line": 311,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-final4.json",
       "line": 316,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -16171,17 +15555,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-final4.json",
-      "line": 322,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-final4.json",
@@ -16944,17 +16317,6 @@
     },
     {
       "file": "todo-tracker-final4.json",
-      "line": 817,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-final4.json",
       "line": 822,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -16963,17 +16325,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-final4.json",
-      "line": 828,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-final4.json",
@@ -18209,17 +17560,6 @@
     },
     {
       "file": "todo-tracker-final5.json",
-      "line": 278,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-final5.json",
       "line": 283,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -18228,17 +17568,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-final5.json",
-      "line": 289,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-final5.json",
@@ -18968,17 +18297,6 @@
     },
     {
       "file": "todo-tracker-final5.json",
-      "line": 751,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-final5.json",
       "line": 756,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -18987,17 +18305,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-final5.json",
-      "line": 762,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-final5.json",
@@ -26261,17 +25568,6 @@
     },
     {
       "file": "todo-tracker-progress.json",
-      "line": 278,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-progress.json",
       "line": 283,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -26294,17 +25590,6 @@
     },
     {
       "file": "todo-tracker-progress.json",
-      "line": 289,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-progress.json",
       "line": 294,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -26313,17 +25598,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-progress.json",
-      "line": 300,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-progress.json",
@@ -26415,17 +25689,6 @@
     },
     {
       "file": "todo-tracker-progress.json",
-      "line": 366,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-progress.json",
       "line": 371,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -26434,17 +25697,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-progress.json",
-      "line": 377,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-progress.json",
@@ -26525,17 +25777,6 @@
     },
     {
       "file": "todo-tracker-progress.json",
-      "line": 432,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-progress.json",
       "line": 437,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -26544,17 +25785,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-progress.json",
-      "line": 443,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-progress.json",
@@ -27196,17 +26426,6 @@
     },
     {
       "file": "todo-tracker-progress.json",
-      "line": 905,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-progress.json",
       "line": 910,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -27229,17 +26448,6 @@
     },
     {
       "file": "todo-tracker-progress.json",
-      "line": 916,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-progress.json",
       "line": 921,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -27248,17 +26456,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-progress.json",
-      "line": 927,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-progress.json",
@@ -27350,17 +26547,6 @@
     },
     {
       "file": "todo-tracker-progress.json",
-      "line": 993,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-progress.json",
       "line": 998,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -27369,17 +26555,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-progress.json",
-      "line": 1004,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-progress.json",
@@ -27460,17 +26635,6 @@
     },
     {
       "file": "todo-tracker-progress.json",
-      "line": 1059,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-progress.json",
       "line": 1064,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -27479,17 +26643,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-progress.json",
-      "line": 1070,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-progress.json",
@@ -28615,17 +27768,6 @@
     },
     {
       "file": "todo-tracker-results-final.json",
-      "line": 102,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final.json",
       "line": 108,
       "type": "SHOULD_BE_IMPLEMENTED",
       "text": "\"text\": \"// Backup customizations if updating (all customizations should be backed up for safety)\",",
@@ -28758,17 +27900,6 @@
     },
     {
       "file": "todo-tracker-results-final.json",
-      "line": 223,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final.json",
       "line": 228,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -28777,17 +27908,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final.json",
-      "line": 234,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final.json",
@@ -28879,17 +27999,6 @@
     },
     {
       "file": "todo-tracker-results-final.json",
-      "line": 300,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final.json",
       "line": 305,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -28898,17 +28007,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final.json",
-      "line": 311,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final.json",
@@ -28989,17 +28087,6 @@
     },
     {
       "file": "todo-tracker-results-final.json",
-      "line": 366,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final.json",
       "line": 371,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -29008,17 +28095,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final.json",
-      "line": 377,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final.json",
@@ -29462,17 +28538,6 @@
     },
     {
       "file": "todo-tracker-results-final.json",
-      "line": 663,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final.json",
       "line": 669,
       "type": "SHOULD_BE_IMPLEMENTED",
       "text": "\"text\": \"// Backup customizations if updating (all customizations should be backed up for safety)\",",
@@ -29605,17 +28670,6 @@
     },
     {
       "file": "todo-tracker-results-final.json",
-      "line": 784,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final.json",
       "line": 789,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -29624,17 +28678,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final.json",
-      "line": 795,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final.json",
@@ -29726,17 +28769,6 @@
     },
     {
       "file": "todo-tracker-results-final.json",
-      "line": 861,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final.json",
       "line": 866,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -29745,17 +28777,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final.json",
-      "line": 872,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final.json",
@@ -29836,17 +28857,6 @@
     },
     {
       "file": "todo-tracker-results-final.json",
-      "line": 927,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final.json",
       "line": 932,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -29855,17 +28865,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final.json",
-      "line": 938,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final.json",
@@ -31079,17 +30078,6 @@
     },
     {
       "file": "todo-tracker-results-final2.json",
-      "line": 102,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final2.json",
       "line": 108,
       "type": "SHOULD_BE_IMPLEMENTED",
       "text": "\"text\": \"// Backup customizations if updating (all customizations should be backed up for safety)\",",
@@ -31222,17 +30210,6 @@
     },
     {
       "file": "todo-tracker-results-final2.json",
-      "line": 223,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final2.json",
       "line": 228,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -31241,17 +30218,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final2.json",
-      "line": 234,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final2.json",
@@ -31343,17 +30309,6 @@
     },
     {
       "file": "todo-tracker-results-final2.json",
-      "line": 300,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final2.json",
       "line": 305,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -31362,17 +30317,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final2.json",
-      "line": 311,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final2.json",
@@ -31453,17 +30397,6 @@
     },
     {
       "file": "todo-tracker-results-final2.json",
-      "line": 366,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final2.json",
       "line": 371,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -31472,17 +30405,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final2.json",
-      "line": 377,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final2.json",
@@ -31926,17 +30848,6 @@
     },
     {
       "file": "todo-tracker-results-final2.json",
-      "line": 663,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final2.json",
       "line": 669,
       "type": "SHOULD_BE_IMPLEMENTED",
       "text": "\"text\": \"// Backup customizations if updating (all customizations should be backed up for safety)\",",
@@ -32069,17 +30980,6 @@
     },
     {
       "file": "todo-tracker-results-final2.json",
-      "line": 784,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final2.json",
       "line": 789,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -32088,17 +30988,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final2.json",
-      "line": 795,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final2.json",
@@ -32190,17 +31079,6 @@
     },
     {
       "file": "todo-tracker-results-final2.json",
-      "line": 861,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final2.json",
       "line": 866,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -32209,17 +31087,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final2.json",
-      "line": 872,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final2.json",
@@ -32300,17 +31167,6 @@
     },
     {
       "file": "todo-tracker-results-final2.json",
-      "line": 927,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final2.json",
       "line": 932,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -32319,17 +31175,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final2.json",
-      "line": 938,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final2.json",
@@ -33543,17 +32388,6 @@
     },
     {
       "file": "todo-tracker-results-final3.json",
-      "line": 102,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final3.json",
       "line": 108,
       "type": "SHOULD_BE_IMPLEMENTED",
       "text": "\"text\": \"// Backup customizations if updating (all customizations should be backed up for safety)\",",
@@ -33686,17 +32520,6 @@
     },
     {
       "file": "todo-tracker-results-final3.json",
-      "line": 223,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final3.json",
       "line": 228,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -33705,17 +32528,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final3.json",
-      "line": 234,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final3.json",
@@ -33807,17 +32619,6 @@
     },
     {
       "file": "todo-tracker-results-final3.json",
-      "line": 300,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final3.json",
       "line": 305,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -33826,17 +32627,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final3.json",
-      "line": 311,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final3.json",
@@ -33917,17 +32707,6 @@
     },
     {
       "file": "todo-tracker-results-final3.json",
-      "line": 366,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final3.json",
       "line": 371,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -33936,17 +32715,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final3.json",
-      "line": 377,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final3.json",
@@ -34390,17 +33158,6 @@
     },
     {
       "file": "todo-tracker-results-final3.json",
-      "line": 663,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final3.json",
       "line": 669,
       "type": "SHOULD_BE_IMPLEMENTED",
       "text": "\"text\": \"// Backup customizations if updating (all customizations should be backed up for safety)\",",
@@ -34533,17 +33290,6 @@
     },
     {
       "file": "todo-tracker-results-final3.json",
-      "line": 784,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final3.json",
       "line": 789,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -34552,17 +33298,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final3.json",
-      "line": 795,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final3.json",
@@ -34654,17 +33389,6 @@
     },
     {
       "file": "todo-tracker-results-final3.json",
-      "line": 861,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final3.json",
       "line": 866,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -34673,17 +33397,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final3.json",
-      "line": 872,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final3.json",
@@ -34764,17 +33477,6 @@
     },
     {
       "file": "todo-tracker-results-final3.json",
-      "line": 927,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final3.json",
       "line": 932,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -34783,17 +33485,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final3.json",
-      "line": 938,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final3.json",
@@ -36007,17 +34698,6 @@
     },
     {
       "file": "todo-tracker-results-final4.json",
-      "line": 102,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final4.json",
       "line": 108,
       "type": "SHOULD_BE_IMPLEMENTED",
       "text": "\"text\": \"// Backup customizations if updating (all customizations should be backed up for safety)\",",
@@ -36150,17 +34830,6 @@
     },
     {
       "file": "todo-tracker-results-final4.json",
-      "line": 223,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final4.json",
       "line": 228,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -36169,17 +34838,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final4.json",
-      "line": 234,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final4.json",
@@ -36271,17 +34929,6 @@
     },
     {
       "file": "todo-tracker-results-final4.json",
-      "line": 300,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final4.json",
       "line": 305,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -36290,17 +34937,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final4.json",
-      "line": 311,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final4.json",
@@ -36381,17 +35017,6 @@
     },
     {
       "file": "todo-tracker-results-final4.json",
-      "line": 366,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final4.json",
       "line": 371,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -36400,17 +35025,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final4.json",
-      "line": 377,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final4.json",
@@ -36854,17 +35468,6 @@
     },
     {
       "file": "todo-tracker-results-final4.json",
-      "line": 663,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final4.json",
       "line": 669,
       "type": "SHOULD_BE_IMPLEMENTED",
       "text": "\"text\": \"// Backup customizations if updating (all customizations should be backed up for safety)\",",
@@ -36997,17 +35600,6 @@
     },
     {
       "file": "todo-tracker-results-final4.json",
-      "line": 784,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final4.json",
       "line": 789,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -37016,17 +35608,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final4.json",
-      "line": 795,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final4.json",
@@ -37118,17 +35699,6 @@
     },
     {
       "file": "todo-tracker-results-final4.json",
-      "line": 861,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final4.json",
       "line": 866,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -37137,17 +35707,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final4.json",
-      "line": 872,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final4.json",
@@ -37228,17 +35787,6 @@
     },
     {
       "file": "todo-tracker-results-final4.json",
-      "line": 927,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final4.json",
       "line": 932,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -37247,17 +35795,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final4.json",
-      "line": 938,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final4.json",
@@ -38471,17 +37008,6 @@
     },
     {
       "file": "todo-tracker-results-final5.json",
-      "line": 102,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final5.json",
       "line": 108,
       "type": "SHOULD_BE_IMPLEMENTED",
       "text": "\"text\": \"// Backup customizations if updating (all customizations should be backed up for safety)\",",
@@ -38614,17 +37140,6 @@
     },
     {
       "file": "todo-tracker-results-final5.json",
-      "line": 223,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final5.json",
       "line": 228,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -38633,17 +37148,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final5.json",
-      "line": 234,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final5.json",
@@ -38735,17 +37239,6 @@
     },
     {
       "file": "todo-tracker-results-final5.json",
-      "line": 300,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final5.json",
       "line": 305,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -38754,17 +37247,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final5.json",
-      "line": 311,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final5.json",
@@ -38845,17 +37327,6 @@
     },
     {
       "file": "todo-tracker-results-final5.json",
-      "line": 366,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final5.json",
       "line": 371,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -38864,17 +37335,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final5.json",
-      "line": 377,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final5.json",
@@ -39318,17 +37778,6 @@
     },
     {
       "file": "todo-tracker-results-final5.json",
-      "line": 663,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final5.json",
       "line": 669,
       "type": "SHOULD_BE_IMPLEMENTED",
       "text": "\"text\": \"// Backup customizations if updating (all customizations should be backed up for safety)\",",
@@ -39461,17 +37910,6 @@
     },
     {
       "file": "todo-tracker-results-final5.json",
-      "line": 784,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final5.json",
       "line": 789,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -39480,17 +37918,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final5.json",
-      "line": 795,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final5.json",
@@ -39582,17 +38009,6 @@
     },
     {
       "file": "todo-tracker-results-final5.json",
-      "line": 861,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final5.json",
       "line": 866,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -39601,17 +38017,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final5.json",
-      "line": 872,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final5.json",
@@ -39692,17 +38097,6 @@
     },
     {
       "file": "todo-tracker-results-final5.json",
-      "line": 927,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final5.json",
       "line": 932,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -39711,17 +38105,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final5.json",
-      "line": 938,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final5.json",
@@ -40935,17 +39318,6 @@
     },
     {
       "file": "todo-tracker-results-final6.json",
-      "line": 102,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final6.json",
       "line": 108,
       "type": "SHOULD_BE_IMPLEMENTED",
       "text": "\"text\": \"// Backup customizations if updating (all customizations should be backed up for safety)\",",
@@ -41078,17 +39450,6 @@
     },
     {
       "file": "todo-tracker-results-final6.json",
-      "line": 223,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final6.json",
       "line": 228,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -41097,17 +39458,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final6.json",
-      "line": 234,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final6.json",
@@ -41199,17 +39549,6 @@
     },
     {
       "file": "todo-tracker-results-final6.json",
-      "line": 300,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final6.json",
       "line": 305,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -41218,17 +39557,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final6.json",
-      "line": 311,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final6.json",
@@ -41309,17 +39637,6 @@
     },
     {
       "file": "todo-tracker-results-final6.json",
-      "line": 366,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final6.json",
       "line": 371,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -41328,17 +39645,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final6.json",
-      "line": 377,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final6.json",
@@ -41782,17 +40088,6 @@
     },
     {
       "file": "todo-tracker-results-final6.json",
-      "line": 663,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final6.json",
       "line": 669,
       "type": "SHOULD_BE_IMPLEMENTED",
       "text": "\"text\": \"// Backup customizations if updating (all customizations should be backed up for safety)\",",
@@ -41925,17 +40220,6 @@
     },
     {
       "file": "todo-tracker-results-final6.json",
-      "line": 784,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final6.json",
       "line": 789,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -41944,17 +40228,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final6.json",
-      "line": 795,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final6.json",
@@ -42046,17 +40319,6 @@
     },
     {
       "file": "todo-tracker-results-final6.json",
-      "line": 861,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final6.json",
       "line": 866,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -42065,17 +40327,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final6.json",
-      "line": 872,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final6.json",
@@ -42156,17 +40407,6 @@
     },
     {
       "file": "todo-tracker-results-final6.json",
-      "line": 927,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-final6.json",
       "line": 932,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -42175,17 +40415,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-final6.json",
-      "line": 938,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-final6.json",
@@ -43410,17 +41639,6 @@
     },
     {
       "file": "todo-tracker-results-fixed.json",
-      "line": 113,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-fixed.json",
       "line": 119,
       "type": "SHOULD_BE_IMPLEMENTED",
       "text": "\"text\": \"// Backup customizations if updating (all customizations should be backed up for safety)\",",
@@ -43542,17 +41760,6 @@
     },
     {
       "file": "todo-tracker-results-fixed.json",
-      "line": 223,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-fixed.json",
       "line": 228,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -43561,17 +41768,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-fixed.json",
-      "line": 234,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-fixed.json",
@@ -43674,17 +41870,6 @@
     },
     {
       "file": "todo-tracker-results-fixed.json",
-      "line": 311,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-fixed.json",
       "line": 316,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -43693,17 +41878,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-fixed.json",
-      "line": 322,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-fixed.json",
@@ -43784,17 +41958,6 @@
     },
     {
       "file": "todo-tracker-results-fixed.json",
-      "line": 377,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-fixed.json",
       "line": 382,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -43803,17 +41966,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-fixed.json",
-      "line": 388,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-fixed.json",
@@ -44268,17 +42420,6 @@
     },
     {
       "file": "todo-tracker-results-fixed.json",
-      "line": 696,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-fixed.json",
       "line": 702,
       "type": "SHOULD_BE_IMPLEMENTED",
       "text": "\"text\": \"// Backup customizations if updating (all customizations should be backed up for safety)\",",
@@ -44400,17 +42541,6 @@
     },
     {
       "file": "todo-tracker-results-fixed.json",
-      "line": 806,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-fixed.json",
       "line": 811,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -44419,17 +42549,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-fixed.json",
-      "line": 817,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-fixed.json",
@@ -44532,17 +42651,6 @@
     },
     {
       "file": "todo-tracker-results-fixed.json",
-      "line": 894,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-fixed.json",
       "line": 899,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -44551,17 +42659,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-fixed.json",
-      "line": 905,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-fixed.json",
@@ -44642,17 +42739,6 @@
     },
     {
       "file": "todo-tracker-results-fixed.json",
-      "line": 960,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results-fixed.json",
       "line": 965,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -44661,17 +42747,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results-fixed.json",
-      "line": 971,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results-fixed.json",
@@ -45885,17 +43960,6 @@
     },
     {
       "file": "todo-tracker-results.json",
-      "line": 168,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results.json",
       "line": 174,
       "type": "SHOULD_BE_IMPLEMENTED",
       "text": "\"text\": \"// Backup customizations if updating (all customizations should be backed up for safety)\",",
@@ -46028,17 +44092,6 @@
     },
     {
       "file": "todo-tracker-results.json",
-      "line": 289,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results.json",
       "line": 294,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -46047,17 +44100,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results.json",
-      "line": 300,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results.json",
@@ -46160,17 +44202,6 @@
     },
     {
       "file": "todo-tracker-results.json",
-      "line": 377,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results.json",
       "line": 382,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -46179,17 +44210,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results.json",
-      "line": 388,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results.json",
@@ -46270,17 +44290,6 @@
     },
     {
       "file": "todo-tracker-results.json",
-      "line": 443,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results.json",
       "line": 448,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -46289,17 +44298,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results.json",
-      "line": 454,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results.json",
@@ -46809,17 +44807,6 @@
     },
     {
       "file": "todo-tracker-results.json",
-      "line": 817,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results.json",
       "line": 823,
       "type": "SHOULD_BE_IMPLEMENTED",
       "text": "\"text\": \"// Backup customizations if updating (all customizations should be backed up for safety)\",",
@@ -46952,17 +44939,6 @@
     },
     {
       "file": "todo-tracker-results.json",
-      "line": 938,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results.json",
       "line": 943,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -46971,17 +44947,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results.json",
-      "line": 949,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results.json",
@@ -47084,17 +45049,6 @@
     },
     {
       "file": "todo-tracker-results.json",
-      "line": 1026,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results.json",
       "line": 1031,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -47103,17 +45057,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results.json",
-      "line": 1037,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results.json",
@@ -47194,17 +45137,6 @@
     },
     {
       "file": "todo-tracker-results.json",
-      "line": 1092,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-results.json",
       "line": 1097,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -47213,17 +45145,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-results.json",
-      "line": 1103,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-results.json",
@@ -48701,17 +46622,6 @@
     },
     {
       "file": "todo-tracker-with-exclusions.json",
-      "line": 256,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-with-exclusions.json",
       "line": 261,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -48720,17 +46630,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-with-exclusions.json",
-      "line": 267,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-with-exclusions.json",
@@ -48822,17 +46721,6 @@
     },
     {
       "file": "todo-tracker-with-exclusions.json",
-      "line": 333,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-with-exclusions.json",
       "line": 338,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -48841,17 +46729,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-with-exclusions.json",
-      "line": 344,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-with-exclusions.json",
@@ -48932,17 +46809,6 @@
     },
     {
       "file": "todo-tracker-with-exclusions.json",
-      "line": 399,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-with-exclusions.json",
       "line": 404,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -48951,17 +46817,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-with-exclusions.json",
-      "line": 410,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-with-exclusions.json",
@@ -49625,17 +47480,6 @@
     },
     {
       "file": "todo-tracker-with-exclusions.json",
-      "line": 850,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-with-exclusions.json",
       "line": 855,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -49644,17 +47488,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-with-exclusions.json",
-      "line": 861,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-with-exclusions.json",
@@ -49746,17 +47579,6 @@
     },
     {
       "file": "todo-tracker-with-exclusions.json",
-      "line": 927,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-with-exclusions.json",
       "line": 932,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -49765,17 +47587,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-with-exclusions.json",
-      "line": 938,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-with-exclusions.json",
@@ -49856,17 +47667,6 @@
     },
     {
       "file": "todo-tracker-with-exclusions.json",
-      "line": 993,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "todo-tracker-with-exclusions.json",
       "line": 998,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "\"type\": \"UNSAFE_ASSUMPTIONS\",",
@@ -49875,17 +47675,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "todo-tracker-with-exclusions.json",
-      "line": 1004,
-      "type": "INCOMPLETE_WORK",
-      "text": "\"guidance\": \"Add validation & error handling\"",
-      "priority": "major",
-      "category": "incomplete",
-      "severity": "MEDIUM",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "todo-tracker-with-exclusions.json",
@@ -52023,9 +49812,9 @@
     },
     {
       "file": "src\\cli-commands\\init.ts",
-      "line": 248,
+      "line": 249,
       "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.yellow(`\\n⚠️  SkillKit is already installed in this project!`));",
+      "text": "console.log(chalk.gray(`   Installed version: ${installedVersion}`));",
       "priority": "minor",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -52034,9 +49823,9 @@
     },
     {
       "file": "src\\cli-commands\\init.ts",
-      "line": 250,
+      "line": 251,
       "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.gray(`   Current version: ${currentVersion}`));",
+      "text": "console.log(chalk.gray(`   Installed at: ${new Date(installCheck.version.installedAt).toLocaleString()}`));",
       "priority": "minor",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -52309,17 +50098,6 @@
     },
     {
       "file": "src\\cli-commands\\init.ts",
-      "line": 479,
-      "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.yellow('\\n⚠️  The following files already exist and differ:'));",
-      "priority": "minor",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
       "line": 481,
       "type": "DEBUG_STATEMENT",
       "text": "console.log(chalk.gray(`   ${path.relative(projectRoot, conflict.path)}`));",
@@ -52551,17 +50329,6 @@
     },
     {
       "file": "src\\cli-commands\\init.ts",
-      "line": 675,
-      "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.yellow('\\n⚠️  Subtasks directory already exists: docs/workflows/subtasks/'));",
-      "priority": "minor",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
       "line": 686,
       "type": "DEBUG_STATEMENT",
       "text": "console.log(chalk.yellow('   ⏭️  Skipped subtasks (use --force to overwrite)'));",
@@ -52609,17 +50376,6 @@
       "line": 725,
       "type": "DEBUG_STATEMENT",
       "text": "console.log(chalk.green(`   Would create: docs/WORKFLOW_DECISION_TREE.md`));",
-      "priority": "minor",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
-      "line": 729,
-      "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.yellow('\\n⚠️  WORKFLOW_DECISION_TREE.md already exists and differs'));",
       "priority": "minor",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -52686,17 +50442,6 @@
       "line": 773,
       "type": "DEBUG_STATEMENT",
       "text": "console.log(chalk.green(`   Would create: .cursor/rules/skillkit-workflows.mdc`));",
-      "priority": "minor",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
-      "line": 777,
-      "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.yellow('\\n⚠️  Rules file already exists: .cursor/rules/skillkit-workflows.mdc'));",
       "priority": "minor",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -52829,17 +50574,6 @@
       "line": 907,
       "type": "DEBUG_STATEMENT",
       "text": "console.log(chalk.green(`   Would create: AGENTS.md`));",
-      "priority": "minor",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
-      "line": 911,
-      "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.yellow('\\n⚠️  AGENTS.md already exists'));",
       "priority": "minor",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -53159,17 +50893,6 @@
       "line": 1073,
       "type": "DEBUG_STATEMENT",
       "text": "console.log(chalk.red(`Error: ${error.message}`));",
-      "priority": "minor",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
-      "line": 1075,
-      "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.gray(error.stack));",
       "priority": "minor",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -54311,9 +52034,9 @@
     },
     {
       "file": "src\\cli-commands\\workflow-gen.ts",
-      "line": 87,
+      "line": 88,
       "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.bold.green(`\\n✅ Workflow generation complete!\\n`));",
+      "text": "console.log(chalk.gray('Usage in Cursor IDE:'));",
       "priority": "minor",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -54322,20 +52045,9 @@
     },
     {
       "file": "src\\cli-commands\\workflow-gen.ts",
-      "line": 89,
+      "line": 90,
       "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.cyan('  1. Type \"/\" in the chat'));",
-      "priority": "minor",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\workflow-gen.ts",
-      "line": 91,
-      "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.cyan('  3. The AI agent will follow the workflow steps\\n'));",
+      "text": "console.log(chalk.cyan('  2. Select your workflow (e.g., \"BEGIN_SESSION\")'));",
       "priority": "minor",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -55939,17 +53651,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 818,
-      "type": "DEBUG_STATEMENT",
-      "text": "console.log(`⏱️  Scan completed in ${(scanDuration / 1000).toFixed(2)} seconds`)",
-      "priority": "minor",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 821,
       "type": "DEBUG_STATEMENT",
       "text": "console.log(\"🔄 Transferring items to priority buckets...\")",
@@ -56206,17 +53907,6 @@
       "line": 1140,
       "type": "DEBUG_STATEMENT",
       "text": "console.log(\"\\n✅ Codebase is clean - no issues found!\")",
-      "priority": "minor",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 1142,
-      "type": "DEBUG_STATEMENT",
-      "text": "console.log(\"\\n✅ No blocking issues - ready for development workflow\")",
       "priority": "minor",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -57380,9 +55070,9 @@
     },
     {
       "file": "src\\cli-commands\\init.ts",
-      "line": 248,
+      "line": 249,
       "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.yellow(`\\n⚠️  SkillKit is already installed in this project!`));",
+      "text": "console.log(chalk.gray(`   Installed version: ${installedVersion}`));",
       "priority": "minor",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -57391,9 +55081,9 @@
     },
     {
       "file": "src\\cli-commands\\init.ts",
-      "line": 250,
+      "line": 251,
       "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.gray(`   Current version: ${currentVersion}`));",
+      "text": "console.log(chalk.gray(`   Installed at: ${new Date(installCheck.version.installedAt).toLocaleString()}`));",
       "priority": "minor",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -57666,17 +55356,6 @@
     },
     {
       "file": "src\\cli-commands\\init.ts",
-      "line": 479,
-      "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.yellow('\\n⚠️  The following files already exist and differ:'));",
-      "priority": "minor",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
       "line": 481,
       "type": "DEBUG_STATEMENT",
       "text": "console.log(chalk.gray(`   ${path.relative(projectRoot, conflict.path)}`));",
@@ -57908,17 +55587,6 @@
     },
     {
       "file": "src\\cli-commands\\init.ts",
-      "line": 675,
-      "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.yellow('\\n⚠️  Subtasks directory already exists: docs/workflows/subtasks/'));",
-      "priority": "minor",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
       "line": 686,
       "type": "DEBUG_STATEMENT",
       "text": "console.log(chalk.yellow('   ⏭️  Skipped subtasks (use --force to overwrite)'));",
@@ -57966,17 +55634,6 @@
       "line": 725,
       "type": "DEBUG_STATEMENT",
       "text": "console.log(chalk.green(`   Would create: docs/WORKFLOW_DECISION_TREE.md`));",
-      "priority": "minor",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
-      "line": 729,
-      "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.yellow('\\n⚠️  WORKFLOW_DECISION_TREE.md already exists and differs'));",
       "priority": "minor",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -58043,17 +55700,6 @@
       "line": 773,
       "type": "DEBUG_STATEMENT",
       "text": "console.log(chalk.green(`   Would create: .cursor/rules/skillkit-workflows.mdc`));",
-      "priority": "minor",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
-      "line": 777,
-      "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.yellow('\\n⚠️  Rules file already exists: .cursor/rules/skillkit-workflows.mdc'));",
       "priority": "minor",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -58186,17 +55832,6 @@
       "line": 907,
       "type": "DEBUG_STATEMENT",
       "text": "console.log(chalk.green(`   Would create: AGENTS.md`));",
-      "priority": "minor",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
-      "line": 911,
-      "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.yellow('\\n⚠️  AGENTS.md already exists'));",
       "priority": "minor",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -58516,17 +56151,6 @@
       "line": 1073,
       "type": "DEBUG_STATEMENT",
       "text": "console.log(chalk.red(`Error: ${error.message}`));",
-      "priority": "minor",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\init.ts",
-      "line": 1075,
-      "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.gray(error.stack));",
       "priority": "minor",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -59668,9 +57292,9 @@
     },
     {
       "file": "src\\cli-commands\\workflow-gen.ts",
-      "line": 87,
+      "line": 88,
       "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.bold.green(`\\n✅ Workflow generation complete!\\n`));",
+      "text": "console.log(chalk.gray('Usage in Cursor IDE:'));",
       "priority": "minor",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -59679,20 +57303,9 @@
     },
     {
       "file": "src\\cli-commands\\workflow-gen.ts",
-      "line": 89,
+      "line": 90,
       "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.cyan('  1. Type \"/\" in the chat'));",
-      "priority": "minor",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "src\\cli-commands\\workflow-gen.ts",
-      "line": 91,
-      "type": "DEBUG_STATEMENT",
-      "text": "console.log(chalk.cyan('  3. The AI agent will follow the workflow steps\\n'));",
+      "text": "console.log(chalk.cyan('  2. Select your workflow (e.g., \"BEGIN_SESSION\")'));",
       "priority": "minor",
       "category": "temporary",
       "severity": "MEDIUM",
@@ -234679,30 +232292,6 @@
   ],
   "blockers": [
     {
-      "file": "src\\cli-commands\\audit.ts",
-      "line": 132,
-      "type": "MASKED_TODO",
-      "text": "spinner.succeed(chalk.green('Audit complete'));"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 56,
-      "type": "FOR_NOW",
-      "text": "{ regex: /for now|For now/gi, type: \"FOR_NOW\", severity: \"CRITICAL\", category: \"temporal\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 57,
-      "type": "IN_PRODUCTION",
-      "text": "{ regex: /in production|In production/gi, type: \"IN_PRODUCTION\", severity: \"CRITICAL\", category: \"temporal\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 62,
-      "type": "INCOMPLETE_ADMISSION",
-      "text": "{ regex: /NOT hardcoded|not yet implemented|needs to be implemented|this needs real implementation|not fully implemented|not implemented/gi, type: \"INCOMPLETE_ADMISSION\", severity: \"CRITICAL\", category: \"incomplete\" },"
-    },
-    {
       "file": "scripts\\todo-tracker.cjs",
       "line": 119,
       "type": "FOR_NOW",
@@ -234791,12 +232380,6 @@
       "line": 1026,
       "type": "MASKED_TODO",
       "text": "**MAKE PRODUCTION READY:** Complete missing integrations and placeholders"
-    },
-    {
-      "file": "src\\cli-commands\\audit.ts",
-      "line": 132,
-      "type": "MASKED_TODO",
-      "text": "spinner.succeed(chalk.green('Audit complete'));"
     },
     {
       "file": "todo-tracker-final8.json",
@@ -235384,21 +232967,9 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 59,
-      "type": "EXPLICIT_MARKERS",
-      "text": "// Incomplete/missing functionality (enhanced from deceptive language detector)"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 60,
       "type": "WOULD_NEED",
       "text": "{ regex: /would need|This would need/gi, type: \"WOULD_NEED\", severity: \"HIGH\", category: \"incomplete\" },"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 63,
-      "type": "UNIMPLEMENTED_FEATURE",
-      "text": "{ regex: /unimplemented|not.*supported|feature.*not.*supported|method.*not.*supported/gi, type: \"UNIMPLEMENTED_FEATURE\", severity: \"HIGH\", category: \"incomplete\" },"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -235741,24 +233312,6 @@
       "line": 786,
       "type": "EXPLICIT_MARKERS",
       "text": "if (matched) return // Skip other checks if incomplete pattern found"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 835,
-      "type": "EXPLICIT_MARKERS",
-      "text": "const totalIssues = analysis.tasks.length + analysis.debug.length + analysis.incomplete.length"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 843,
-      "type": "EXPLICIT_MARKERS",
-      "text": "incompleteFound: analysis.incomplete.length,"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 870,
-      "type": "EXPLICIT_MARKERS",
-      "text": "const allIssues = [...analysis.tasks, ...analysis.debug, ...analysis.incomplete]"
     },
     {
       "file": "scripts\\todo-tracker.cjs",

@@ -907,6 +907,26 @@ function shouldExclude(line, file) {
     if (pattern.test(line)) return true
   }
   
+  // Exclude pattern definitions in todo-tracker.cjs itself (not lazy coding, just pattern definitions)
+  if (file.includes('todo-tracker.cjs') && (
+    /regex:\s*\/.*for now|regex:\s*\/.*in production/i.test(line) ||
+    /type:\s*["']FOR_NOW|type:\s*["']IN_PRODUCTION/i.test(line) ||
+    /const deceptivePatterns|const explicitTodoPatterns|const temporaryCodePatterns|const incompletePatterns/i.test(line) ||
+    (/not.*implemented|not yet implemented|needs to be implemented/i.test(line) && /regex:|type:|severity:/i.test(line)) ||
+    /\/\/.*Enhanced.*from|\/\/.*Additional.*patterns|\/\/.*from SEDI/i.test(line) ||
+    /\/\/.*\b(workaround|work around)\b.*\b(until|for now)\b/i.test(line) && /regex:/i.test(line) ||
+    /throw new Error.*not implemented/i.test(line) && /regex:/i.test(line) ||
+    /\/\/.*\b(placeholder|stub|mock)\b.*\b(implementation|data|function)\b/i.test(line) && /regex:/i.test(line)
+  )) {
+    return true
+  }
+  
+  // Exclude success/completion messages (not masked TODOs)
+  if (/(spinner|console)\.(succeed|log|info)\s*\([^)]*(?:complete|finished|done|ready)[^)]*\)/i.test(line) ||
+      /(?:Audit|Task|Process|Operation|Scan|Analysis).*complete/i.test(line)) {
+    return true
+  }
+  
   // Exclude documentation comments that mention HACK/TODO/FIXME (not actual hacks)
   if (/\/\*\s*\*.*(?:Find|Search|Detect|Check|List).*(?:TODO|FIXME|HACK)/i.test(line) ||
       /\/\/\s*\*.*(?:Find|Search|Detect|Check|List).*(?:TODO|FIXME|HACK)/i.test(line) ||
