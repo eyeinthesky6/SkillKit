@@ -106,7 +106,7 @@ export function jsonSchemaToZod(schema: JSONSchema7): ZodSchema<unknown> {
       zodObj = zodObj.strip();
     } else if (typeof schema.additionalProperties === 'object') {
       // TODO: Implement full support for additionalProperties with schema objects
-      // For now, strip unknown properties as a safe fallback
+      // Current implementation: strip unknown properties as a safe fallback
       console.warn('additionalProperties with schema object is not fully supported - using strip() as fallback');
       zodObj = zodObj.strip();
     }
