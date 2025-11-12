@@ -221,7 +221,7 @@ export class GitHubIntegration {
         skill1Meta = fs.readFileSync(skill1Yaml, 'utf-8');
         skill2Meta = fs.readFileSync(skill2Yaml, 'utf-8');
       } else {
-        // Different metadata formats, assume different
+        // Different metadata formats detected - treat as different packages (safe fallback)
         return false;
       }
       
@@ -242,7 +242,7 @@ export class GitHubIntegration {
       
       return hash1 === hash2;
     } catch {
-      // If comparison fails, assume different (safer)
+      // If comparison fails, treat as different (safe fallback to avoid false matches)
       return false;
     }
   }
