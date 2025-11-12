@@ -1003,7 +1003,13 @@ function shouldExclude(line, file) {
     /\/\/.*Enhanced.*from|\/\/.*Additional.*patterns|\/\/.*from SEDI/i.test(line) ||
     /\/\/.*\b(workaround|work around)\b.*\b(until|for now)\b/i.test(line) && /regex:/i.test(line) ||
     /throw new Error.*not implemented/i.test(line) && /regex:/i.test(line) ||
-    /\/\/.*\b(placeholder|stub|mock)\b.*\b(implementation|data|function)\b/i.test(line) && /regex:/i.test(line)
+    /\/\/.*\b(placeholder|stub|mock)\b.*\b(implementation|data|function)\b/i.test(line) && /regex:/i.test(line) ||
+    // Exclude pattern array definitions (lines with { regex: ... type: ... })
+    /\{\s*regex:\s*\/.*type:\s*["']/i.test(line) ||
+    // Exclude comments about patterns
+    /\/\/.*(?:pattern|regex|detection|from SEDI|from.*docs)/i.test(line) ||
+    // Exclude pattern object definitions
+    /(?:regex|type|severity|category):\s*[\/"']/i.test(line) && /deceptivePatterns|explicitTodoPatterns|temporaryCodePatterns|incompletePatterns/i.test(file)
   )) {
     return true
   }
@@ -1011,6 +1017,21 @@ function shouldExclude(line, file) {
   // Exclude success/completion messages (not masked TODOs)
   if (/(spinner|console)\.(succeed|log|info)\s*\([^)]*(?:complete|finished|done|ready)[^)]*\)/i.test(line) ||
       /(?:Audit|Task|Process|Operation|Scan|Analysis).*complete/i.test(line)) {
+    return true
+  }
+  
+  // Exclude documentation/rules text and user-facing messages (not actual AI claims)
+  if (/No errors:\s*Ready for any work/i.test(line) ||
+      /Ready for deployment/i.test(line) && /suggestions\.push|suggestion|user.*message|display.*message/i.test(line) ||
+      /(?:routing|workflow|decision|logic|rule|rules|documentation|guide|instructions|help|menu|suggestion|suggestions)\s*(?:text|string|message|content|description|label|title|heading|header)/i.test(line) ||
+      /(?:suggestions?|menu|options?|commands?|workflows?)\s*\.(push|add|append|set|create)\s*\([^)]*(?:ready|complete|production)/i.test(line) ||
+      /(?:markdown|md|mdc|documentation|docs|guide|instructions|help|rules|routing|workflow)\s*(?:file|content|text|string|template|format)/i.test(line) && /ready|complete|production/i.test(line)) {
+    return true
+  }
+  
+  // Exclude conditional/descriptive text (not claims)
+  if (/(?:if|when|when.*then|suggest|suggests|suggestion|option|options|can|may|might)\s+(?:ready|complete|production|deployment)/i.test(line) && 
+      !/(?:claim|claimed|claims|claiming|reports|reported|reporting|states|stated|says|said|saying|asserts|asserted|asserting)/i.test(line)) {
     return true
   }
   
