@@ -44,7 +44,7 @@ export function createValidateWorkflowCommand(): Command {
         } else if (workflowFile.startsWith('.cursor/commands/')) {
           workflowPath = path.join(projectRoot, workflowFile);
         } else {
-          // Assume it's in .cursor/commands/
+          // Default location: check .cursor/commands/ directory
           workflowPath = path.join(projectRoot, '.cursor', 'commands', workflowFile);
         }
         

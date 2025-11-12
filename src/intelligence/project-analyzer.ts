@@ -134,7 +134,8 @@ export class ProjectAnalyzer {
       if (pkg['dependencies']?.['typescript'] || pkg['devDependencies']?.['typescript'] || this.fileExists('tsconfig.json')) {
         return 'typescript';
       }
-      return 'typescript'; // Assume TS if has package.json
+      // Heuristic: TypeScript is common in projects with package.json
+      return 'typescript';
     }
     if (this.fileExists('pyproject.toml') || this.fileExists('setup.py') || this.fileExists('requirements.txt')) {
       return 'python';
@@ -281,7 +282,7 @@ export class ProjectAnalyzer {
     if (this.fileExists('.eslintrc.json')) {
       config = this.readJSON('.eslintrc.json');
     } else if (this.fileExists('.eslintrc.js')) {
-      // Can't easily parse JS config, assume moderate
+      // Fallback: JS config files are complex to parse, use moderate strictness as safe default
       return { tool: 'eslint', rules: [], strictness: 'moderate' };
     }
 

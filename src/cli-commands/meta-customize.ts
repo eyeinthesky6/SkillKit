@@ -243,7 +243,7 @@ export function createMetaCustomizeCommand(): Command {
                   customizedAt: stats.mtime.toISOString(),
                   originalHash: '', // Will be updated on next init
                   intentional: true,
-                  customizedVia: 'manual', // Detected customization, assume manual
+                  customizedVia: 'manual', // Fallback: default to manual if detection fails
                 });
                 marked++;
               }
