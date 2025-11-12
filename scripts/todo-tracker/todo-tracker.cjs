@@ -523,8 +523,13 @@ const commentedCodePatterns = [
 
   // Commented out method calls (actual execution, not examples)
   // Exclude descriptive comments about files (e.g., "// pyproject.toml (Poetry)")
-  /^\s*\/\/\s*(?!\w+\.(toml|txt|py|js|ts|json|yaml|yml|md|makefile|cmake|gradle|pom|xml)\s*\()\w+\.\w+\s*\(/i,
-  /^\s*\/\/\s*(await\s+)?\w+\s*\(/i,
+  // Exclude descriptive comments (e.g., "// PowerShell (default on Windows 10+)")
+  /^\s*\/\/\s*(?!\w+\.(toml|txt|py|js|ts|json|yaml|yml|md|makefile|cmake|gradle|pom|xml)\s*\()(?!.*\(.*\)\s*$)\w+\.\w+\s*\(/i,
+  // Exclude descriptive comments like "// PowerShell (description)" - these are not method calls
+  // Only match if it looks like an actual method call (lowercase method name, or await, or dot notation)
+  // Pattern must start with lowercase letter (not uppercase like "PowerShell")
+  /^\s*\/\/\s*(await\s+)?[a-z][a-z0-9_]*\s*\(/i, // Lowercase method names (actual code) - must start with lowercase
+  /^\s*\/\/\s*\w+\.\w+\s*\(/i, // Method calls with dot notation
 
   // Commented out control flow and error handling (only actual code)
   /^\s*\/\/\s*if\s*\(/i,
@@ -864,6 +869,58 @@ function shouldExclude(line, file) {
   for (const pattern of excludeFiles) {
     if (pattern.test(file)) return true
   }
+  
+  // Exclude documentation comments that mention HACK/TODO/FIXME (not actual hacks)
+  if (/\/\*\s*\*.*(?:Find|Search|Detect|Check|List).*(?:TODO|FIXME|HACK)/i.test(line) ||
+      /\/\/\s*\*.*(?:Find|Search|Detect|Check|List).*(?:TODO|FIXME|HACK)/i.test(line) ||
+      /\/\/\s*(?:Find|Search|Detect|Check|List).*(?:TODO|FIXME|HACK)/i.test(line) ||
+      /\*\s*(?:Find|Search|Detect|Check|List).*(?:TODO|FIXME|HACK)/i.test(line)) {
+    return true
+  }
+  
+  // Exclude code that searches for HACK/TODO/FIXME patterns (not using hacks)
+  if (/'TODO\|FIXME\|HACK|"TODO\|FIXME\|HACK|`TODO\|FIXME\|HACK/.test(line)) {
+    return true
+  }
+  
+  // Exclude string literals containing "deprecated" (not deprecated code, just IDs/messages)
+  // Pattern: id: '...deprecated...' or message: '...deprecated...' or impact: '...deprecated...'
+  if (/(id|message|impact|fix|description|text|label|name|title|category|severity|type|reason|guidance)\s*[:=]\s*['"`][^'"`]*[Dd]eprecated[^'"`]*['"`]/.test(line)) {
+    return true
+  }
+  
+  // Exclude object property values that are string literals with "deprecated"
+  if (/:\s*['"`][^'"`]*[Dd]eprecated[^'"`]*['"`]\s*[,}]/.test(line)) {
+    return true
+  }
+  
+  // Exclude comments about deprecated code (documentation, not deprecated code itself)
+  if (/\/\/\s*Check.*deprecated|\/\/\s*Find.*deprecated/i.test(line)) {
+    return true
+  }
+  
+  // Exclude warning/error messages that contain keywords (not lazy code, just warnings)
+  // Pattern: console.warn/error with strings containing keywords
+  if (/console\.(warn|error|log)\s*\([^)]*(?:in production|deprecated|hack|TODO|FIXME)/i.test(line)) {
+    return true
+  }
+  
+  // Exclude regex.exec() - it's not insecure input, it's regex matching
+  // Pattern: pattern.exec() or regex.exec() or RegExp.exec()
+  if (/\.exec\s*\(/.test(line) && 
+      (/\w+Pattern\.exec|regex\w*\.exec|RegExp.*\.exec|pattern.*\.exec/i.test(line) ||
+       /skillLoadPattern|workflowPattern|filePattern|matchPattern/i.test(line))) {
+    return true
+  }
+  
+  // Exclude descriptive comments that look like method calls but aren't
+  // Pattern: "// Word (description)" - these are descriptive, not code
+  // But exclude if it's actually a method call pattern
+  if (/^\s*\/\/\s*[A-Z][a-z]+\s*\([^)]*\)\s*$/.test(line) && 
+      !/^\s*\/\/\s*\w+\.\w+\s*\(/.test(line) &&
+      !/^\s*\/\/\s*(await\s+)?\w+\s*\(/.test(line)) {
+    return true
+  }
 
   // Context-aware exclusions for test files
   const isTestFile = /\.(test|spec)\.(ts|tsx|js|jsx)$/.test(file) ||
@@ -894,17 +951,42 @@ function isDocumentationComment(line) {
 
   // Exclude descriptive comments (not commented out code)
   // Pattern: // filename or // description (context)
-  if (/^\/\/\s*[a-z0-9_-]+\.(toml|txt|py|js|ts|json|yaml|yml|md|makefile|cmake|gradle|pom|xml)\s*\(/i.test(line)) {
-    return true // Descriptive comment like "// pyproject.toml (Poetry, Black, etc.)"
+  // These are documentation comments describing what the code does, not commented code
+  
+  // File references: "// pyproject.toml (Poetry, Black, etc.)"
+  if (/^\/\/\s*[a-z0-9_-]+\.(toml|txt|py|js|ts|json|yaml|yml|md|makefile|cmake|gradle|pom|xml)\s*\(/i.test(line.trim())) {
+    return true
   }
   if (/^\/\/\s*[a-z0-9_-]+\.(toml|txt|py|js|ts|json|yaml|yml|md|makefile|cmake|gradle|pom|xml)\s*$/i.test(line.trim())) {
-    return true // Descriptive comment like "// requirements.txt (pip)"
+    return true
   }
+  
+  // Descriptive comments with proper nouns: "// PowerShell (default on Windows 10+)"
+  // Pattern: "// ProperNoun (description)" - descriptive, not code
+  // These are documentation comments, not commented out code
+  // Match: "// ProperNoun (description)" where ProperNoun starts with capital letter
+  // Handle proper nouns with multiple capitals like "PowerShell", "Windows", etc.
+  const trimmed = line.trim()
+  const properNounPattern = /^\/\/\s*([A-Z][A-Za-z]+)\s*\([^)]*\)\s*$/
+  if (properNounPattern.test(trimmed)) {
+    const match = trimmed.match(properNounPattern)
+    const properNoun = match ? match[1] : ''
+    // Common proper nouns used in descriptive comments (not code)
+    const descriptiveNouns = ['PowerShell', 'Windows', 'Linux', 'MacOS', 'Git', 'Bash', 'CMD', 'WSL', 'Poetry', 'Black', 'pip', 'npm', 'yarn', 'pnpm']
+    if (descriptiveNouns.includes(properNoun)) {
+      return true
+    }
+    // Also exclude if it's clearly descriptive (starts with capital, no dot notation, no lowercase method name)
+    if (/^[A-Z]/.test(properNoun) &&
+        !/^\s*\/\/\s*\w+\.\w+\s*\(/.test(line) &&
+        !/^\s*\/\/\s*(await\s+)?[a-z]\w*\s*\(/.test(line)) {
+      return true
+    }
+  }
+  
+  // File type references: "// Makefile (common in Python projects)"
   if (/^\/\/\s*[A-Z][a-z]+file\s*\(/i.test(line.trim())) {
-    return true // Descriptive comment like "// Makefile (common in Python projects)"
-  }
-  if (/^\/\/\s*[A-Z][a-z]+\s*\(/i.test(line)) {
-    return true // Descriptive comment like "// PowerShell (default on Windows 10+)"
+    return true
   }
 
   // Exclude documentation and examples
@@ -1441,6 +1523,14 @@ function scanCodeComprehensive() {
       for (const pattern of deceptivePatterns) {
         // Skip excluded patterns (like regex.exec)
         if (pattern.exclude) continue
+        
+        // Skip QUICK_HACK if it's in documentation or searching for HACK
+        if (pattern.type === "QUICK_HACK" && 
+            (/Find.*HACK|Search.*HACK|Detect.*HACK|Check.*HACK|TODO\|FIXME\|HACK/i.test(line) ||
+             /['"]\w*HACK\w*['"]/.test(line))) {
+          continue
+        }
+        
         if (pattern.regex.test(line)) {
           const todoItem = addGitInfoToTodoItem({
             file,
