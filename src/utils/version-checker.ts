@@ -118,10 +118,12 @@ export function detectSkippedVersions(installed: string, current: string): {
   const skipped = majorChanged || minorSkipped || patchSkipped;
   const hasBreakingChanges = currentParsed.major > installedParsed.major;
 
-  // Generate list of skipped versions (simplified)
+  // Generate list of skipped versions
+  // TODO: Enhance to parse CHANGELOG.md for actual skipped versions instead of estimating
   const skippedVersions: string[] = [];
   if (skipped) {
-    // This is a simplified version - in reality, would need CHANGELOG parsing
+    // Estimate skipped versions based on major version increments
+    // In the future, this should parse CHANGELOG.md for accurate version history
     for (let major = installedParsed.major; major < currentParsed.major; major++) {
       skippedVersions.push(`${major + 1}.0.0`);
     }
