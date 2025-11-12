@@ -590,21 +590,21 @@ export function createInitCommand(): Command {
 
           let content = await fs.readFile(sourcePath, 'utf8');
 
-          // Replace custom header placeholder (with validation)
+          // Replace or remove custom header placeholder
           if (customHeader) {
             const headerBlock = `---\n## ⚠️ ${customHeader}\n---`;
-            const regex = /## \{\{CUSTOM_HEADER\}\}[\s\S]*?---/g;
-            if (regex.test(content)) {
-              content = content.replace(regex, headerBlock);
-            } else {
-              console.log(chalk.yellow(`   ⚠ ${file} (custom header placeholder not found)`));
+            const placeholderRegex = /## \{\{CUSTOM_HEADER\}\}[\s\S]*?---/g;
+            if (placeholderRegex.test(content)) {
+              content = content.replace(placeholderRegex, headerBlock);
             }
+            // If placeholder not found, file doesn't have one - that's fine, skip silently
           } else {
-            // Remove custom header placeholder (with validation)
-            const regex = /---\n## \{\{CUSTOM_HEADER\}\}[\s\S]*?---\n\n/g;
-            if (regex.test(content)) {
-              content = content.replace(regex, '');
+            // Remove custom header placeholder if present
+            const removeRegex = /---\n## \{\{CUSTOM_HEADER\}\}[\s\S]*?---\n\n/g;
+            if (removeRegex.test(content)) {
+              content = content.replace(removeRegex, '');
             }
+            // If placeholder not found, file doesn't need modification - skip silently
           }
 
           try {
