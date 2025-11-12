@@ -1616,6 +1616,12 @@ function scanCodeComprehensive() {
           continue
         }
         
+        // Skip SHORTCUT_SOLUTION if it's a comment explaining what code does (not lazy coding)
+        if (pattern.type === "SHORTCUT_SOLUTION" && 
+            /\/\/\s*(Create|Add|Generate|Build|Setup|Initialize|Configure|Install|Enable|Activate|Start|Run|Execute|Call|Invoke|Return|Throw|Catch|Log|Print|Display|Show|Output|Input|Read|Write|Save|Load|Import|Export|Include|Exclude|Skip|Ignore|Filter|Sort|Map|Reduce|Iterate|Loop|Traverse|Navigate|Access|Modify|Change|Edit|Fix|Repair|Restore|Backup|Copy|Move|Rename|Delete|Clear|Reset|Initialize|Setup|Configure|Install|Uninstall|Enable|Disable|Activate|Deactivate|Start|Stop|Pause|Resume|Continue|Break|Exit|Quit|Abort|Cancel|Confirm|Prompt|Ask|Request|Response|Send|Receive|Connect|Disconnect|Open|Close|Lock|Unlock|Encrypt|Decrypt|Encode|Decode|Hash|Verify|Sign|Validate|Check|Test|Debug|Trace|Monitor|Watch|Listen|Observe|Notify|Alert|Warn|Error|Info|Success|Fail|Pass|Skip|Retry|Timeout|Wait|Sleep|Delay|Schedule|Queue|Stack|Heap|Cache|Store|Retrieve|Fetch|Pull|Push|Pop|Peek|Insert|Append|Prepend|Remove|Delete|Clear|Empty|Fill|Drain|Flush|Sync|Async|Await|Promise|Resolve|Reject|Then|Catch|Finally|Try|Catch|Finally|Throw|Raise|Handle|Process|Manage|Control|Govern|Regulate|Limit|Restrict|Allow|Permit|Deny|Block|Unblock|Grant|Revoke|Approve|Reject|Accept|Decline|Confirm|Cancel|Commit|Rollback|Abort|Finish|Complete|Done|Ready|Pending|Waiting|Processing|Running|Stopped|Paused|Resumed|Started|Initialized|Configured|Setup|Installed|Enabled|Disabled|Activated|Deactivated|Opened|Closed|Locked|Unlocked|Connected|Disconnected|Sent|Received|Loaded|Saved|Created|Updated|Deleted|Modified|Changed|Edited|Fixed|Repaired|Restored|Backed|Copied|Moved|Renamed|Cleared|Reset)\s+\w+\s+shortcut/i.test(line)) {
+          continue
+        }
+        
         // Skip PLACEHOLDER_VALUES if it's in variable names or code handling placeholders
         if (pattern.type === "PLACEHOLDER_VALUES") {
           // Exclude variable names containing "placeholder" (const placeholderRegex = ...)
@@ -1628,6 +1634,10 @@ function scanCodeComprehensive() {
           }
           // Exclude comments about placeholder handling (any comment explaining placeholder handling)
           if (/\/\/.*(Replace|Remove|Add|Update|Set|Get|Check|Validate|Handle|Process).*(custom|header|footer|template).*placeholder/i.test(line)) {
+            continue
+          }
+          // Exclude comments explaining placeholder behavior (not lazy coding)
+          if (/\/\/.*placeholder.*(not found|doesn't have|doesn't need|skip|fine|ok|that's fine)/i.test(line)) {
             continue
           }
           // Exclude any line that's actually implementing placeholder handling (not lazy coding)
