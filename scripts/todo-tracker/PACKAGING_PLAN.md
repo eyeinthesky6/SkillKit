@@ -96,7 +96,7 @@ critical: {
 ```bash
 npx todo-tracker
 # or
-npx @lazy-coding/tracker
+npx tt
 ```
 
 **Features:**
