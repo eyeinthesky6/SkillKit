@@ -995,7 +995,9 @@ function shouldExclude(line, file) {
   }
   
   // Exclude pattern definitions in todo-tracker.cjs itself (not lazy coding, just pattern definitions)
-  if (file.includes('todo-tracker.cjs') || file.includes('todo-tracker/')) {
+  // Check for both old location (scripts/todo-tracker.cjs) and new location (scripts/todo-tracker/todo-tracker.cjs)
+  if (file.includes('todo-tracker.cjs') || file.includes('todo-tracker/') || file.includes('scripts/todo-tracker') || 
+      (file.includes('scripts/') && file.includes('todo-tracker'))) {
     // Exclude pattern array definitions (lines with regex patterns)
     if (/\{\s*regex:\s*\/.*type:\s*["']/i.test(line) ||
         /\/\s*\/.*\b(workaround|work around|for now|not implemented|placeholder|stub|mock|incomplete|temporary)\b/i.test(line) ||
@@ -1010,7 +1012,7 @@ function shouldExclude(line, file) {
         /\/\/.*(?:pattern|regex|detection|from SEDI|from.*docs|Enhanced.*from|Additional.*patterns)/i.test(line) ||
         // Exclude pattern object definitions
         /(?:regex|type|severity|category):\s*[\/"']/i.test(line) ||
-        // Exclude array element definitions
+        // Exclude array element definitions (regex patterns in arrays)
         /^\s*\/\/.*\b(temporarily disabled|temp disabled|disabled temporarily|quick fix|quick hack|temporary fix)\b/i.test(line) ||
         /^\s*\/\/.*\b(workaround|work around)\b.*\b(until|for now)\b/i.test(line) ||
         /^\s*\/\/.*\b(placeholder|stub|mock)\b.*\b(implementation|data|function)\b/i.test(line) ||
@@ -1020,7 +1022,18 @@ function shouldExclude(line, file) {
         /^\s*throw new Error\s*\(\s*["'].*temporarily unavailable/i.test(line) ||
         /^\s*return null\s*\/\/.*\b(implement|add|complete)\b/i.test(line) ||
         /^\s*return undefined\s*\/\/.*\b(implement|add|complete)\b/i.test(line) ||
-        /^\s*temporary|temp |TEMP/gi.test(line)) {
+        /^\s*temporary|temp |TEMP/gi.test(line) ||
+        // Exclude regex pattern literals in arrays (e.g., /\/\/.*\b(workaround|work around)\b.*\b(until|for now)\b/i)
+        /^\s*\/\/.*\b(workaround|work around|for now|not implemented|placeholder|stub|mock|incomplete|temporary)\b/i.test(line) ||
+        // Exclude any line that's part of a pattern array definition
+        /^\s*\/.*\b(workaround|work around|for now|not implemented|placeholder|stub|mock|incomplete|temporary)\b.*\/i?[,;]?\s*$/i.test(line) ||
+        /^\s*\/.*\b(workaround|work around|for now|not implemented|placeholder|stub|mock|incomplete|temporary)\b.*\/i?[,;]?\s*\/\/.*$/i.test(line) ||
+        // Exclude priority level definitions (e.g., "not implemented" in triggers array)
+        /triggers:\s*\[.*not implemented/i.test(line) ||
+        // Exclude keyword arrays in priority definitions
+        /keywords:\s*\[.*not implemented/i.test(line) ||
+        // Exclude pattern definitions in priorityCategories
+        /priorityCategories|priorityLevels/i.test(line) && /not implemented|INCOMPLETE_ADMISSION|MASKED_TODO/i.test(line)) {
       return true
     }
   }
