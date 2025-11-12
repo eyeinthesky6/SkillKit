@@ -1618,17 +1618,21 @@ function scanCodeComprehensive() {
         
         // Skip PLACEHOLDER_VALUES if it's in variable names or code handling placeholders
         if (pattern.type === "PLACEHOLDER_VALUES") {
-          // Exclude variable names containing "placeholder"
+          // Exclude variable names containing "placeholder" (const placeholderRegex = ...)
           if (/\b\w*placeholder\w*\s*[=:]/i.test(line)) {
             continue
           }
-          // Exclude code that handles/replaces placeholders
+          // Exclude code that handles/replaces placeholders (.test(placeholderRegex), .replace(placeholderRegex))
           if (/\.(replace|test|match|exec|search|split)\s*\(\s*\w*placeholder\w*/i.test(line)) {
             continue
           }
-          // Exclude comments about placeholder handling
-          if (/\/\/\s*(Replace|Remove)\s+or\s+(remove|replace)\s+(custom|header|footer|template)\s+placeholder/i.test(line) ||
-              /\/\/\s*(Replace|Remove|Add|Update|Set|Get|Check|Validate|Handle|Process)\s+(custom|header|footer|template)\s+placeholder\s+if\s+present/i.test(line)) {
+          // Exclude comments about placeholder handling (any comment explaining placeholder handling)
+          if (/\/\/.*(Replace|Remove|Add|Update|Set|Get|Check|Validate|Handle|Process).*(custom|header|footer|template).*placeholder/i.test(line)) {
+            continue
+          }
+          // Exclude any line that's actually implementing placeholder handling (not lazy coding)
+          if (/placeholderRegex|placeholderPattern|placeholder\s*=/i.test(line) && 
+              !/\/\/.*placeholder.*(?:TODO|FIXME|HACK|XXX|TBD|NYI|WIP|incomplete|not implemented|not finished|unfinished|broken|fixme|hack|workaround|quick fix|quick hack|temporary fix|temporary solution|simplified|minimal|partial|incomplete|unimplemented|missing|needed|required|should|must|will|would|can|could|may|might|maybe|perhaps|probably|likely|unlikely|possibly|potentially)/i.test(line)) {
             continue
           }
         }
