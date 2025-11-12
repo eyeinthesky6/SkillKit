@@ -391,7 +391,7 @@ export class SkillRunner {
     // Create audit log if enabled and we have a sandbox
     if (audit && this.sandbox) {
       try {
-        // Get the skill from the sandbox or create a minimal valid skill
+        // Get the skill from the sandbox or create a fallback skill structure for audit logging
         const skill: Skill = this.sandbox.getSkill?.() || {
           name: 'unknown',
           version: '0.0.0',

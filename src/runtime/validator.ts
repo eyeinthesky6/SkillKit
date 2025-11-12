@@ -9,8 +9,8 @@ import type { Skill } from '../types';
  * Convert a JSON Schema to a Zod schema
  */
 export function jsonSchemaToZod(schema: JSONSchema7): ZodSchema<unknown> {
-  // This is a simplified implementation. In a real-world scenario,
-  // you'd want to use a more comprehensive library or handle more cases.
+  // JSON Schema to Zod converter - covers common schema patterns
+  // TODO: Extend to support additional JSON Schema features (allOf, anyOf, oneOf, etc.)
 
   if (schema.type === 'string') {
     let zodType: ZodString = z.string();
@@ -105,7 +105,10 @@ export function jsonSchemaToZod(schema: JSONSchema7): ZodSchema<unknown> {
       // Use .strip() to remove unknown properties
       zodObj = zodObj.strip();
     } else if (typeof schema.additionalProperties === 'object') {
-      console.warn('additionalProperties with schema is not fully supported');
+      // TODO: Implement full support for additionalProperties with schema objects
+      // For now, strip unknown properties as a safe fallback
+      console.warn('additionalProperties with schema object is not fully supported - using strip() as fallback');
+      zodObj = zodObj.strip();
     }
 
     return zodObj;
