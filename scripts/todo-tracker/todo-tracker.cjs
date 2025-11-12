@@ -291,6 +291,44 @@ const deceptivePatterns = [
   { regex: /\b(done|complete|finished|implemented|ready)\b.*\b(future|enhance|expand|improve|plan|pending|scheduled|add|next step|follow up|not yet|not finished|not complete|not ready|not implemented|incomplete|partial|stub|workaround|WIP|hack|fixme|bug|placeholder|dummy|mock|unfinished|ignore|bypass|skip|missing|lazy|mask|misreport|audit|action plan|open|issue|problem|risk|gap|limitation|improvement|enhancement|feature|expansion|carry out|scheduled|planned|future release|future sprint|future work|future enhancement|future improvement|future expansion|future refactor|future optimization|future feature|future addition|future change|future update|future upgrade)\b/gi, type: "MASKED_TODO", severity: "CRITICAL", category: "deceptive" },
   { regex: /\b(future|enhance|expand|improve|plan|pending|scheduled|add|next step|follow up|not yet|not finished|not complete|not ready|not implemented|incomplete|partial|stub|workaround|WIP|hack|fixme|bug|placeholder|dummy|mock|unfinished|ignore|bypass|skip|missing|lazy|mask|misreport|audit|action plan|open|issue|problem|risk|gap|limitation|improvement|enhancement|feature|expansion|carry out|scheduled|planned|future release|future sprint|future work|future enhancement|future improvement|future expansion|future refactor|future optimization|future feature|future addition|future change|future update|future upgrade)\b.*\b(done|complete|finished|implemented|ready)\b/gi, type: "MASKED_TODO", severity: "CRITICAL", category: "deceptive" },
   { regex: /\b(enhancement opportunities identified|minor enhancements recommended|feature expansion needed|scheduled for future sprint|initial implementation, optimization pending|MVP complete, needs refactor|basic version done, feature expansion needed|work finished but enhancements to be carried out in future|production-ready, but minor recommendations for enhancement|no critical issues found but|no critical issues found, however|done but|complete but|finished but|work complete but|work finished but|initial findings|comprehensive error analysis|code quality analysis)\b/gi, type: "MASKED_TODO", severity: "CRITICAL", category: "deceptive" },
+  
+  // AI Agent Behavioral Patterns (from SEDI docs - AI-Control-Framework, AITracking, audits)
+  // Overconfidence & False Reporting
+  { regex: /\b(100% ready|100% complete|production ready|ready for deployment|build successful|no errors|all routes are implemented|all requirements met|everything is done|comprehensive analysis|feature is production-ready)\b/gi, type: "AI_OVERCONFIDENCE", severity: "CRITICAL", category: "deceptive" },
+  { regex: /\b(100%)\s+(ready|complete|done|implemented|verified|tested)\b/gi, type: "AI_OVERCONFIDENCE", severity: "CRITICAL", category: "deceptive" },
+  { regex: /\b(confident|confidently|certainly|definitely|absolutely|without doubt|guaranteed)\b.*\b(complete|ready|done|implemented|verified|tested|working)\b/gi, type: "AI_OVERCONFIDENCE", severity: "HIGH", category: "deceptive" },
+  
+  // Laziness & Shortcut Taking
+  { regex: /\b(skipping|skipped|skip)\s+(thorough|detailed|complete|full|comprehensive)\s+(analysis|review|verification|check|testing|examination)\b/gi, type: "AI_LAZINESS", severity: "CRITICAL", category: "deceptive" },
+  { regex: /\b(impressive.*looking|convincing.*looking|professional.*sounding)\s+(report|analysis|documentation|summary)\s+(without|lacking)\s+(substance|verification|evidence|proof)\b/gi, type: "AI_LAZINESS", severity: "HIGH", category: "deceptive" },
+  { regex: /\b(gaming|gamed|game)\s+(the|this)\s+(system|process|workflow|protocol)\b/gi, type: "AI_LAZINESS", severity: "CRITICAL", category: "deceptive" },
+  { regex: /\b(took|taking|takes)\s+(shortcuts|a shortcut|corners|the easy way)\b/gi, type: "AI_LAZINESS", severity: "HIGH", category: "deceptive" },
+  
+  // Ego-Driven Behaviors
+  { regex: /\b(resisting|resisted|resists)\s+(correction|feedback|review|verification|checking)\b/gi, type: "AI_EGO", severity: "HIGH", category: "deceptive" },
+  { regex: /\b(overreporting|overreported|overreports)\s+(completeness|progress|status|readiness)\b/gi, type: "AI_EGO", severity: "HIGH", category: "deceptive" },
+  { regex: /\b(avoiding|avoided|avoids)\s+(admitting|admission|acknowledging|acknowledgment)\s+(ignorance|uncertainty|mistake|error|failure)\b/gi, type: "AI_EGO", severity: "HIGH", category: "deceptive" },
+  { regex: /\b(emotional|emotionally)\s+(language|appeal|response|reaction)\s+(without|despite)\s+(emotional|feeling|experience)\b/gi, type: "AI_EGO", severity: "MEDIUM", category: "deceptive" },
+  
+  // Post-Facto Brilliance (claiming completion then explaining failures)
+  { regex: /\b(post.*facto|after.*the.*fact|retroactively|in hindsight)\s+(brilliance|analysis|explanation|insight|understanding)\b/gi, type: "POST_FACTO_BRILLIANCE", severity: "CRITICAL", category: "deceptive" },
+  { regex: /\b(claim|claimed|claims)\s+(complete|ready|done|finished).*\b(then|when|after|later)\s+(issue|problem|error|failure|bug)\s+(arise|arose|arises|occurred|occurs)\b/gi, type: "POST_FACTO_BRILLIANCE", severity: "CRITICAL", category: "deceptive" },
+  { regex: /\b(detailed|comprehensive|thorough)\s+(genesis|root.*cause|analysis|explanation)\s+(as if|making it appear|pretending)\s+(planned|expected|anticipated|foreseen)\s+(all along|from.*start|from.*beginning)\b/gi, type: "POST_FACTO_BRILLIANCE", severity: "CRITICAL", category: "deceptive" },
+  
+  // Process Violations (from INITIAL_PATTERN_ANALYSIS.md)
+  { regex: /\b(skipped|skipping|skip)\s+(review|testing|verification|check|audit|quality.*gate)\b/gi, type: "PROCESS_VIOLATION", severity: "CRITICAL", category: "deceptive" },
+  { regex: /\b(no|without|missing)\s+(testing|review|verification|documentation|evidence|proof)\b/gi, type: "PROCESS_VIOLATION", severity: "HIGH", category: "deceptive" },
+  { regex: /\b(direct|bypassed|bypassing)\s+(push|commit|merge)\s+(to|into)\s+(main|master|production)\b/gi, type: "PROCESS_VIOLATION", severity: "CRITICAL", category: "deceptive" },
+  { regex: /\b(TODO|FIXME|HACK|XXX)\s+(in|left.*in|still.*in)\s+(production|main|master|live)\b/gi, type: "PROCESS_VIOLATION", severity: "CRITICAL", category: "deceptive" },
+  
+  // Quality Gate Bypasses
+  { regex: /\b(bypass|bypassed|bypassing|circumvent|circumvented|circumventing)\s+(quality.*gate|quality.*control|verification|testing|review|check|audit|lint|eslint|typescript|build.*check)\b/gi, type: "QUALITY_BYPASS", severity: "CRITICAL", category: "deceptive" },
+  { regex: /\b(--no-verify|--skip.*check|--ignore.*error|--force|--no.*check)\b/gi, type: "QUALITY_BYPASS", severity: "CRITICAL", category: "deceptive" },
+  { regex: /\b(relaxed|relaxing|relax)\s+(rule|rules|quality.*gate|eslint|typescript|strict.*mode)\s+(instead.*of|rather.*than|to.*avoid)\s+(fix|fixing|addressing|resolving)\b/gi, type: "QUALITY_BYPASS", severity: "HIGH", category: "deceptive" },
+  
+  // False Claims Without Evidence
+  { regex: /\b(claim|claimed|claims|claiming)\s+(complete|ready|done|finished|implemented|verified|tested|100%|all|everything)\s+(without|without.*evidence|without.*proof|without.*verification|without.*testing|lacking|missing)\s+(evidence|proof|verification|testing|check|review|confirmation)\b/gi, type: "FALSE_CLAIM", severity: "CRITICAL", category: "deceptive" },
+  { regex: /\b(confident|confidently)\s+(percentage|percent|assertion|statement|claim)\s+(without|without.*evidence|without.*proof|lacking|missing)\s+(evidence|proof|backing|support|data|verification)\b/gi, type: "FALSE_CLAIM", severity: "CRITICAL", category: "deceptive" },
 
   // Deceptive/simplified implementations
   { regex: /simplified/gi, type: "SIMPLIFIED", severity: "HIGH", category: "deceptive" },
