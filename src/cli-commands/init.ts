@@ -173,7 +173,9 @@ async function filesAreIdentical(file1: string, file2: string): Promise<boolean>
     // Skip comparison for very large files (prevent memory issues)
     if (size1 > MAX_FILE_SIZE) {
       console.log(chalk.dim(`   ⚠ Skipping comparison for large file (${Math.round(size1 / 1024)}KB)`));
-      return false; // Assume different to be safe
+      // For large files, we can't compare efficiently, so we treat them as potentially different
+      // This is a safe default that prevents overwriting large customized files
+      return false;
     }
     
     const content1 = await fs.readFile(file1, 'utf8');
