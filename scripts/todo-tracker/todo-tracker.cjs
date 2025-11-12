@@ -1616,6 +1616,23 @@ function scanCodeComprehensive() {
           continue
         }
         
+        // Skip PLACEHOLDER_VALUES if it's in variable names or code handling placeholders
+        if (pattern.type === "PLACEHOLDER_VALUES") {
+          // Exclude variable names containing "placeholder"
+          if (/\b\w*placeholder\w*\s*[=:]/i.test(line)) {
+            continue
+          }
+          // Exclude code that handles/replaces placeholders
+          if (/\.(replace|test|match|exec|search|split)\s*\(\s*\w*placeholder\w*/i.test(line)) {
+            continue
+          }
+          // Exclude comments about placeholder handling
+          if (/\/\/\s*(Replace|Remove)\s+or\s+(remove|replace)\s+(custom|header|footer|template)\s+placeholder/i.test(line) ||
+              /\/\/\s*(Replace|Remove|Add|Update|Set|Get|Check|Validate|Handle|Process)\s+(custom|header|footer|template)\s+placeholder\s+if\s+present/i.test(line)) {
+            continue
+          }
+        }
+        
         if (pattern.regex.test(line)) {
           const todoItem = addGitInfoToTodoItem({
             file,
