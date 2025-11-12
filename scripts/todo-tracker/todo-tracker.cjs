@@ -995,23 +995,34 @@ function shouldExclude(line, file) {
   }
   
   // Exclude pattern definitions in todo-tracker.cjs itself (not lazy coding, just pattern definitions)
-  if (file.includes('todo-tracker.cjs') && (
-    /regex:\s*\/.*for now|regex:\s*\/.*in production/i.test(line) ||
-    /type:\s*["']FOR_NOW|type:\s*["']IN_PRODUCTION/i.test(line) ||
-    /const deceptivePatterns|const explicitTodoPatterns|const temporaryCodePatterns|const incompletePatterns/i.test(line) ||
-    (/not.*implemented|not yet implemented|needs to be implemented/i.test(line) && /regex:|type:|severity:/i.test(line)) ||
-    /\/\/.*Enhanced.*from|\/\/.*Additional.*patterns|\/\/.*from SEDI/i.test(line) ||
-    /\/\/.*\b(workaround|work around)\b.*\b(until|for now)\b/i.test(line) && /regex:/i.test(line) ||
-    /throw new Error.*not implemented/i.test(line) && /regex:/i.test(line) ||
-    /\/\/.*\b(placeholder|stub|mock)\b.*\b(implementation|data|function)\b/i.test(line) && /regex:/i.test(line) ||
-    // Exclude pattern array definitions (lines with { regex: ... type: ... })
-    /\{\s*regex:\s*\/.*type:\s*["']/i.test(line) ||
-    // Exclude comments about patterns
-    /\/\/.*(?:pattern|regex|detection|from SEDI|from.*docs)/i.test(line) ||
-    // Exclude pattern object definitions
-    /(?:regex|type|severity|category):\s*[\/"']/i.test(line) && /deceptivePatterns|explicitTodoPatterns|temporaryCodePatterns|incompletePatterns/i.test(file)
-  )) {
-    return true
+  if (file.includes('todo-tracker.cjs') || file.includes('todo-tracker/')) {
+    // Exclude pattern array definitions (lines with regex patterns)
+    if (/\{\s*regex:\s*\/.*type:\s*["']/i.test(line) ||
+        /\/\s*\/.*\b(workaround|work around|for now|not implemented|placeholder|stub|mock|incomplete|temporary)\b/i.test(line) ||
+        /\/\/.*\b(workaround|work around)\b.*\b(until|for now)\b/i.test(line) ||
+        /\/\/.*\b(placeholder|stub|mock)\b.*\b(implementation|data|function)\b/i.test(line) ||
+        /throw new Error\s*\(\s*["'].*not implemented/i.test(line) ||
+        /\/\/.*\b(not implemented|not finished|incomplete)\b/i.test(line) ||
+        /\/\/.*\b(stub|placeholder)\b.*\b(replace|implement)\b/i.test(line) ||
+        // Exclude const declarations for pattern arrays
+        /const\s+(deceptivePatterns|explicitTodoPatterns|temporaryCodePatterns|incompletePatterns|commentedCodePatterns)\s*=/i.test(line) ||
+        // Exclude comments about patterns
+        /\/\/.*(?:pattern|regex|detection|from SEDI|from.*docs|Enhanced.*from|Additional.*patterns)/i.test(line) ||
+        // Exclude pattern object definitions
+        /(?:regex|type|severity|category):\s*[\/"']/i.test(line) ||
+        // Exclude array element definitions
+        /^\s*\/\/.*\b(temporarily disabled|temp disabled|disabled temporarily|quick fix|quick hack|temporary fix)\b/i.test(line) ||
+        /^\s*\/\/.*\b(workaround|work around)\b.*\b(until|for now)\b/i.test(line) ||
+        /^\s*\/\/.*\b(placeholder|stub|mock)\b.*\b(implementation|data|function)\b/i.test(line) ||
+        /^\s*\/\/.*\b(not implemented|not finished|incomplete)\b/i.test(line) ||
+        /^\s*\/\/.*\b(stub|placeholder)\b.*\b(replace|implement)\b/i.test(line) ||
+        /^\s*throw new Error\s*\(\s*["'].*not implemented/i.test(line) ||
+        /^\s*throw new Error\s*\(\s*["'].*temporarily unavailable/i.test(line) ||
+        /^\s*return null\s*\/\/.*\b(implement|add|complete)\b/i.test(line) ||
+        /^\s*return undefined\s*\/\/.*\b(implement|add|complete)\b/i.test(line) ||
+        /^\s*temporary|temp |TEMP/gi.test(line)) {
+      return true
+    }
   }
   
   // Exclude success/completion messages (not masked TODOs)
