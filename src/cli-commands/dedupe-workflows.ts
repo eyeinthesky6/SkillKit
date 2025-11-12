@@ -170,8 +170,8 @@ export function createDedupeWorkflowsCommand(): Command {
               console.log(chalk.yellow('\n❌ Cancelled. No files deleted.'));
               return;
             }
-          } catch (error) {
-            // Fallback if inquirer fails (non-interactive terminal)
+              } catch {
+                // Fallback if inquirer fails (non-interactive terminal)
             console.log(chalk.cyan('To proceed, run:'));
             console.log(chalk.cyan('  tsk dedupe-workflows --force\n'));
             return;
