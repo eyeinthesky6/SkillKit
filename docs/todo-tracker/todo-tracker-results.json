@@ -1,32 +1,32 @@
 {
   "metadata": {
-    "timestamp": "2025-11-12T08-43-25",
+    "timestamp": "2025-11-12T08-44-55",
     "date": "2025-11-12",
     "format": "json",
     "version": "1.0.0"
   },
   "summary": {
-    "total": 21070,
+    "total": 21042,
     "bySource": {
       "explicit": 31,
-      "deceptive": 4353,
-      "temporary": 16686,
+      "deceptive": 4342,
+      "temporary": 16669,
       "incomplete": 0,
       "commented_code": 0
     },
     "byPriority": {
-      "blocker": 109,
-      "critical": 2010,
-      "major": 17845,
+      "blocker": 108,
+      "critical": 2000,
+      "major": 17828,
       "minor": 1106
     },
     "byCategory": {
       "temporal": 89,
       "incomplete": 1158,
-      "deceptive": 1181,
+      "deceptive": 1177,
       "technical_debt": 769,
-      "explicit": 841,
-      "temporary": 17030,
+      "explicit": 837,
+      "temporary": 17010,
       "commented_code": 0
     }
   },
@@ -1467,17 +1467,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 84,
-      "type": "PLACEHOLDER_VALUES",
-      "text": "// Temporary/placeholder values and empty returns",
-      "priority": "critical",
-      "category": "temporary",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Replace with real data/service"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 91,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "// Unsafe assumptions and hardcoded values",
@@ -1486,17 +1475,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Add validation & error handling"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 118,
-      "type": "QUICK_HACK",
-      "text": "/\\/\\/.*\\b(quick fix|quick hack|temporary fix)\\b/i,",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Replace with architecturally sound solution"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -1577,9 +1555,9 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 207,
+      "line": 209,
       "type": "PLACEHOLDER_VALUES",
-      "text": "// LEGITIMATE UI PLACEHOLDER TEXT (exclude from PLACEHOLDER_VALUES flagging)",
+      "text": "/placeholder.*[\"']Enter.*symbol|placeholder.*[\"']Enter.*quantity/i, // Form input guidance",
       "priority": "critical",
       "category": "temporary",
       "severity": "HIGH",
@@ -1588,9 +1566,9 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 209,
+      "line": 210,
       "type": "PLACEHOLDER_VALUES",
-      "text": "/placeholder.*[\"']Enter.*symbol|placeholder.*[\"']Enter.*quantity/i, // Form input guidance",
+      "text": "/placeholder.*[\"']Choose.*BUY.*SELL|placeholder.*[\"']Choose.*order.*type/i, // Select dropdown guidance",
       "priority": "critical",
       "category": "temporary",
       "severity": "HIGH",
@@ -1786,17 +1764,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 319,
-      "type": "EXPLICIT_MARKERS",
-      "text": "// Incomplete features - IMPLEMENT MISSING PARTS",
-      "priority": "critical",
-      "category": "explicit",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 320,
       "type": "INCOMPLETE_WORK",
       "text": "WOULD_NEED: \"Add missing service integration\",",
@@ -1838,17 +1805,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Implement missing feature"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 326,
-      "type": "TEMPORARY_SOLUTION",
-      "text": "TEMPORARY_SOLUTION: \"Replace with permanent solution\",",
-      "priority": "critical",
-      "category": "temporary",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Replace with permanent solution"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -1951,17 +1907,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 398,
-      "type": "EXPLICIT_MARKERS",
-      "text": "incomplete: [], // Incomplete implementations",
-      "priority": "critical",
-      "category": "explicit",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 407,
       "type": "EXPLICIT_MARKERS",
       "text": "incomplete: [],",
@@ -2036,17 +1981,6 @@
       "severity": "MEDIUM",
       "source": "deceptive_language",
       "guidance": "Plan migration"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 752,
-      "type": "EXPLICIT_MARKERS",
-      "text": "// 4. Check for incomplete implementations",
-      "priority": "critical",
-      "category": "explicit",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -2160,17 +2094,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 929,
-      "type": "EXPLICIT_MARKERS",
-      "text": "const totalIssues = todos.explicit.length + todos.deceptive.length + todos.temporary.length + todos.incomplete.length + todos.commented_code.length",
-      "priority": "critical",
-      "category": "explicit",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 935,
       "type": "QUICK_HACK",
       "text": "- **Explicit TODOs:** ${todos.explicit.length} (TODO/FIXME/HACK comments)",
@@ -2179,17 +2102,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Replace with architecturally sound solution"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 937,
-      "type": "WORKAROUND",
-      "text": "- **Temporary Code:** ${todos.temporary.length} (console.log, workarounds, etc.)",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Replace workaround with proper integration"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -2223,17 +2135,6 @@
       "severity": "HIGH",
       "source": "deceptive_language",
       "guidance": "Move to config/contract"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 953,
-      "type": "WORKAROUND",
-      "text": "- **Temporary Solutions:** ${todos.byCategory.temporary.length} (workarounds, stubs)",
-      "priority": "critical",
-      "category": "deceptive",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Replace workaround with proper integration"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -2336,17 +2237,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 1030,
-      "type": "AI_OVERCONFIDENCE",
-      "text": "**MAKE PRODUCTION READY:** Replace temporary code with permanent solutions",
-      "priority": "blocker",
-      "category": "deceptive",
-      "severity": "CRITICAL",
-      "source": "deceptive_language",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 1038,
       "type": "AI_OVERCONFIDENCE",
       "text": "**MAKE PRODUCTION READY:** Complete TODOs and remove comments",
@@ -2355,17 +2245,6 @@
       "severity": "CRITICAL",
       "source": "deceptive_language",
       "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 1040,
-      "type": "TEMPORARY_SOLUTION",
-      "text": "### ${todos.byCategory.temporary.length} Temporary Solutions",
-      "priority": "critical",
-      "category": "temporary",
-      "severity": "HIGH",
-      "source": "deceptive_language",
-      "guidance": "Replace with permanent solution"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -52969,83 +52848,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 117,
-      "type": "TEMPORARY_CODE",
-      "text": "/\\/\\/.*\\b(temporarily disabled|temp disabled|disabled temporarily)\\b/i,",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 121,
-      "type": "TEMPORARY_CODE",
-      "text": "/temporary|temp |TEMP/gi, // From deceptive language detector",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 128,
-      "type": "TEMPORARY_CODE",
-      "text": "/throw new Error\\s*\\(\\s*[\"'].*temporarily unavailable.*[\"']\\s*\\)/i,",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 335,
-      "type": "TEMPORARY_CODE",
-      "text": "// Temporal - FIX FOR PRODUCTION",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 338,
-      "type": "TEMPORARY_CODE",
-      "text": "TEMPORAL_LANGUAGE: \"Replace temporary with permanent code\",",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 406,
-      "type": "TEMPORARY_CODE",
-      "text": "temporal: [],",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 411,
-      "type": "TEMPORARY_CODE",
-      "text": "temporary: [],",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 417,
       "type": "DEBUG_STATEMENT",
       "text": "console.log(\"🔍 Phase 2: Scanning for deceptive language patterns...\")",
@@ -53053,28 +52855,6 @@
       "category": "temporary",
       "severity": "MEDIUM",
       "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 418,
-      "type": "TEMPORARY_CODE",
-      "text": "console.log(\"🔍 Phase 3: Scanning for temporary code patterns...\")",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 582,
-      "type": "TEMPORARY_CODE",
-      "text": "\"temp\",",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
       "guidance": "Fix per requirements"
     },
     {
@@ -53108,61 +52888,6 @@
       "category": "temporary",
       "severity": "MEDIUM",
       "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 717,
-      "type": "TEMPORARY_CODE",
-      "text": "for (const pattern of temporaryCodePatterns) {",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 722,
-      "type": "TEMPORARY_CODE",
-      "text": "type: \"TEMPORARY_CODE\",",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 724,
-      "type": "TEMPORARY_CODE",
-      "text": "priority: categorizeTodo(trimmedLine, \"TEMPORARY\", \"MEDIUM\"),",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 726,
-      "type": "TEMPORARY_CODE",
-      "text": "source: \"temporary_code\"",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 729,
-      "type": "TEMPORARY_CODE",
-      "text": "todos.byCategory.temporary.push(todoItem)",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
       "guidance": "Fix per requirements"
     },
     {
@@ -53266,28 +52991,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 948,
-      "type": "TEMPORARY_CODE",
-      "text": "- **Temporal Issues:** ${todos.byCategory.temporal.length} (time-based temporary code)",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 998,
-      "type": "TEMPORARY_CODE",
-      "text": "const debugStatements = todos.temporary.filter(",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 1003,
       "type": "DEBUG_STATEMENT",
       "text": "item.text.includes(\"alert(\")",
@@ -53295,17 +52998,6 @@
       "category": "temporary",
       "severity": "MEDIUM",
       "source": "debug_statement",
-      "guidance": "Fix per requirements"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 1028,
-      "type": "TEMPORARY_CODE",
-      "text": "### ${todos.byCategory.temporal.length} Temporal Issues",
-      "priority": "major",
-      "category": "temporary",
-      "severity": "MEDIUM",
-      "source": "temporary_code",
       "guidance": "Fix per requirements"
     },
     {
@@ -231911,12 +231603,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 1030,
-      "type": "AI_OVERCONFIDENCE",
-      "text": "**MAKE PRODUCTION READY:** Replace temporary code with permanent solutions"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 1038,
       "type": "AI_OVERCONFIDENCE",
       "text": "**MAKE PRODUCTION READY:** Complete TODOs and remove comments"
@@ -232525,21 +232211,9 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 84,
-      "type": "PLACEHOLDER_VALUES",
-      "text": "// Temporary/placeholder values and empty returns"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 91,
       "type": "UNSAFE_ASSUMPTIONS",
       "text": "// Unsafe assumptions and hardcoded values"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 118,
-      "type": "QUICK_HACK",
-      "text": "/\\/\\/.*\\b(quick fix|quick hack|temporary fix)\\b/i,"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -232555,15 +232229,15 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 207,
-      "type": "PLACEHOLDER_VALUES",
-      "text": "// LEGITIMATE UI PLACEHOLDER TEXT (exclude from PLACEHOLDER_VALUES flagging)"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 209,
       "type": "PLACEHOLDER_VALUES",
       "text": "/placeholder.*[\"']Enter.*symbol|placeholder.*[\"']Enter.*quantity/i, // Form input guidance"
+    },
+    {
+      "file": "scripts\\todo-tracker.cjs",
+      "line": 210,
+      "type": "PLACEHOLDER_VALUES",
+      "text": "/placeholder.*[\"']Choose.*BUY.*SELL|placeholder.*[\"']Choose.*order.*type/i, // Select dropdown guidance"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -232615,12 +232289,6 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 319,
-      "type": "EXPLICIT_MARKERS",
-      "text": "// Incomplete features - IMPLEMENT MISSING PARTS"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 322,
       "type": "EXPLICIT_MARKERS",
       "text": "INCOMPLETE_ADMISSION: \"Finish incomplete functionality\","
@@ -232630,12 +232298,6 @@
       "line": 323,
       "type": "UNIMPLEMENTED_FEATURE",
       "text": "UNIMPLEMENTED_FEATURE: \"Implement missing feature\","
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 326,
-      "type": "TEMPORARY_SOLUTION",
-      "text": "TEMPORARY_SOLUTION: \"Replace with permanent solution\","
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -232663,21 +232325,9 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 398,
-      "type": "EXPLICIT_MARKERS",
-      "text": "incomplete: [], // Incomplete implementations"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 407,
       "type": "EXPLICIT_MARKERS",
       "text": "incomplete: [],"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 752,
-      "type": "EXPLICIT_MARKERS",
-      "text": "// 4. Check for incomplete implementations"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -232699,21 +232349,9 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 929,
-      "type": "EXPLICIT_MARKERS",
-      "text": "const totalIssues = todos.explicit.length + todos.deceptive.length + todos.temporary.length + todos.incomplete.length + todos.commented_code.length"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 935,
       "type": "QUICK_HACK",
       "text": "- **Explicit TODOs:** ${todos.explicit.length} (TODO/FIXME/HACK comments)"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 937,
-      "type": "WORKAROUND",
-      "text": "- **Temporary Code:** ${todos.temporary.length} (console.log, workarounds, etc.)"
     },
     {
       "file": "scripts\\todo-tracker.cjs",
@@ -232729,21 +232367,9 @@
     },
     {
       "file": "scripts\\todo-tracker.cjs",
-      "line": 953,
-      "type": "WORKAROUND",
-      "text": "- **Temporary Solutions:** ${todos.byCategory.temporary.length} (workarounds, stubs)"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
       "line": 1024,
       "type": "EXPLICIT_MARKERS",
       "text": "### ${todos.byCategory.incomplete.length} Incomplete Features"
-    },
-    {
-      "file": "scripts\\todo-tracker.cjs",
-      "line": 1040,
-      "type": "TEMPORARY_SOLUTION",
-      "text": "### ${todos.byCategory.temporary.length} Temporary Solutions"
     },
     {
       "file": "src\\cli-commands\\init.ts",
