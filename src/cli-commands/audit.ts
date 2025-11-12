@@ -559,18 +559,9 @@ async function checkCustomizations(projectRoot: string): Promise<AuditIssue[]> {
     }
     
     // Check for deprecated workflows/skills
-    // This would require a deprecation list - for now, check version metadata
-    if (versionInfo.installed && compareVersions(versionInfo.installed, '0.0.3') < 0) {
-      issues.push({
-        id: 'CUST-deprecated-version',
-        severity: 'warning',
-        category: 'Deprecation',
-        message: `Very old version detected: ${versionInfo.installed}`,
-        impact: 'Some workflows may be deprecated. Check for updates.',
-        fix: `Update to latest version (${current}) or review CHANGELOG.md for deprecated features.`,
-        autoFixable: false,
-      });
-    }
+    // Use deprecation list to identify specific deprecated items
+    const deprecatedItems = await checkDeprecatedItems(projectRoot, versionInfo.installed, current);
+    issues.push(...deprecatedItems);
     
   } catch (error) {
     issues.push({
@@ -590,6 +581,66 @@ async function checkCustomizations(projectRoot: string): Promise<AuditIssue[]> {
 /**
  * Compare two semantic versions
  */
+/**
+ * Check for deprecated workflows, skills, or features
+ * Uses version-based deprecation tracking
+ */
+async function checkDeprecatedItems(
+  projectRoot: string,
+  installedVersion: string | null,
+  currentVersion: string
+): Promise<AuditIssue[]> {
+  const issues: AuditIssue[] = [];
+
+  // Deprecation list: items deprecated in specific versions
+  // Format: { version: 'x.y.z', items: ['workflow-name', 'skill-name'], reason?: string }
+  const deprecationList: Array<{ version: string; items: string[]; reason?: string }> = [
+    // Add specific deprecations here as they occur
+    // Example: { version: '0.0.4', items: ['OLD_WORKFLOW'], reason: 'Replaced by NEW_WORKFLOW' }
+  ];
+
+  // Check version-based deprecations
+  if (installedVersion) {
+    for (const deprecation of deprecationList) {
+      if (compareVersions(installedVersion, deprecation.version) < 0) {
+        // Installed version is older than deprecation version
+        for (const item of deprecation.items) {
+          // Check if deprecated item exists in project
+          const workflowPath = path.join(projectRoot, '.cursor', 'commands', `${item}.md`);
+          const skillPath = path.join(projectRoot, 'skills', item);
+          
+          if (fs.existsSync(workflowPath) || fs.existsSync(skillPath)) {
+            issues.push({
+              id: `DEPRECATED-${item}`,
+              severity: 'warning',
+              category: 'Deprecation',
+              message: `${item} was deprecated in version ${deprecation.version}`,
+              impact: deprecation.reason || `This item is deprecated and should be removed or replaced.`,
+              fix: `Remove ${item} or migrate to the recommended replacement. Review CHANGELOG.md for details.`,
+              autoFixable: false,
+            });
+          }
+        }
+      }
+    }
+
+    // Fallback: warn about very old versions
+    if (compareVersions(installedVersion, '0.0.3') < 0) {
+      issues.push({
+        id: 'CUST-deprecated-version',
+        severity: 'warning',
+        category: 'Deprecation',
+        message: `Very old version detected: ${installedVersion}`,
+        impact: 'Some workflows may be deprecated. Check for updates.',
+        fix: `Update to latest version (${currentVersion}) or review CHANGELOG.md for deprecated features.`,
+        autoFixable: false,
+      });
+    }
+  }
+
+  return issues;
+}
+
 function compareVersions(v1: string, v2: string): number {
   const parse = (v: string) => v.split('.').map(Number);
   const [m1, i1, p1] = parse(v1);
