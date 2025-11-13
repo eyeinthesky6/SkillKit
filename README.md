@@ -77,23 +77,33 @@ pnpm add @trinity-os/skillkit
 
 ## Quick Start
 
-### 🚀 Initialize in Your Project
+### 🚀 Automatic Setup (Recommended)
 
 ```bash
-# Install globally
-npm install -g @trinity-os/skillkit
-
-# Initialize in your project (Cursor)
+# Install in your project
 cd your-project
-tsk init --cursor
+npm install @trinity-os/skillkit
 
-# What this does:
+# That's it! SkillKit auto-initializes during install:
+# ✓ Detects your project (package.json, .git, etc.)
 # ✓ Copies 13 workflows to .cursor/commands/ (including SKILLKIT_TASK)
 # ✓ Auto-customizes workflows to your project (detects languages, package managers, tools)
 # ✓ Installs Anthropic skills (pdf, xlsx, docx, etc.)
 # ✓ Generates AGENTS.md catalog
 # ✓ Auto-deduplicates any conflicts
-# ✓ Ready to use!
+# ✓ Ready to use immediately!
+```
+
+**Note:** To skip auto-initialization, set `SKILLKIT_NO_AUTO_INIT=true` before install.
+
+### 🛠️ Manual Initialization (Optional)
+
+```bash
+# If you need to manually initialize or re-initialize
+tsk init --cursor
+
+# Or for non-Cursor projects
+tsk init --workflows
 ```
 
 ### 📋 Use Workflows in Cursor
@@ -168,10 +178,12 @@ tsk install anthropics/skills
 # → Interactive checkbox to select skills
 # → Installs to .claude/skills/
 
-# Load a skill when needed
+# Load a skill when needed (MANDATORY for agents)
 tsk skill:load pdf
-# → AI gets PDF expertise in context
+# → Outputs full SKILL.md content (200-600 lines) to terminal
+# → AI agent MUST read terminal output to get skill knowledge
 # → Works cross-platform (Windows/Mac/Linux)
+# → Skills are loaded into context via terminal output
 
 # List installed skills
 tsk list
@@ -180,6 +192,12 @@ tsk list
 tsk skills:add alice/db-skills/postgres
 # → Auto-downloads, validates, installs
 ```
+
+**⚠️ Important for AI Agents:**
+- Skills are NOT automatically loaded - you MUST run `tsk skill:load <name>` in terminal
+- The terminal output contains the full skill instructions
+- You MUST read the terminal output to get skill knowledge
+- Workflows explicitly require skill loading via terminal commands
 
 ### 🛠️ System Commands
 

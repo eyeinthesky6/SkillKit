@@ -32,29 +32,6 @@ LOG_FILE="docs/AITracking/AIAction_${TODAY}_${TASK_NAME}.md"
 
 ---
 
-## Phase 0.5: Read AGENTS.md (MANDATORY)
-
-**Before starting, you MUST read AGENTS.md to understand available skills and workflows:**
-
-**YOU MUST USE THE FILE TOOL TO OPEN AND READ:**
-
-```
-AGENTS.md
-```
-
-**What to look for:**
-- Available skills (pdf, xlsx, docx, etc.)
-- Skill descriptions and use cases
-- Workflow references
-- Available agents
-
-**After reading, summarize:**
-- Which skills are available
-- Which skills might be relevant for this feature
-- Note this for Phase 2.5
-
----
-
 ## Phase 1: Gather Requirements (5min)
 
 **See:** @docs/workflows/subtasks/gather-requirements.md
@@ -65,13 +42,12 @@ AGENTS.md
 - [ ] Files to modify identified
 - [ ] Success criteria defined
 - [ ] AITracking log created
-- [ ] AGENTS.md read and relevant skills identified
 
 **Detect domain expertise needed:**
-- Mentions "PDF" → **MUST load `pdf` skill in Phase 2.5 (via terminal)**
-- Mentions "Excel/spreadsheet" → **MUST load `xlsx` skill in Phase 2.5 (via terminal)**
-- Mentions "Word/document" → **MUST load `docx` skill in Phase 2.5 (via terminal)**
-- Mentions "design/poster" → **MUST load `canvas-design` skill in Phase 2.5 (via terminal)**
+- Mentions "PDF" → Load `pdf` skill (see Phase 2.5)
+- Mentions "Excel/spreadsheet" → Load `xlsx` skill
+- Mentions "Word/document" → Load `docx` skill
+- Mentions "design/poster" → Load `canvas-design` skill
 
 ---
 
@@ -86,54 +62,21 @@ npm install  # Or: pip install -r requirements.txt
 
 ---
 
-## Phase 2.5: Load Domain Skills (MANDATORY if needed)
+## Phase 2.5: Load Domain Skills (if needed)
 
 **See:** @docs/workflows/subtasks/load-skill.md
 
-**🚨 CRITICAL: You MUST use the terminal tool to load skills. Do NOT just mention them.**
-
-### Step 1: Determine Which Skill is Needed
-
-Based on Phase 1 requirements, identify if specialized expertise is needed:
-- Mentions "PDF" → Need `pdf` skill
-- Mentions "Excel/spreadsheet" → Need `xlsx` skill
-- Mentions "Word/document" → Need `docx` skill
-- Mentions "design/poster" → Need `canvas-design` skill
-- Mentions "database" → Need `database` skill
-
-### Step 2: Load the Skill via Terminal (REQUIRED)
-
-**YOU MUST RUN THIS COMMAND IN THE TERMINAL TOOL:**
+**When requirements mention specialized tasks:**
 
 ```bash
 # Example: If working with PDFs:
 tsk skill:load pdf
+
+# Example: If working with spreadsheets:
+tsk skill:load xlsx
 ```
 
-**What happens:**
-1. Command outputs full SKILL.md content (200-600 lines)
-2. Skill instructions appear in terminal output
-3. You must read the entire terminal output
-4. Skill knowledge is now in your context
-
-### Step 3: Verify Skill Loaded
-
-**Check terminal output for:**
-- ✅ "✓ Loaded <skill> skill" message
-- ✅ Full skill instructions (200-600 lines)
-- ✅ Sections like "When to use", "Approach", "Examples"
-
-**If you don't see full skill content, the skill was NOT loaded. Re-run the command.**
-
-### Step 4: Use Skill Knowledge
-
-**After loading, you MUST:**
-1. Reference the skill instructions when working on the task
-2. Use the provided code examples and patterns
-3. Follow the skill's best practices
-4. Apply the domain expertise to your specific implementation
-
-**This loads 200-600 lines of expert guidance that you MUST use!**
+**This loads 200-600 lines of expert guidance!**
 
 ---
 

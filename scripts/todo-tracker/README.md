@@ -4,6 +4,21 @@
 
 A specialized tool for detecting incomplete implementations, deceptive language patterns, and code quality issues in AI-generated codebases.
 
+## 🆕 Context-Aware Detection (2025-11-13)
+
+**NEW:** Context-aware pattern detection with **82% reduction in false positives** (690 → 124 issues)!
+
+- **Context Window Analysis** - Analyzes surrounding code for better accuracy
+- **Confidence Scoring** - Multi-indicator detection with confidence thresholds
+- **Research-Based** - Based on CodeT5, CodeBERT, and InferCode research
+
+**Results:**
+- COMMENTED_OUT_CODE: 12 → 0 issues (100% false positives eliminated)
+- Deceptive Language: 309 → 21 issues (93% reduction)
+- Overall: 82% reduction in false positives
+
+See [CONTEXT_AWARE_README.md](./CONTEXT_AWARE_README.md) for details and research attributions.
+
 ---
 
 ## Features
@@ -97,11 +112,19 @@ Currently uses hardcoded patterns. Future enhancements will support:
 
 ---
 
-## Documentation
+## 📚 Documentation
 
-See `docs/` folder for:
+### Context-Aware Detection
+- [CONTEXT_AWARE_README.md](./CONTEXT_AWARE_README.md) - Complete guide with research attributions
+- [docs/todo-tracker/CONTEXT_AWARE_IMPROVEMENTS_13-11-2025.md](../docs/todo-tracker/CONTEXT_AWARE_IMPROVEMENTS_13-11-2025.md) - Improvement plan
+- [docs/todo-tracker/CONTEXT_AWARE_IMPLEMENTATION_13-11-2025.md](../docs/todo-tracker/CONTEXT_AWARE_IMPLEMENTATION_13-11-2025.md) - Implementation details
+
+### Other Documentation
+See `docs/todo-tracker/` folder for:
 - `TODO_Tracker_Comparison_10-11-2025.md` - Comparison with leasot
 - `AI_Generated_Codebase_TODO_Tracking_Analysis_10-11-2025.md` - Analysis and learnings
+- `FALSE_POSITIVE_ANALYSIS_13-11-2025.md` - False positive analysis
+- `COMPREHENSIVE_ISSUE_ANALYSIS_13-11-2025.md` - Comprehensive issue breakdown
 
 ---
 
@@ -128,9 +151,14 @@ See `docs/` folder for:
 
 ```
 scripts/todo-tracker/
-├── todo-tracker.cjs      # Main script
-├── README.md            # This file
-└── docs/                # Documentation
+├── todo-tracker.cjs              # Main script
+├── README.md                      # This file
+├── CONTEXT_AWARE_README.md        # Context-aware detection guide
+└── docs/todo-tracker/             # Documentation
+    ├── CONTEXT_AWARE_IMPROVEMENTS_13-11-2025.md
+    ├── CONTEXT_AWARE_IMPLEMENTATION_13-11-2025.md
+    ├── FALSE_POSITIVE_ANALYSIS_13-11-2025.md
+    ├── COMPREHENSIVE_ISSUE_ANALYSIS_13-11-2025.md
     ├── TODO_Tracker_Comparison_10-11-2025.md
     └── AI_Generated_Codebase_TODO_Tracking_Analysis_10-11-2025.md
 ```
@@ -145,5 +173,5 @@ This is an experimental project folder. Feel free to experiment and enhance!
 
 ---
 
-**Last Updated:** 10-11-2025
+**Last Updated:** 2025-11-13
 

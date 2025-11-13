@@ -47,14 +47,21 @@ export function createSkillLoadCommand(): Command {
           console.log(chalk.dim(`\nCommand used: ${result.command}\n`));
         }
         
-        // Display the skill content
+        // Display the skill content with clear markers for agents
+        console.log(chalk.bold.cyan('\n' + '═'.repeat(80)));
+        console.log(chalk.bold.cyan('📚 SKILL LOADED: ' + skillName.toUpperCase()));
+        console.log(chalk.bold.cyan('═'.repeat(80)));
+        console.log(chalk.dim('\nThe following content contains the complete skill instructions.'));
+        console.log(chalk.dim('You MUST read and apply these instructions for your task.\n'));
         console.log(chalk.dim('─'.repeat(80)));
         console.log(result.content);
         console.log(chalk.dim('─'.repeat(80)));
-        
-        // Provide helpful tips
-        console.log(chalk.dim('\n💡 Tip: The skill content is now in your context.'));
-        console.log(chalk.dim('   Follow the instructions above to complete your task.\n'));
+        console.log(chalk.bold.green('\n✅ SKILL CONTENT LOADED INTO CONTEXT'));
+        console.log(chalk.yellow('\n🚨 IMPORTANT FOR AI AGENTS:'));
+        console.log(chalk.yellow('   • The skill instructions above are now in your context'));
+        console.log(chalk.yellow('   • You MUST use these instructions when working on related tasks'));
+        console.log(chalk.yellow('   • Follow the approaches, examples, and best practices shown above'));
+        console.log(chalk.yellow('   • Reference this skill knowledge throughout your work\n'));
       } else {
         spinner.fail(chalk.red(`Failed to load ${chalk.cyan(skillName)} skill`));
         

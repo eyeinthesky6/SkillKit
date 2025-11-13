@@ -8,29 +8,6 @@
 <!-- Project-specific critical rules/standards -->
 ---
 
-## Step 0: Read AGENTS.md (MANDATORY)
-
-**Before anything else, you MUST read AGENTS.md to understand available skills and workflows:**
-
-**YOU MUST USE THE FILE TOOL TO OPEN AND READ:**
-
-```
-AGENTS.md
-```
-
-**What to look for:**
-- Available skills (pdf, xlsx, docx, database, etc.)
-- Skill descriptions and when to use them
-- Available workflows
-- System capabilities
-
-**After reading, note:**
-- Which skills are available for this project
-- Which workflows can be used
-- This information will be needed for task routing
-
----
-
 ## Step 1: Load Context (30s)
 
 **See:** @docs/workflows/subtasks/load-context.md  

@@ -438,6 +438,7 @@ export function createInitCommand(): Command {
           'HELP.md',
           'AUDIT_SKILLKIT.md',
           'SKILLKIT_TASK.md',
+          'PDF_REVIEW.md',
         ];
 
         // Build source file paths
