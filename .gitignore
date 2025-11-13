@@ -45,3 +45,69 @@ Thumbs.db
 
 # Audit logs
 docs/audits/
+# Note: docs/audit/ reports are tracked (they're useful for history)
+# Note: docs/skillkit/ reports are tracked by default (can be excluded if desired)
+# Uncomment to exclude: # docs/skillkit/
+
+# Workflow generation cache and test outputs
+test-workflow-output/
+*.workflow-cache
+.workflow-cache/
+# Note: .cursor/commands/ files are intentionally tracked (they're the generated workflows)
+
+# Test outputs and temporary files
+test-results/
+coverage/
+.nyc_output/
+*.test-output
+*.test-results
+
+# Generated todo tracker files
+todo-tracker-*.json
+blockers.json
+current-issues.json
+fix-plan.json
+false-positives-report.md
+
+# Todo tracker cache directory
+.todo-tracker-cache/
+
+# Todo tracker reports
+**/Comprehensive_TODO_Analysis_*.md
+**/Comprehensive_TODO_Analysis_*.json
+**/Comprehensive_TODO_Analysis_*.html
+**/todo-tracker-results.json
+
+# Temporary and cache files
+*.tmp
+*.temp
+.cache/
+.temp/
+tmp/
+temp/
+
+# OS and editor temp files
+*.swp
+*.swo
+*~
+.vscode-test/
+.idea/
+*.iml
+
+# Build artifacts and generated files
+*.js.map
+*.d.ts.map
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# Package manager caches
+.pnpm-store/
+.yarn/
+.npm/
+package-lock.json
+yarn.lock
+
+# Environment and local config
+.env.local
+.env.*.local
+*.local

@@ -35,12 +35,23 @@ A specialized tool for detecting incomplete implementations, deceptive language 
 ### Basic Usage
 
 ```bash
-# Run from project root
+# Run from project root (excludes scripts/ folder by default)
 node scripts/todo-tracker/todo-tracker.cjs
+
+# Include scripts folder (contains utility/admin code)
+node scripts/todo-tracker/todo-tracker.cjs --scripts
 
 # Focus on specific directory
 node scripts/todo-tracker/todo-tracker.cjs --focus=packages/shared/src
 ```
+
+### Directory Scanning
+
+By default, the tool scans:
+- `apps/`, `packages/`, `src/`, `lib/`, `.` (current directory)
+- Excludes: `node_modules/`, `.git/`, `dist/`, `build/`, `docs/`, `scripts/`, etc.
+
+Use `--scripts` to include the `scripts/` folder if it contains important code.
 
 ### Output
 

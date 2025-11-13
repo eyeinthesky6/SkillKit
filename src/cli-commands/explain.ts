@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-
+import { MultiLanguageAnalyzer } from '../intelligence/multi-language-analyzer';
 import { WorkflowAdapter } from '../intelligence/workflow-adapter';
 
 /**
@@ -19,57 +19,48 @@ export function createExplainCommand(): Command {
     .action(async (workflow, options) => {
       console.log(`🔍 Analyzing project architecture...\n`);
       
-      const adapter = new WorkflowAdapter(options.dir);
-      const architecture = await adapter.initialize();
+      const analyzer = new MultiLanguageAnalyzer(options.dir);
+      const project = await analyzer.analyze();
+      const adapter = new WorkflowAdapter(project);
       
       // Show detected architecture
       console.log('📊 Project Architecture:\n');
-      console.log(`Language: ${architecture.language}`);
-      if (architecture.framework) {
-        console.log(`Framework: ${architecture.framework}`);
+      console.log(`Languages: ${project.languages.map(l => l.language).join(', ')}`);
+      if (project.isMonorepo) {
+        console.log(`Structure: Monorepo`);
       }
       
-      if (Object.keys(architecture.patterns).length > 0) {
-        console.log('\nPatterns Detected:');
-        if (architecture.patterns.contractsFirst) {
-          console.log(`  ✓ Contracts-First (${architecture.tools.validation})`);
+      for (const lang of project.languages) {
+        console.log(`\n${lang.language.toUpperCase()} (${lang.rootPath}):`);
+        if (lang.framework) {
+          console.log(`  Framework: ${lang.framework}`);
         }
-        if (architecture.patterns.typeFirst) {
-          console.log(`  ✓ Type-First (strict TypeScript)`);
+        if (lang.packageManager) {
+          console.log(`  Package Manager: ${lang.packageManager}`);
         }
-        if (architecture.patterns.testDriven) {
-          console.log(`  ✓ Test-Driven Development`);
+        if (lang.testFramework) {
+          console.log(`  Test Framework: ${lang.testFramework}`);
         }
-        if (architecture.patterns.domainDriven) {
-          console.log(`  ✓ Domain-Driven Design`);
+        if (lang.linter) {
+          console.log(`  Linter: ${lang.linter}`);
         }
-      }
-      
-      if (architecture.tools.linting) {
-        console.log(`\nLinting: ${architecture.tools.linting.tool} (${architecture.tools.linting.strictness} mode)`);
       }
       
       console.log('\n' + '─'.repeat(60));
       console.log(`\n🎯 Workflow: ${workflow}\n`);
       
-      try {
-        const adapted = await adapter.adapt(workflow);
-        
-        console.log(`Description: ${adapted.description}\n`);
-        console.log('Steps that will be executed:\n');
-        
-        adapted.steps.forEach((step, i) => {
-          console.log(`  ${i + 1}. ${step.name} (${step.intent})`);
-        });
-        
-        console.log('\n💡 Reasoning:\n');
-        console.log(adapted.reasoning);
-        
-      } catch (error: unknown) {
-        const err = error as { message?: string };
-        console.log(`❌ ${err.message || 'Unknown error'}`);
-        console.log('\n💡 Available workflows: quality-gate, pre-commit, contracts-check, deploy-prep');
+      const mappings = adapter.generateCommandMappings();
+      const rootMapping = mappings.get(options.dir) || mappings.values().next().value;
+      
+      if (rootMapping) {
+        console.log('Commands that will be executed:\n');
+        console.log(`  Install: ${rootMapping.install}`);
+        console.log(`  Lint: ${rootMapping.lint}`);
+        console.log(`  Test: ${rootMapping.test}`);
+        console.log(`  Build: ${rootMapping.build}`);
       }
+      
+      console.log('\n💡 This workflow adapts to your project\'s detected languages and tools.');
     });
   
   return cmd;

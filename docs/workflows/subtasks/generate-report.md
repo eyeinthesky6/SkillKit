@@ -26,12 +26,14 @@ pytest --cov=src --cov-report=html
 
 ### 2. Lint Report
 
+**Standard Location:** `docs/skillkit/`
+
 ```bash
 # JSON format:
-npx eslint . --format json --output-file lint-report.json
+npx eslint . --format json --output-file docs/skillkit/lint-report.json
 
 # HTML format:
-npx eslint . --format html --output-file lint-report.html
+npx eslint . --format html --output-file docs/skillkit/lint-report.html
 ```
 
 ### 3. Type Coverage Report
@@ -45,15 +47,17 @@ npx type-coverage --detail
 
 ### 4. Dependency Report
 
+**Standard Location:** `docs/skillkit/`
+
 ```bash
 # List all dependencies:
-npm list --depth=0 > dependencies-report.txt
+npm list --depth=0 > docs/skillkit/dependencies-report.txt
 
 # Check licenses:
-npx license-checker --summary > licenses-report.txt
+npx license-checker --summary > docs/skillkit/licenses-report.txt
 
 # Check vulnerabilities:
-npm audit --json > security-report.json
+npm audit --json > docs/skillkit/security-report.json
 ```
 
 ### 5. Build Size Report
@@ -72,9 +76,14 @@ npm run build -- --report
 
 ## Generate Summary
 
+**Standard Location:** `docs/skillkit/`
+
 ```bash
+# Ensure directory exists:
+mkdir -p docs/skillkit
+
 # Create summary file:
-cat > project-report.md << 'EOF'
+cat > docs/skillkit/project-report.md << 'EOF'
 # Project Status Report
 Generated: $(date)
 
@@ -97,6 +106,18 @@ Generated: $(date)
 - Build time: 12s
 EOF
 ```
+
+## Report Organization
+
+**SkillKit Standard:** All diagnostic reports should be saved to `docs/skillkit/`
+
+- **Diagnostics:** `docs/skillkit/diagnostics-{timestamp}.md`
+- **Lint Reports:** `docs/skillkit/lint-report.{json|html}`
+- **Dependency Reports:** `docs/skillkit/dependencies-report.txt`
+- **Security Reports:** `docs/skillkit/security-report.json`
+- **Coverage Reports:** `coverage/` (tool standard, but can be symlinked to `docs/skillkit/coverage/`)
+
+**Note:** Some tools have their own standard locations (e.g., `coverage/` for test coverage). These can be kept in their standard locations or symlinked/copied to `docs/skillkit/` for centralized access.
 
 ## Open Report
 

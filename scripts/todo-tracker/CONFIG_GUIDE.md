@@ -31,6 +31,16 @@ These are **always** excluded, even with `--include`:
 - `.git/`
 - `dist/`, `build/`, `coverage/`
 - The tracker itself (`scripts/todo-tracker/`)
+- **Backup files:** `*.bak`, `*.backup`, `*.old`, `*.orig`, `*.save`, `*.swp`, `*.swo`, `*~`
+- **Temp files:** `*.tmp`, `*.temp`, `*.cache`
+- **Archive files:** `*.archive`, `*.archived`
+- **WIP/Draft files:** `*.wip`, `*.work`, `*.draft`, `*.final`, `*.staging`, `*.dev`, `*.test`, `*.local`, `*.copy`
+- **Numbered backups:** `*.backup1`, `*.backup2`, `*.bak1`, `*.old1`, `*.tmp1`, etc.
+- **Multi-extension backups:** `*.backup.ts`, `*.old.js`, `*.tmp.py`, `*.wip.tsx`, etc.
+- **Archive directories:** `archive/`, `archives/`, `backup/`, `backups/`, `old/`, `legacy/`, `deprecated/`
+- **Test outputs:** `test-results/`, `test-output/`, `.nyc_output/`
+- **IDE files:** `.vscode/`, `.idea/`, `.DS_Store`, `Thumbs.db`
+- **Generated files:** `*.min.js`, `*.bundle.js`, `*.map`, `generated/`
 
 #### Default Exclusions (Can Override)
 These are excluded by default, but can be overridden with `--include`:

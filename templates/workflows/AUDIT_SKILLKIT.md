@@ -221,9 +221,9 @@ tsk audit --verify
 ### **Issue: Customized Files Blocking Updates** ⭐ NEW
 ```
 ⚠️  Found: 3 customized workflows detected
-   - BEGIN_SESSION.md (customized on 2025-11-05)
-   - IMPLEMENT_FEATURE.md (customized on 2025-11-07)
-   - FIX_BUGS.md (customized on 2025-11-08)
+   - BEGIN_SESSION.md (customized on YYYY-MM-DD)
+   - IMPLEMENT_FEATURE.md (customized on YYYY-MM-DD)
+   - FIX_BUGS.md (customized on YYYY-MM-DD)
 
 Current version: 0.0.5
 Your workflows: 0.0.3
@@ -268,7 +268,7 @@ Your workflows: 0.0.3
 
 ```markdown
 # SkillKit Audit Report
-**Date:** 2025-11-07
+**Date:** $(date +%Y-%m-%d)
 **Duration:** 47 seconds
 **Health Score:** 82/100 ✅ Good
 
@@ -460,9 +460,9 @@ chmod -R u+rw .cursor/
 **All audits are saved:**
 ```
 docs/audit/
-├── audit-report-2025-11-07.md
-├── audit-report-2025-11-06.md
-├── audit-report-2025-11-05.md
+├── audit-report-YYYY-MM-DD.md
+├── audit-report-YYYY-MM-DD.md
+├── audit-report-YYYY-MM-DD.md
 └── audit-report-latest.md → (symlink to most recent)
 ```
 
@@ -473,9 +473,9 @@ tsk audit:history
 
 # Output:
 # Date        Score  Issues  Status
-# 2025-11-07  82     4       ✅ Good
-# 2025-11-06  75     8       ⚠️ Fair
-# 2025-11-05  68     12      ⚠️ Fair
+# YYYY-MM-DD  82     4       ✅ Good
+# YYYY-MM-DD  75     8       ⚠️ Fair
+# YYYY-MM-DD  68     12      ⚠️ Fair
 #
 # Trend: ⬆️ Improving
 ```

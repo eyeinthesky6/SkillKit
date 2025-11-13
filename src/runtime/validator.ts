@@ -10,7 +10,38 @@ import type { Skill } from '../types';
  */
 export function jsonSchemaToZod(schema: JSONSchema7): ZodSchema<unknown> {
   // JSON Schema to Zod converter - covers common schema patterns
-  // TODO: Extend to support additional JSON Schema features (allOf, anyOf, oneOf, etc.)
+  
+  // Handle composition keywords (allOf, anyOf, oneOf) first
+  if (schema.allOf && Array.isArray(schema.allOf) && schema.allOf.length > 0) {
+    // allOf: all schemas must match (intersection)
+    const schemas = schema.allOf.map((s) => jsonSchemaToZod(s as JSONSchema7));
+    if (schemas.length === 1) return schemas[0];
+    return schemas.reduce((acc, s) => acc.and(s), schemas[0]);
+  }
+  
+  if (schema.anyOf && Array.isArray(schema.anyOf) && schema.anyOf.length > 0) {
+    // anyOf: at least one schema must match (union)
+    const schemas = schema.anyOf.map((s) => jsonSchemaToZod(s as JSONSchema7));
+    if (schemas.length === 1) return schemas[0];
+    return z.union(schemas as [ZodType, ZodType, ...ZodType[]]);
+  }
+  
+  if (schema.oneOf && Array.isArray(schema.oneOf) && schema.oneOf.length > 0) {
+    // oneOf: exactly one schema must match (discriminated union)
+    // Zod doesn't have native oneOf, so we use union with refinement
+    const schemas = schema.oneOf.map((s) => jsonSchemaToZod(s as JSONSchema7));
+    if (schemas.length === 1) return schemas[0];
+    const union = z.union(schemas as [ZodType, ZodType, ...ZodType[]]);
+    // Refine to ensure exactly one matches
+    return union.refine((val) => {
+      let matchCount = 0;
+      for (const s of schemas) {
+        const result = s.safeParse(val);
+        if (result.success) matchCount++;
+      }
+      return matchCount === 1;
+    }, { message: 'Must match exactly one schema' });
+  }
 
   if (schema.type === 'string') {
     let zodType: ZodString = z.string();
@@ -105,10 +136,10 @@ export function jsonSchemaToZod(schema: JSONSchema7): ZodSchema<unknown> {
       // Use .strip() to remove unknown properties
       zodObj = zodObj.strip();
     } else if (typeof schema.additionalProperties === 'object') {
-      // TODO: Implement full support for additionalProperties with schema objects
-      // Current implementation: strip unknown properties as a safe fallback
-      console.warn('additionalProperties with schema object is not fully supported - using strip() as fallback');
-      zodObj = zodObj.strip();
+      // additionalProperties with schema object: validate additional properties against schema
+      const additionalSchema = jsonSchemaToZod(schema.additionalProperties as JSONSchema7);
+      // Use catchall() to validate additional properties against the schema
+      zodObj = zodObj.catchall(additionalSchema);
     }
 
     return zodObj;
