@@ -7,6 +7,153 @@
 const fs = require("fs")
 const path = require("path")
 const { execSync } = require("child_process")
+const crypto = require("crypto")
+
+// Try to load AST parser (optional - falls back to regex if not available)
+let parser = null
+try {
+  parser = require("@typescript-eslint/parser")
+  parser.available = true
+} catch (e) {
+  parser = { available: false }
+}
+
+// Cache directory for parsed ASTs
+const CACHE_DIR = path.join(process.cwd(), '.todo-tracker-cache')
+
+// Ensure cache directory exists
+if (!fs.existsSync(CACHE_DIR)) {
+  try {
+    fs.mkdirSync(CACHE_DIR, { recursive: true })
+  } catch (e) {
+    // Cache directory creation failed, will continue without caching
+  }
+}
+
+// Get file hash for caching
+function getFileHash(filePath) {
+  try {
+    const content = fs.readFileSync(filePath, 'utf8')
+    return crypto.createHash('sha256').update(content).digest('hex')
+  } catch (e) {
+    return null
+  }
+}
+
+// Get cached AST if available
+function getCachedAST(filePath) {
+  if (!fs.existsSync(CACHE_DIR)) return null
+  
+  try {
+    const hash = getFileHash(filePath)
+    if (!hash) return null
+    
+    const cacheFile = path.join(CACHE_DIR, `${hash}.json`)
+    
+    if (fs.existsSync(cacheFile)) {
+      const stats = fs.statSync(filePath)
+      const cacheStats = fs.statSync(cacheFile)
+      
+      // Cache is valid if file hasn't changed
+      if (cacheStats.mtime >= stats.mtime) {
+        const cached = JSON.parse(fs.readFileSync(cacheFile, 'utf8'))
+        return cached.ast
+      }
+    }
+  } catch (e) {
+    // Cache read failed, continue without cache
+  }
+  
+  return null
+}
+
+// Cache AST
+function setCachedAST(filePath, ast) {
+  if (!fs.existsSync(CACHE_DIR)) return
+  
+  try {
+    const hash = getFileHash(filePath)
+    if (!hash) return
+    
+    const cacheFile = path.join(CACHE_DIR, `${hash}.json`)
+    fs.writeFileSync(cacheFile, JSON.stringify({ ast, timestamp: Date.now() }))
+  } catch (e) {
+    // Cache write failed, continue without cache
+  }
+}
+
+// Parse file with AST parser (with caching)
+function parseFileWithAST(filePath, content) {
+  if (!parser.available) return null
+  
+  // Check cache first
+  const cachedAST = getCachedAST(filePath)
+  if (cachedAST) {
+    return cachedAST
+  }
+  
+  try {
+    // Determine file type
+    const ext = path.extname(filePath).toLowerCase()
+    const isTypeScript = ['.ts', '.tsx'].includes(ext)
+    const isJSX = ['.tsx', '.jsx'].includes(ext)
+    
+    const ast = parser.parse(content, {
+      sourceType: 'module',
+      ecmaVersion: 'latest',
+      ...(isTypeScript && {
+        project: false, // Don't require tsconfig
+        jsx: isJSX
+      })
+    })
+    
+    // Cache the AST
+    setCachedAST(filePath, ast)
+    
+    return ast
+  } catch (e) {
+    // Parsing failed, fall back to regex
+    return null
+  }
+}
+
+// Extract comments from AST
+function extractCommentsFromAST(ast) {
+  if (!ast || !ast.comments) return []
+  
+  return ast.comments.map(comment => ({
+    type: comment.type, // 'Line' or 'Block'
+    value: comment.value,
+    loc: comment.loc,
+    range: comment.range
+  }))
+}
+
+// Simple AST traversal to find nodes
+function traverseAST(ast, visitor) {
+  if (!ast) return
+  
+  function walk(node, parent) {
+    if (!node || typeof node !== 'object') return
+    
+    // Visit node
+    visitor(node, parent)
+    
+    // Traverse children
+    for (const key in node) {
+      if (key === 'parent' || key === 'loc' || key === 'range') continue
+      
+      const child = node[key]
+      if (Array.isArray(child)) {
+        child.forEach(item => walk(item, node))
+      } else if (child && typeof child === 'object') {
+        walk(child, node)
+      }
+    }
+  }
+  
+  walk(ast, null)
+}
 
 // Parse command line arguments
 const args = process.argv.slice(2)
@@ -136,7 +283,10 @@ For more information, see scripts/todo-tracker/README.md
 }
 
 const focusDir = args.find(arg => arg.startsWith('--focus='))?.split('=')[1]
-const includeDirs = args.filter(arg => arg.startsWith('--include=')).map(arg => arg.split('=')[1])
+const includeDirs = [
+  ...(focusDir ? [focusDir] : []),
+  ...args.filter(arg => arg.startsWith('--include=')).map(arg => arg.split('=')[1])
+]
 const configPath = args.find(arg => arg.startsWith('--config='))?.split('=')[1] || '.todo-tracker.config.js'
 const includeAll = args.includes('--all')
 const includeDebug = includeAll || args.includes('--debug')
@@ -147,7 +297,7 @@ const includeMd = includeAll || args.includes('--md')
 
 // Parse format flag (markdown, json, table)
 const formatArg = args.find(arg => arg.startsWith('--format='))?.split('=')[1] || 'markdown'
-const outputFormat = ['markdown', 'json', 'table'].includes(formatArg.toLowerCase()) 
+const outputFormat = ['markdown', 'json', 'table', 'html'].includes(formatArg.toLowerCase()) 
   ? formatArg.toLowerCase() 
   : 'markdown'
 
@@ -207,16 +357,29 @@ const SCRIPT_DIR = path.dirname(__filename)
 const startTime = Date.now()
 let scanStartTime = 0
 
-// Get current timestamp for reports
-const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19)
-const dateOnly = new Date().toISOString().slice(0, 10)
+// Get current timestamp for reports (local system time)
+const now = new Date()
+// Format: YYYY-MM-DD_HH-MM-SS (local time)
+const year = now.getFullYear()
+const month = String(now.getMonth() + 1).padStart(2, '0')
+const day = String(now.getDate()).padStart(2, '0')
+const hours = String(now.getHours()).padStart(2, '0')
+const minutes = String(now.getMinutes()).padStart(2, '0')
+const seconds = String(now.getSeconds()).padStart(2, '0')
+const timestamp = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`
+const dateOnly = `${year}-${month}-${day}`
+const timeOnly = `${hours}-${minutes}-${seconds}`
 
 // Console output wrapper (suppress if --no-console)
 const log = noConsole ? () => {} : console.log.bind(console)
 const warn = noConsole ? () => {} : console.warn.bind(console)
 
+const TODO_TRACKER_VERSION = '0.0.0'
+
 log("🔍 Enhanced Comprehensive TODO Tracker (Unified)")
-log(`📅 Analysis Date: ${timestamp}`)
+log(`📦 Version: ${TODO_TRACKER_VERSION}`)
+log(`📅 Analysis Date: ${dateOnly} ${timeOnly}`)
+log(`🕐 Analysis Time: ${timestamp}`)
 if (focusDir) {
   log(`🎯 Focused scan: ${focusDir}`)
 }
@@ -228,14 +391,17 @@ if (!fs.existsSync(reportsDir)) {
 }
 
 // Default report file (will be overridden if --output is specified)
-const defaultReportFile = path.join(reportsDir, `Comprehensive_TODO_Analysis_${dateOnly}.md`)
+// Use timestamp in filename for uniqueness
+const defaultReportFile = path.join(reportsDir, `Comprehensive_TODO_Analysis_${timestamp}.md`)
 
 // Set report file based on output flag and format
 let reportFile
 if (!outputArg) {
-  // Default: use format-specific extension
+  // Default: use format-specific extension with timestamp
   if (outputFormat === 'json') {
-    reportFile = path.join(reportsDir, `Comprehensive_TODO_Analysis_${dateOnly}.json`)
+    reportFile = path.join(reportsDir, `Comprehensive_TODO_Analysis_${timestamp}.json`)
+  } else if (outputFormat === 'html') {
+    reportFile = path.join(reportsDir, `Comprehensive_TODO_Analysis_${timestamp}.html`)
   } else if (outputFormat === 'table') {
     reportFile = null // Table format doesn't write to file
   } else {
@@ -266,6 +432,9 @@ const explicitTodoPatterns = [
   /\/\*\s*HACK[\s:]/i,
   /#\s*TODO[\s:]/i,
   /#\s*FIXME[\s:]/i,
+  /#\s*HACK[\s:]/i,
+  /#\s*XXX[\s:]/i,
+  /#\s*BUG[\s:]/i,
 ]
 
 // 2. DECEPTIVE LANGUAGE PATTERNS (Enhanced with manual scan findings)
@@ -276,17 +445,65 @@ const deceptivePatterns = [
 
   // Incomplete/missing functionality (enhanced from deceptive language detector + SEDI patterns)
   { regex: /would need|This would need/gi, type: "WOULD_NEED", severity: "HIGH", category: "incomplete" },
-  { regex: /should be|Should be/gi, type: "SHOULD_BE_IMPLEMENTED", severity: "MEDIUM", category: "incomplete" },
+  { regex: /(?:should be|Should be)\s+(?:implemented|added|created|developed|built|written)/gi, type: "SHOULD_BE_IMPLEMENTED", severity: "MEDIUM", category: "incomplete" },
   { regex: /NOT hardcoded|not yet implemented|needs to be implemented|this needs real implementation|not fully implemented|not implemented/gi, type: "INCOMPLETE_ADMISSION", severity: "CRITICAL", category: "incomplete" },
   { regex: /unimplemented|not.*supported|feature.*not.*supported|method.*not.*supported/gi, type: "UNIMPLEMENTED_FEATURE", severity: "HIGH", category: "incomplete" },
   
-  // Additional incomplete patterns from SEDI todo-verifier
-  { regex: /\b(task|pending|defer|enhance|improve|future|planned|expand|refactor|optimi)\b/gi, type: "INCOMPLETE_MARKER", severity: "MEDIUM", category: "incomplete" },
+  // Additional incomplete patterns from SEDI todo-verifier (ENHANCED: Context-aware)
+  // INCOMPLETE_MARKER: Match in comments with incomplete work context
+  // Only flag when words indicate incomplete work, not when used descriptively
+  { regex: /\b(task|pending|defer|enhance|improve|future|planned|expand|refactor|optimi)\b.*(?:TODO|FIXME|HACK|XXX|TBD|NYI|WIP|not.*done|not.*implemented|not.*finished|incomplete|missing|unfinished|needs.*to|required.*to|to.*do|to.*be|should.*be|must.*be|will.*be|left.*to|remain.*to)/gi, type: "INCOMPLETE_MARKER", severity: "MEDIUM", category: "incomplete" },
+  { regex: /(?:TODO|FIXME|HACK|XXX|TBD|NYI|WIP|not.*done|not.*implemented|not.*finished|incomplete|missing|unfinished|needs.*to|required.*to|to.*do|to.*be|should.*be|must.*be|will.*be|left.*to|remain.*to).*\b(task|pending|defer|enhance|improve|future|planned|expand|refactor|optimi)\b/gi, type: "INCOMPLETE_MARKER", severity: "MEDIUM", category: "incomplete" },
   { regex: /\b(basic version|first version|MVP|initial implementation)\b/gi, type: "BASIC_VERSION", severity: "HIGH", category: "incomplete" },
-  { regex: /\b(work finished|work complete|needs|add|left|remain|next step|follow up)\b/gi, type: "INCOMPLETE_WORK", severity: "MEDIUM", category: "incomplete" },
+  // INCOMPLETE_WORK: Match in comments with incomplete work context
+  // Only flag when words indicate incomplete work, not when used descriptively (e.g., "Adds two numbers")
+  { regex: /\b(work finished|work complete|needs|add|left|remain|next step|follow up)\b.*(?:TODO|FIXME|HACK|XXX|TBD|NYI|WIP|not.*done|not.*implemented|not.*finished|incomplete|missing|unfinished|to.*do|to.*be|should.*be|must.*be|will.*be|left.*to|remain.*to|validation|implementation|error.*handling|testing|documentation)/gi, type: "INCOMPLETE_WORK", severity: "MEDIUM", category: "incomplete" },
+  { regex: /(?:TODO|FIXME|HACK|XXX|TBD|NYI|WIP|not.*done|not.*implemented|not.*finished|incomplete|missing|unfinished|to.*do|to.*be|should.*be|must.*be|will.*be|left.*to|remain.*to).*\b(work finished|work complete|needs|add|left|remain|next step|follow up)\b/gi, type: "INCOMPLETE_WORK", severity: "MEDIUM", category: "incomplete" },
   { regex: /\b(to be done|to do|not yet|not finished|not complete|not ready)\b/gi, type: "INCOMPLETE_STATE", severity: "HIGH", category: "incomplete" },
   { regex: /\b(scheduled|planned|future release|future sprint|future work|future enhancement|future improvement|future expansion|future refactor|future optimization|future feature|future addition|future change|future update|future upgrade)\b/gi, type: "DEFERRED_TO_FUTURE", severity: "MEDIUM", category: "incomplete" },
-  
+
+  // Python-specific incomplete implementation patterns
+  { regex: /raise\s+NotImplementedError\s*\(/gi, type: "PYTHON_NOT_IMPLEMENTED_ERROR", severity: "CRITICAL", category: "incomplete" },
+  { regex: /raise\s+NotImplementedError\s*$/gim, type: "PYTHON_NOT_IMPLEMENTED_ERROR", severity: "CRITICAL", category: "incomplete" },
+  { regex: /\bpass\s+#\s*TODO/gi, type: "PYTHON_PASS_TODO", severity: "HIGH", category: "incomplete" },
+  { regex: /\bpass\s+#\s*FIXME/gi, type: "PYTHON_PASS_FIXME", severity: "HIGH", category: "incomplete" },
+  { regex: /\bpass\s+#\s*HACK/gi, type: "PYTHON_PASS_HACK", severity: "HIGH", category: "incomplete" },
+  { regex: /\bpass\s+#\s*XXX/gi, type: "PYTHON_PASS_XXX", severity: "HIGH", category: "incomplete" },
+  { regex: /\bpass\s+#\s*BUG/gi, type: "PYTHON_PASS_BUG", severity: "HIGH", category: "incomplete" },
+  { regex: /\.\.\./g, type: "PYTHON_ELLIPSIS", severity: "MEDIUM", category: "incomplete" },
+  { regex: /#\s*needs\s+implementation|#*\s*implement\s+me|#*\s*to\s+be\s+implemented|#*\s*not\s+yet\s+implemented/gi, type: "PYTHON_IMPLEMENTATION_NEEDED", severity: "HIGH", category: "incomplete" },
+
+  // Additional Python-specific incomplete patterns (with false positive reductions)
+  // Only flag NotImplemented when used as return value, not in comparisons
+  { regex: /(?:return\s+|=\s*)\bNotImplemented\b/g, type: "PYTHON_NOTIMPLEMENTED_CONSTANT", severity: "HIGH", category: "incomplete" },
+  { regex: /assert\s+False\s*,\s*["'](?:TODO|FIXME|Not\s+implemented?|Not\s+done|TBD|NYI)/gi, type: "PYTHON_ASSERT_FALSE_TODO", severity: "CRITICAL", category: "incomplete" },
+  { regex: /raise\s+(?:ValueError|RuntimeError|NotImplementedError)\s*\(\s*["'](?:TODO|FIXME|Not\s+implemented?|TBD|NYI)/gi, type: "PYTHON_RAISE_TODO", severity: "CRITICAL", category: "incomplete" },
+  // Only flag code quality suppressions when they clearly indicate incomplete work
+  { regex: /#\s*pragma\s*:\s*no\s+cover.*(?:TODO|FIXME|implement|not\s+implemented|placeholder)/gi, type: "PYTHON_PRAGMA_NO_COVER_TODO", severity: "MEDIUM", category: "incomplete" },
+  { regex: /#\s*type\s*:\s*ignore.*(?:TODO|FIXME|implement|not\s+implemented|placeholder)/gi, type: "PYTHON_TYPE_IGNORE_TODO", severity: "MEDIUM", category: "incomplete" },
+  { regex: /#\s*pylint\s*:\s*disable.*(?:TODO|FIXME|implement|not\s+implemented|placeholder)/gi, type: "PYTHON_PYLIN_DISABLE_TODO", severity: "MEDIUM", category: "incomplete" },
+  { regex: /#\s*noqa.*(?:TODO|FIXME|implement|not\s+implemented|placeholder)/gi, type: "PYTHON_NOQA_TODO", severity: "MEDIUM", category: "incomplete" },
+  // More specific docstring patterns - avoid generic mentions
+  { regex: /"""(?:.*?\b(?:TODO|FIXME|implement|not\s+implemented|placeholder|stub)\b.*?)+"""/gis, type: "PYTHON_DOCSTRING_TODO", severity: "MEDIUM", category: "incomplete" },
+  { regex: /'''(?:.*?\b(?:TODO|FIXME|implement|not\s+implemented|placeholder|stub)\b.*?)+'''/gis, type: "PYTHON_DOCSTRING_TODO", severity: "MEDIUM", category: "incomplete" },
+  // Only flag pass-only functions that look like stubs (short names, no docstring)
+  { regex: /^def\s+[a-z_][a-z0-9_]*\s*\([^)]*\)\s*:\s*pass\s*$/gm, type: "PYTHON_PASS_ONLY_FUNCTION", severity: "HIGH", category: "incomplete" },
+  { regex: /if\s+__name__\s*==\s*["']__main__["']\s*:\s*pass\s*$/gm, type: "PYTHON_MAIN_PASS", severity: "MEDIUM", category: "incomplete" },
+  // Only flag ellipsis in class/function definitions (not other uses)
+  { regex: /^class\s+\w+.*?:\s*\.\.\./gm, type: "PYTHON_CLASS_ELLIPSIS", severity: "HIGH", category: "incomplete" },
+  { regex: /^def\s+\w+\s*\([^)]*\)\s*:\s*\.\.\./gm, type: "PYTHON_METHOD_ELLIPSIS", severity: "HIGH", category: "incomplete" },
+
+  // Additional Python incomplete work patterns
+  { regex: /^class\s+\w+.*?:\s*pass\s*$/gm, type: "PYTHON_PASS_ONLY_CLASS", severity: "MEDIUM", category: "incomplete" },
+  { regex: /def\s+\w+\s*\([^)]*\)\s*:\s*return\s+None\s*$/gm, type: "PYTHON_RETURN_NONE_ONLY", severity: "MEDIUM", category: "incomplete" },
+  { regex: /def\s+\w+\s*\([^)]*\)\s*:\s*return\s*\[\]\s*$/gm, type: "PYTHON_RETURN_EMPTY_LIST", severity: "MEDIUM", category: "incomplete" },
+  { regex: /def\s+\w+\s*\([^)]*\)\s*:\s*return\s*\{\}\s*$/gm, type: "PYTHON_RETURN_EMPTY_DICT", severity: "MEDIUM", category: "incomplete" },
+  { regex: /def\s+\w+\s*\([^)]*\)\s*:\s*super\(\)\.\w+\(\)\s*$/gm, type: "PYTHON_SUPER_ONLY_METHOD", severity: "LOW", category: "incomplete" },
+  { regex: /raise\s+(?:Exception|ValueError|RuntimeError)\s*\(\s*["'](?:TODO|FIXME|Not\s+implemented?|placeholder|stub|TBD|NYI)/gi, type: "PYTHON_GENERIC_EXCEPTION_TODO", severity: "HIGH", category: "incomplete" },
+  { regex: /#\s*(?:placeholder|stub|dummy|mock|temp|temporary|hack|workaround)\s+(?:implementation|code|function|method|class)/gi, type: "PYTHON_PLACEHOLDER_COMMENT", severity: "HIGH", category: "incomplete" },
+  { regex: /#\s*(?:needs?\s+)?(?:to\s+be\s+)?(?:re)?implemented/gi, type: "PYTHON_NEEDS_IMPLEMENTATION", severity: "HIGH", category: "incomplete" },
+  { regex: /#\s*wip|#*\s*work\s+in\s+progress|#*\s*in\s+progress|#*\s*not\s+finished|#*\s*unfinished/gi, type: "PYTHON_WIP_COMMENT", severity: "MEDIUM", category: "incomplete" },
+
   // Masked/underreported TODO patterns (from SEDI todo-verifier)
   { regex: /\b(done|complete|finished|implemented|ready)\b.*\b(future|enhance|expand|improve|plan|pending|scheduled|add|next step|follow up|not yet|not finished|not complete|not ready|not implemented|incomplete|partial|stub|workaround|WIP|hack|fixme|bug|placeholder|dummy|mock|unfinished|ignore|bypass|skip|missing|lazy|mask|misreport|audit|action plan|open|issue|problem|risk|gap|limitation|improvement|enhancement|feature|expansion|carry out|scheduled|planned|future release|future sprint|future work|future enhancement|future improvement|future expansion|future refactor|future optimization|future feature|future addition|future change|future update|future upgrade)\b/gi, type: "MASKED_TODO", severity: "CRITICAL", category: "deceptive" },
   { regex: /\b(future|enhance|expand|improve|plan|pending|scheduled|add|next step|follow up|not yet|not finished|not complete|not ready|not implemented|incomplete|partial|stub|workaround|WIP|hack|fixme|bug|placeholder|dummy|mock|unfinished|ignore|bypass|skip|missing|lazy|mask|misreport|audit|action plan|open|issue|problem|risk|gap|limitation|improvement|enhancement|feature|expansion|carry out|scheduled|planned|future release|future sprint|future work|future enhancement|future improvement|future expansion|future refactor|future optimization|future feature|future addition|future change|future update|future upgrade)\b.*\b(done|complete|finished|implemented|ready)\b/gi, type: "MASKED_TODO", severity: "CRITICAL", category: "deceptive" },
@@ -401,7 +618,7 @@ const deceptivePatterns = [
   // Temporary/placeholder values and empty returns
   { regex: /placeholder|Placeholder/gi, type: "PLACEHOLDER_VALUES", severity: "HIGH", category: "temporary" },
   { regex: /return.*basic|return basic/gi, type: "RETURN_BASIC", severity: "HIGH", category: "deceptive" },
-  { regex: /temporary.*solution|temporary.*fix|Temporary.*solution|Temporary.*fix/gi, type: "TEMPORARY_SOLUTION", severity: "HIGH", category: "temporary" },
+  { regex: /(?:temporary|Temporary)\s+(?:solution|fix|workaround|hack|patch)/gi, type: "TEMPORARY_SOLUTION", severity: "HIGH", category: "temporary" },
   { regex: /return.*empty.*array|return.*empty.*object|return.*null.*for.*now|return.*undefined.*for.*now|return.*zero.*for.*now/gi, type: "EMPTY_FALLBACK", severity: "MEDIUM", category: "temporary" },
   { regex: /mock|dummy|MOCK|DUMMY/gi, type: "MOCK_DATA", severity: "MEDIUM", category: "temporary" },
 
@@ -459,7 +676,10 @@ const deceptivePatterns = [
 
   // Additional obscure markers found in manual scan
   { regex: /NOTE:|IMPORTANT:|WARNING:|CAUTION:|ATTENTION:/gi, type: "IMPORTANT_NOTES", severity: "MEDIUM", category: "explicit" },
-  { regex: /remove.*me|delete.*me|clean.*up.*needed|obsolete|deprecated|legacy/gi, type: "CLEANUP_NEEDED", severity: "MEDIUM", category: "technical_debt" },
+  // CLEANUP_NEEDED: Match cleanup indicators in comments, but context checks will exclude method names
+  // Only match in comments or when explicitly indicating cleanup needed
+  { regex: /\/\/.*\b(remove.*me|delete.*me|clean.*up.*needed)\b/gi, type: "CLEANUP_NEEDED", severity: "MEDIUM", category: "technical_debt" },
+  { regex: /\b(obsolete|deprecated|legacy)\b.*(?:TODO|FIXME|remove|delete|cleanup|needs|should|must)/gi, type: "CLEANUP_NEEDED", severity: "MEDIUM", category: "technical_debt" },
 
   // FALSE ASSURANCE PATTERNS (from developer research - AI code that looks complete but isn't)
   { regex: /seems.*to.*work|appears.*to.*work|looks.*like.*it.*works/gi, type: "FALSE_ASSURANCE", severity: "HIGH", category: "deceptive" },
@@ -510,7 +730,8 @@ const deceptivePatterns = [
 
   // GENERIC ERROR THROWING (throw errors without context - AI often generates these)
   { regex: /throw\s+new\s+Error\s*\(\s*["'](?:An error occurred|Something went wrong|Error|Exception|Failed|An error|Something wrong|Error occurred|Exception occurred)["']\s*\)/gi, type: "GENERIC_ERROR_THROW", severity: "HIGH", category: "incomplete" },
-  { regex: /throw\s+new\s+Error\s*\(\s*["'][^"']{0,20}["']\s*\)/gi, type: "GENERIC_ERROR_THROW", severity: "MEDIUM", category: "incomplete" }, // Very short error messages
+  // Very short error messages (< 20 chars) - will be filtered by context check for specific messages
+  { regex: /throw\s+new\s+Error\s*\(\s*["']([^"']{0,20})["']\s*\)/gi, type: "GENERIC_ERROR_THROW", severity: "MEDIUM", category: "incomplete" },
   
   // INCOMPLETE ZOD SCHEMAS (superficial validation - AI often creates minimal schemas)
   { regex: /z\.(?:string|number|boolean|object)\s*\(\s*\)\s*$/gm, type: "INCOMPLETE_ZOD_SCHEMA", severity: "MEDIUM", category: "incomplete" },
@@ -556,7 +777,7 @@ const temporaryCodePatterns = [
   /\/\/.*\b(quick fix|quick hack|temporary fix)\b/i,
   /\/\/.*\b(workaround|work around)\b.*\b(until|for now)\b/i,
   /\/\/.*\b(placeholder|stub|mock)\b.*\b(implementation|data|function)\b/i,
-  /temporary|temp |TEMP/gi, // From deceptive language detector
+  /\b(temporary|temp |TEMP)\b/gi, // From deceptive language detector - use word boundaries to avoid matching "templates", "template", etc.
 ]
 
 // DEBUG STATEMENT PATTERNS (only checked if --debug flag is set)
@@ -696,7 +917,7 @@ const businessExclusions = [
   /ring-offset-white placeholder:text-/i, // Tailwind placeholder styling in components
 ]
 
-// 6. FILE EXCLUSIONS (Exclude build artifacts, docs, dependencies, and config files)
+// 6. FILE EXCLUSIONS (Exclude build artifacts, docs, dependencies, backup, archive, temp files)
 const excludeFiles = [
   /node_modules/,
   /\.git/,
@@ -724,6 +945,75 @@ const excludeFiles = [
   /turbo\.json$/,
   /tsconfig\..*\.json$/,
   /package\.json$/,
+  // Backup and archive files (by extension)
+  /.*\.bak$/i,
+  /.*\.backup$/i,
+  /.*\.old$/i,
+  /.*\.orig$/i,
+  /.*\.save$/i,
+  /.*\.swp$/i,
+  /.*\.swo$/i,
+  /.*~$/i,
+  /.*\.tmp$/i,
+  /.*\.temp$/i,
+  /.*\.cache$/i,
+  /.*\.archive$/i,
+  /.*\.archived$/i,
+  // Work-in-progress and draft files
+  /.*\.wip$/i,
+  /.*\.work$/i,
+  /.*\.draft$/i,
+  /.*\.final$/i,
+  /.*\.staging$/i,
+  /.*\.dev$/i,
+  /.*\.test$/i,
+  /.*\.local$/i,
+  /.*\.copy$/i,
+  // Numbered backups
+  /.*\.backup\d+$/i,
+  /.*\.bak\d+$/i,
+  /.*\.old\d+$/i,
+  /.*\.tmp\d+$/i,
+  /.*\.temp\d+$/i,
+  // Files with backup/temp in name (even if they have valid extensions)
+  /.*\.backup\./i,
+  /.*\.bak\./i,
+  /.*\.old\./i,
+  /.*\.tmp\./i,
+  /.*\.temp\./i,
+  /.*\.wip\./i,
+  /.*\.work\./i,
+  /.*\.draft\./i,
+  // Archive directories
+  /.*\/archive\//i,
+  /.*\/archives\//i,
+  /.*\/backup\//i,
+  /.*\/backups\//i,
+  /.*\/old\//i,
+  /.*\/legacy\//i,
+  /.*\/deprecated\//i,
+  /.*\/temp\//i,
+  /.*\/tmp\//i,
+  /.*\/cache\//i,
+  /.*\/\.cache\//i,
+  /.*\/\.temp\//i,
+  /.*\/\.tmp\//i,
+  // Version control and IDE files
+  /.*\/\.vscode\//i,
+  /.*\/\.idea\//i,
+  /.*\/\.DS_Store$/i,
+  /.*\/Thumbs\.db$/i,
+  // Generated and compiled files
+  /.*\.min\.(js|css)$/i,
+  /.*\.bundle\.(js|css)$/i,
+  /.*\.chunk\.(js|css)$/i,
+  /.*\.map$/i,
+  // Test outputs and reports
+  /.*\/test-results\//i,
+  /.*\/test-output\//i,
+  /.*\/\.nyc_output\//i,
+  /.*\/coverage\//i,
+  /.*\/\.coverage\//i,
   // Note: Project-specific exclusions should be added via configuration file
   // These are examples that can be customized per project
 ]
@@ -816,6 +1106,37 @@ function getIssueGuidance(issueType) {
     EXPLICIT_TODO: "Complete TODO and remove comment",
     IMPORTANT_NOTES: "Address noted requirement",
 
+    // Python-specific patterns - COMPLETE IMPLEMENTATION
+    PYTHON_NOT_IMPLEMENTED_ERROR: "Replace NotImplementedError with actual implementation",
+    PYTHON_PASS_TODO: "Implement method functionality and remove pass statement",
+    PYTHON_PASS_FIXME: "Fix the issue and replace pass with proper code",
+    PYTHON_PASS_HACK: "Replace hack with proper implementation",
+    PYTHON_PASS_XXX: "Complete placeholder implementation",
+    PYTHON_PASS_BUG: "Fix bug and implement proper logic",
+    PYTHON_ELLIPSIS: "Replace ellipsis (...) with actual implementation",
+    PYTHON_IMPLEMENTATION_NEEDED: "Complete the noted implementation",
+    PYTHON_NOTIMPLEMENTED_CONSTANT: "Replace NotImplemented constant with actual implementation",
+    PYTHON_ASSERT_FALSE_TODO: "Replace assert False with actual implementation",
+    PYTHON_RAISE_TODO: "Replace TODO exception with actual implementation",
+    PYTHON_PRAGMA_NO_COVER_TODO: "Implement the noted functionality",
+    PYTHON_TYPE_IGNORE_TODO: "Complete the implementation and remove type ignore",
+    PYTHON_PYLIN_DISABLE_TODO: "Fix the code quality issue and remove pylint disable",
+    PYTHON_NOQA_TODO: "Address the code quality issue and remove noqa comment",
+    PYTHON_DOCSTRING_TODO: "Complete the implementation mentioned in docstring",
+    PYTHON_PASS_ONLY_FUNCTION: "Implement function body instead of just pass",
+    PYTHON_MAIN_PASS: "Implement main block functionality",
+    PYTHON_CLASS_ELLIPSIS: "Complete class definition instead of ellipsis",
+    PYTHON_METHOD_ELLIPSIS: "Complete method definition instead of ellipsis",
+    PYTHON_PASS_ONLY_CLASS: "Implement class body instead of just pass",
+    PYTHON_RETURN_NONE_ONLY: "Implement proper return value instead of None",
+    PYTHON_RETURN_EMPTY_LIST: "Implement proper return logic instead of empty list",
+    PYTHON_RETURN_EMPTY_DICT: "Implement proper return logic instead of empty dict",
+    PYTHON_SUPER_ONLY_METHOD: "Add method-specific logic beyond super() call",
+    PYTHON_GENERIC_EXCEPTION_TODO: "Replace TODO exception with proper implementation",
+    PYTHON_PLACEHOLDER_COMMENT: "Replace placeholder implementation with real code",
+    PYTHON_NEEDS_IMPLEMENTATION: "Complete the noted implementation",
+    PYTHON_WIP_COMMENT: "Finish the work in progress",
+
     // Commented out code - TOP BLOCKER - UNCOMMENT IMMEDIATELY
     COMMENTED_OUT_CODE: "Uncomment code to resolve type errors and wire up with corresponding consumers",
 
@@ -894,16 +1215,19 @@ function getIssueGuidance(issueType) {
 // Initialize report
 let report = `# Comprehensive TODO Analysis Report
 
+**Version:** ${TODO_TRACKER_VERSION}
+**Analysis Date:** ${dateOnly}
+**Analysis Time:** ${timeOnly}
 **Generated:** ${timestamp}
 **Scope:** Combined deceptive language detection + precise TODO tracking
 **Purpose:** Identify all code quality issues and actionable development tasks
-**Approach:** Integrated deceptive patterns + SEDI precision + priority classification
+**Approach:** Integrated deceptive patterns + precise TODO tracking + priority classification
 
 ## Executive Summary
 
 This comprehensive analysis combines:
-- **Deceptive Language Patterns** (1,048+ issues detected previously)
-- **SEDI TODO Precision** (89 targeted issues with priorities)
+- **Deceptive Language Patterns** (comprehensive pattern detection)
+- **Precise TODO Tracking** (targeted issues with priorities)
 - **Priority Classification** (Critical → Low action items)
 - **False Positive Filtering** (Business logic exclusions)
 - **Actionable Insights** (Concrete development tasks)
@@ -1085,6 +1409,38 @@ function shouldExclude(line, file) {
   
   // Exclude comments about deprecated code (documentation, not deprecated code itself)
   if (/\/\/\s*Check.*deprecated|\/\/\s*Find.*deprecated/i.test(line)) {
+    return true
+  }
+  
+  // Exclude "fix:" property names in object literals (not incomplete work, just property names)
+  // Pattern: fix: '...' or fix: `...` in object literals
+  if (/\bfix\s*:\s*['"`]/.test(line) && 
+      !/\/\/.*fix\s*:/i.test(line) && 
+      !/\*\s*fix\s*:/i.test(line)) {
+    return true
+  }
+  
+  // Exclude comments explaining deprecation logic (not deprecated code itself)
+  // Pattern: Comments like "// Use deprecation list" or "// Check for deprecated" or "// Deprecation list:"
+  if (/\/\/\s*(Use|Check|Find|List|Manage|Handle|Process).*deprecat/i.test(line) ||
+      /\/\/\s*Deprecation\s+(list|check|logic|management|tracking)/i.test(line) ||
+      /\*\s*(Check|Find|List|Manage|Handle|Process).*deprecat/i.test(line) ||
+      /\*\s*Deprecation\s+(list|check|logic|management|tracking)/i.test(line)) {
+    return true
+  }
+  
+  // Exclude active code that checks for/manages deprecations (not deprecated code itself)
+  // Pattern: Function names like checkDeprecatedItems, deprecatedItems variable, etc.
+  if (/\b(check|find|list|manage|handle|process|get|getAll|getList|getItems|getDeprecated)\w*[Dd]eprecated\w*\s*[=(]/i.test(line) ||
+      /\b\w*[Dd]eprecated\w*\s*=\s*(await\s+)?(check|find|list|manage|handle|process|get|getAll|getList|getItems|getDeprecated)/i.test(line) ||
+      /\b\w*[Dd]eprecated\w*\s*\.(push|add|append|concat|filter|map|reduce|forEach)\s*\(/i.test(line) ||
+      /issues\.push\s*\(\s*\.\.\.\s*\w*[Dd]eprecated\w*/i.test(line)) {
+    return true
+  }
+  
+  // Exclude JSDoc comments about deprecation checking (not deprecated code)
+  // Pattern: "* Check for deprecated..." or "* Find deprecated..."
+  if (/^\s*\*\s*(Check|Find|List|Manage|Handle|Process|Get|GetAll|GetList|GetItems|GetDeprecated).*deprecat/i.test(line)) {
     return true
   }
   
@@ -1512,7 +1868,7 @@ function shouldExcludeFile(filePath, rootDir) {
           }
           return false // Allow other scripts
         }
-        
+
         // Check if explicitly included
         if (includeDirs.length > 0) {
           for (const includeDir of includeDirs) {
@@ -1637,7 +1993,26 @@ function scanCodeComprehensive() {
   const rootDir = process.cwd()
   
   // Get file extensions from config or use defaults
-  let extensions = config?.scan?.extensions || ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs']
+  // Support multiple languages: TypeScript, JavaScript, Python, Go, Rust, Java, PHP, Ruby
+  let extensions = config?.scan?.extensions || [
+    '.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs',  // TypeScript/JavaScript
+    '.py', '.pyw',                                   // Python
+    '.go',                                           // Go
+    '.rs',                                           // Rust
+    '.java',                                         // Java
+    '.php',                                          // PHP
+    '.rb',                                           // Ruby
+    '.kt', '.kts',                                   // Kotlin
+    '.swift',                                        // Swift
+    '.scala',                                        // Scala
+    '.cpp', '.cc', '.cxx', '.c++', '.hpp', '.h',     // C/C++
+    '.cs',                                           // C#
+    '.dart',                                         // Dart
+    '.r', '.R',                                      // R
+    '.sh', '.bash', '.zsh',                         // Shell scripts
+    '.sql',                                          // SQL
+    '.vue', '.svelte',                              // Vue/Svelte
+  ]
   
   // Add config file extensions if --configs flag is set
   if (includeConfigs) {
@@ -1645,7 +2020,9 @@ function scanCodeComprehensive() {
     extensions = [...new Set([...extensions, ...configExtensions])] // Remove duplicates
   }
   
-  const extensionRegex = new RegExp(`\\.(${extensions.map(ext => ext.slice(1)).join('|')})$`)
+  // Escape special regex characters in extensions (e.g., c++ -> c\+\+)
+  const escapedExtensions = extensions.map(ext => ext.slice(1).replace(/[+*?^${}()|[\]\\]/g, '\\$&'))
+  const extensionRegex = new RegExp(`\\.(${escapedExtensions.join('|')})$`)
   
   // Build exclude directories list from config or defaults
   let excludeDirs = config?.exclude?.always?.map(p => p.replace(/\*\*/g, '').replace(/\//g, '').replace(/\*/g, '')) || [
@@ -1665,6 +2042,24 @@ function scanCodeComprehensive() {
     "logs",
     "tmp",
     "temp",
+    // Archive and backup directories
+    "archive",
+    "archives",
+    "backup",
+    "backups",
+    "old",
+    "legacy",
+    "deprecated",
+    // Test outputs
+    "test-results",
+    "test-output",
+    ".nyc_output",
+    // Generated files
+    ".generated",
+    "generated",
+    // OS files
+    ".DS_Store",
+    "Thumbs.db",
   ]
   
   // Remove scripts from exclusion if --scripts flag is set
@@ -1686,10 +2081,58 @@ function scanCodeComprehensive() {
       const fullPath = path.join(dir, file)
       const stat = fs.statSync(fullPath)
 
-      if (stat.isDirectory() && !excludeDirs.includes(file)) {
-        scanDirectory(fullPath)
-      } else if (stat.isFile() && extensionRegex.test(file)) {
-        // Scan ALL source code and config files - exclude docs, build outputs, dependencies
+      // Skip if directory is excluded
+      if (stat.isDirectory()) {
+        if (!excludeDirs.includes(file)) {
+          scanDirectory(fullPath)
+        }
+        return
+      }
+
+      // Check for files with known backup/temp extensions (before extension pattern check)
+      // These extensions indicate backup/temp files regardless of base extension
+      const backupExtensions = [
+        '.backup', '.bak', '.old', '.orig', '.save', 
+        '.tmp', '.temp', '.cache', 
+        '.archive', '.archived', 
+        '.final', '.wip', '.work', '.draft', 
+        '.staging', '.dev', '.test', '.local', '.copy',
+        // Numbered variants
+        '.backup1', '.backup2', '.bak1', '.bak2',
+        '.old1', '.old2', '.tmp1', '.tmp2', '.temp1', '.temp2'
+      ]
+      
+      // Check if file has backup/temp extension
+      const fileExt = path.extname(file).toLowerCase()
+      if (backupExtensions.includes(fileExt)) {
+        return // Skip files with backup/temp extensions
+      }
+      
+      // Check if file has multiple extensions with backup/temp in middle
+      // e.g., file.backup.ts, file.old.js, file.tmp.py
+      const fileName = file.toLowerCase()
+      const backupInName = backupExtensions.some(ext => {
+        const extWithoutDot = ext.substring(1) // Remove leading dot
+        return fileName.includes(`.${extWithoutDot}.`) || fileName.endsWith(`.${extWithoutDot}`)
+      })
+      if (backupInName) {
+        return // Skip files with backup/temp in extension chain
+      }
+
+      // Skip if file doesn't match extension pattern
+      if (!extensionRegex.test(file)) {
+        return
+      }
+
+      // Check file exclusions (backup, temp, archive patterns)
+      const shouldExclude = excludeFiles.some(pattern => {
+        if (pattern instanceof RegExp) {
+          return pattern.test(fullPath) || pattern.test(file)
+        }
+        return fullPath.includes(pattern) || file.includes(pattern)
+      })
+
+      if (!shouldExclude) {
         codeFiles.push(fullPath)
       }
     })
@@ -1824,12 +2267,37 @@ function scanCodeComprehensive() {
     }
   }
   
+  // Load pattern exclusions from config file
+  if (config && config.patternExclusions && Array.isArray(config.patternExclusions)) {
+    config.patternExclusions.forEach((exclusion) => {
+      if (exclusion.file || exclusion.files) {
+        // File pattern exclusion
+        const filePattern = exclusion.file || exclusion.files
+        const patternType = exclusion.pattern || exclusion.type
+        const reason = exclusion.reason || 'Config exclusion'
+        filePatternExclusions.push({ filePattern, patternType, reason })
+      } else {
+        // Global pattern exclusion
+        globalPatternExclusions.push({
+          patternType: exclusion.pattern || exclusion.type,
+          match: exclusion.match ? new RegExp(exclusion.match) : null,
+          reason: exclusion.reason || 'Config exclusion'
+        })
+      }
+    })
+    log(`📋 Loaded ${config.patternExclusions.length} pattern exclusions from config`)
+  }
+  
   // Track inline exclusion state (for block-level exclusions)
   const inlineExclusionState = new Map() // Map of file -> { disabled: boolean, disabledPatterns: Set }
   
   // Extract comprehensive issues from files
   log(`🔍 Processing ${filesToScan.length} files...`)
   let processedCount = 0
+  let cacheHits = 0
+  let cacheMisses = 0
+  let astParsed = 0
+  
   filesToScan.forEach((file) => {
     // Double-check exclusion (should already be filtered, but be safe)
     if (shouldExcludeFile(file, rootDir)) return // Skip excluded files
@@ -1843,14 +2311,55 @@ function scanCodeComprehensive() {
     const content = fs.readFileSync(file, "utf8")
     const lines = content.split("\n")
     
+    // Try to parse with AST for better comment extraction
+    const cachedAST = getCachedAST(file)
+    const hadCache = cachedAST !== null
+    const ast = parseFileWithAST(file, content)
+    
+    // Track cache statistics
+    if (ast) {
+      astParsed++
+      if (hadCache) {
+        cacheHits++
+      } else {
+        cacheMisses++
+      }
+    }
+    
+    const astComments = ast ? extractCommentsFromAST(ast) : []
+    const astCommentsByLine = new Map()
+    
+    // Map AST comments to line numbers for quick lookup
+    astComments.forEach(comment => {
+      if (comment.loc) {
+        const lineNum = comment.loc.start.line
+        if (!astCommentsByLine.has(lineNum)) {
+          astCommentsByLine.set(lineNum, [])
+        }
+        astCommentsByLine.get(lineNum).push(comment)
+      }
+    })
+    
     // Initialize inline exclusion state for this file
     const relativePath = path.relative(rootDir, file).replace(/\\/g, '/')
     inlineExclusionState.set(file, { disabled: false, disabledPatterns: new Set() })
 
+    // Track cache hits for statistics
+    let cacheHit = false
+    if (ast) {
+      // Check if AST was from cache
+      const cachedAST = getCachedAST(file)
+      cacheHit = cachedAST !== null
+    }
+    
     lines.forEach((line, index) => {
       const lineNumber = index + 1
       const trimmedLine = line.trim()
       const fileState = inlineExclusionState.get(file)
+      
+      // Use AST comments if available for better context detection
+      const astCommentsForLine = astCommentsByLine.get(lineNumber) || []
+      const isASTComment = astCommentsForLine.length > 0
       
       // Check for inline exclusion comments
       // Format: // todo-tracker-disable-next-line
@@ -1943,6 +2452,137 @@ function scanCodeComprehensive() {
 
       if (!trimmedLine || trimmedLine.length < 3) return // Skip empty/short lines
 
+      // Built-in context-aware exclusions for common code patterns
+      // These reduce false positives without requiring extensive exclusion files
+      const isLegitimateCode = (patternType, matchedText) => {
+        const trimmed = trimmedLine.trim()
+        const isComment = trimmed.startsWith('//') || trimmed.startsWith('*') || trimmed.startsWith('/*')
+        const isStringLiteral = /^['"`]/.test(trimmed) || /['"`].*['"`]/.test(line)
+        
+        // Only apply context checks for patterns prone to false positives
+        if (!['INCOMPLETE_WORK', 'INCOMPLETE_MARKER', 'CLEANUP_NEEDED', 'FUTURE_FEATURE', 'PYTHON_PASS_ONLY_FUNCTION', 'PYTHON_DOCSTRING_TODO', 'PYTHON_NOTIMPLEMENTED_CONSTANT'].includes(patternType)) {
+          return false
+        }
+        
+        // Extract individual words from matched text for context checking
+        const matchedWords = matchedText ? matchedText.toLowerCase().trim().split(/\s+/) : []
+        
+        // Exclude if any matched word is part of a method call (e.g., array.add(), list.remove(), this.skills.delete())
+        // Check if matched word appears as method name: obj.matchedWord( or this.obj.matchedWord(
+        for (const word of matchedWords) {
+          if (word && /\w+/.test(word)) {
+            // Check for method calls: obj.method(), this.obj.method(), array.method()
+            const methodCallPattern = new RegExp(`(?:\\w+\\.|this\\.\\w+\\.)${word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*\\(`, 'i')
+            if (methodCallPattern.test(line)) {
+              return true
+            }
+            // Also check for standalone method calls: delete(), remove(), etc.
+            if (['delete', 'remove', 'clean', 'cleanup'].includes(word.toLowerCase()) && 
+                new RegExp(`\\b${word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*\\(`, 'i').test(line) &&
+                !trimmedLine.startsWith('//') && !trimmedLine.startsWith('*')) {
+              return true
+            }
+          }
+        }
+        
+        // Exclude if any matched word is part of a variable/function declaration
+        // (e.g., const add = ..., function remove() {...})
+        for (const word of matchedWords) {
+          if (word && /\w+/.test(word) && new RegExp(`\\b(const|let|var|function|async|class|interface|type|enum)\\s+\\w*${word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\w*\\s*[=:(]`, 'i').test(line)) {
+            return true
+          }
+        }
+        
+        // Exclude if any matched word is an object property key (e.g., { add: ..., remove: ... })
+        for (const word of matchedWords) {
+          if (word && /\w+/.test(word) && new RegExp(`\\b${word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*:\\s*`, 'i').test(line) && !isComment) {
+            return true
+          }
+        }
+        
+        // Exclude string literals (unless they're in comments with incomplete indicators)
+        if (isStringLiteral && !isComment) {
+          return true
+        }
+        
+        // IMPORTANT: We DO scan JSDoc comments for incomplete work indicators
+        // Only exclude JSDoc if it's clearly descriptive AND doesn't contain incomplete work context
+        // The patterns themselves should be context-aware to distinguish:
+        // - Descriptive: "Adds two numbers" (should NOT flag)
+        // - Incomplete work: "TODO: add validation" or "needs to be implemented" (SHOULD flag)
+
+        // Python-specific context checks
+        if (patternType === 'PYTHON_PASS_ONLY_FUNCTION') {
+          // Exclude if function has decorators indicating it's abstract or a legitimate stub
+          if (/@abstractmethod|@abc\.abstractmethod|def __\w+__|def _\w+__\w+/.test(lines.slice(Math.max(0, lineIndex - 2), lineIndex + 1).join('\n'))) {
+            return true
+          }
+          // Exclude if function name suggests it's a test stub
+          if (/def test_|def _test_/.test(line)) {
+            return true
+          }
+        }
+
+        if (patternType === 'PYTHON_NOTIMPLEMENTED_CONSTANT') {
+          // Exclude if NotImplemented is used in rich comparison methods (legitimate use)
+          if (/def __eq__|def __lt__|def __gt__|def __le__|def __ge__/.test(lines.slice(Math.max(0, lineIndex - 5), lineIndex + 1).join('\n'))) {
+            return true
+          }
+          // Exclude if NotImplemented is used in type hints or isinstance checks
+          if (/isinstance.*NotImplemented|NotImplemented.*type|Type\[.*NotImplemented\]/.test(line)) {
+            return true
+          }
+        }
+
+        if (patternType === 'PYTHON_DOCSTRING_TODO') {
+          // Exclude docstrings that are just descriptive, not indicating incomplete work
+          if (/This (method|function|class).*TODO.*done|TODO.*already|TODO.*completed/.test(matchedText)) {
+            return true
+          }
+        }
+
+        if (patternType === 'PYTHON_RETURN_NONE_ONLY') {
+          // Exclude methods that legitimately return None (property getters, event handlers, etc.)
+          if (/def (get|set|is_|has_|can_|should_|will_)|def on_|def handle_/.test(line)) {
+            return true
+          }
+        }
+
+        if (patternType === 'PYTHON_RETURN_EMPTY_LIST' || patternType === 'PYTHON_RETURN_EMPTY_DICT') {
+          // Exclude methods that might legitimately return empty collections
+          if (/def get_.*_list|def get_.*_dict|def list_|def dict_/.test(line)) {
+            return true
+          }
+        }
+
+        if (patternType === 'PYTHON_SUPER_ONLY_METHOD') {
+          // This is already quite specific, but exclude if it's clearly just delegation
+          if (/def __init__|def __new__|def __del__/.test(line)) {
+            return true
+          }
+        }
+
+        if (patternType === 'PYTHON_WIP_COMMENT') {
+          // Exclude if it's clearly marked as intentionally incomplete
+          if (/intentionally|by design|placeholder|stub/.test(line)) {
+            return true
+          }
+        }
+        // We rely on pattern matching to detect incomplete work context, not blanket exclusion
+        
+        // Exclude import/export statements
+        if (/^\s*(import|export)\s+.*\b(from|as|default)\b/i.test(line)) {
+          return true
+        }
+        
+        // Exclude type definitions (TypeScript)
+        if (/^\s*(type|interface|enum|namespace)\s+\w+/i.test(line)) {
+          return true
+        }
+        
+        return false
+      }
+
       let matched = false
 
       // 1. Check for explicit TODO patterns
@@ -1951,7 +2591,8 @@ function scanCodeComprehensive() {
           // Check if EXPLICIT_TODO is excluded
           if (isPatternExcluded("EXPLICIT_TODO")) continue
           
-          const priority = categorizeTodo(trimmedLine, "EXPLICIT", "HIGH")
+          // EXPLICIT_TODO is always a blocker - needs case-by-case review
+          const priority = 1 // Blocker - explicit TODOs must be reviewed
           const todoItem = addGitInfoToTodoItem({
             file,
             line: lineNumber,
@@ -2065,9 +2706,39 @@ function scanCodeComprehensive() {
           continue
         }
         
-        // Skip EXPLICIT_MARKERS if it's a test name (not lazy coding, just test naming)
+        // Pattern exclusions are now handled via .todo-tracker.exclusions.json or config.patternExclusions
+        // All false positive exclusions have been moved to configuration files
+        
+        // Skip EXPLICIT_MARKERS if it's a test name or test assertion (not lazy coding, just test naming)
         if (pattern.type === "EXPLICIT_MARKERS" && 
-            /^\s*(it|test|describe|context)\s*\(['"].*FIX_BUGS/i.test(line)) {
+            (/^\s*(it|test|describe|context)\s*\(['"].*FIX_BUGS/i.test(line) ||
+             /expect\(.*\)\.to(Contain|Equal|Be|Match)/i.test(line) ||
+             /assert\(|should\(|\.should\./i.test(line))) {
+          continue
+        }
+        
+        // Skip AI_GENERATED_MARKER if it's a legitimate auto-generated file marker with update instructions
+        if (pattern.type === "AI_GENERATED_MARKER" && 
+            (/This file was auto-generated.*Run.*sync/i.test(line) ||
+             /This file was auto-generated.*Run.*update/i.test(line) ||
+             /This file was auto-generated.*Run.*regenerate/i.test(line) ||
+             /program\.(name|description|version)/i.test(line))) {
+          continue
+        }
+        
+        // Skip INCOMPLETE_WORK if it's a comment explaining what to do (not incomplete work)
+        if (pattern.type === "INCOMPLETE_WORK" && 
+            trimmedLine.startsWith('//') && 
+            (trimmedLine.includes('Add') || trimmedLine.includes('Example') || trimmedLine.includes('Format')) &&
+            !trimmedLine.includes('TODO') && !trimmedLine.includes('FIXME') && !trimmedLine.includes('HACK') &&
+            !trimmedLine.includes('not implemented') && !trimmedLine.includes('missing')) {
+          continue
+        }
+        
+        // Skip DEPRECATED_CODE if it's a string literal/template literal used as ID (not deprecated code)
+        if (pattern.type === "DEPRECATED_CODE" && 
+            (/\b(id|key|name|identifier)\s*[:=]\s*['"`]DEPRECATED/i.test(line) ||
+             /\b(id|key|name|identifier)\s*[:=]\s*['"`].*DEPRECATED/i.test(line))) {
           continue
         }
         
@@ -2096,8 +2767,35 @@ function scanCodeComprehensive() {
           }
         }
         
-        if (pattern.regex.test(line)) {
-          const todoItem = addGitInfoToTodoItem({
+        // Check if pattern matches (use exec to get capture groups)
+        const match = pattern.regex.exec(line)
+        pattern.regex.lastIndex = 0 // Reset regex
+        if (!match) continue // Pattern doesn't match
+        
+        const matchedText = match[0] || ''
+        const capturedGroup = match[1] || '' // For patterns with capture groups
+        
+        // Skip GENERIC_ERROR_THROW if error message is specific enough
+        if (pattern.type === "GENERIC_ERROR_THROW") {
+          // Extract error message from matched text or capture group
+          const errorMsgMatch = matchedText.match(/["']([^"']+)["']/)
+          const errorMsg = (capturedGroup || (errorMsgMatch && errorMsgMatch[1]) || '').toLowerCase()
+          
+          if (errorMsg) {
+            // Exclude specific error messages (e.g., "Skill is required", "User not found")
+            const specificIndicators = ['is required', 'not found', 'not available', 'not allowed', 'invalid', 'missing', 'required', 'must be', 'should be', 'cannot be', 'failed to', 'unable to', 'expected', 'actual', 'found', 'exists', 'does not', "doesn't", 'is not', 'are not', 'was not', 'were not', 'has not', 'have not', 'will not', 'would not', 'can not', 'cannot', 'should not', 'must not', 'may not', 'might not', 'could not', 'did not', 'do not']
+            if (specificIndicators.some(indicator => errorMsg.includes(indicator))) {
+              continue
+            }
+          }
+        }
+        
+        // Skip if it's legitimate code (method calls, variable declarations, etc.)
+        if (isLegitimateCode(pattern.type, matchedText)) {
+          continue
+        }
+        
+        const todoItem = addGitInfoToTodoItem({
             file,
             line: lineNumber,
             type: pattern.type,
@@ -2126,7 +2824,6 @@ function scanCodeComprehensive() {
           }
           matched = true
           break // Only match first deceptive pattern
-        }
       }
 
       if (matched) return // Skip other checks if deceptive pattern found
@@ -2136,6 +2833,24 @@ function scanCodeComprehensive() {
         if (pattern.test(line)) {
           // Check if TEMPORARY_CODE is excluded
           if (isPatternExcluded("TEMPORARY_CODE")) continue
+          
+          // Exclude false positives: "templates", "template", etc. (not temporary code)
+          if (/\b(templates?|templateDir|templatePath|templateName|templateFile)\b/i.test(line) && 
+              !/\b(temporary|temp |TEMP)\b/i.test(line)) {
+            continue
+          }
+          
+          // Exclude regular comments that don't indicate temporary code
+          if (trimmedLine.startsWith('//') && 
+              !trimmedLine.toLowerCase().includes('temporary') && 
+              !trimmedLine.toLowerCase().includes('temp ') &&
+              !trimmedLine.toLowerCase().includes('quick fix') &&
+              !trimmedLine.toLowerCase().includes('workaround') &&
+              !trimmedLine.toLowerCase().includes('placeholder') &&
+              !trimmedLine.toLowerCase().includes('stub') &&
+              !trimmedLine.toLowerCase().includes('mock')) {
+            continue
+          }
           
           const todoItem = addGitInfoToTodoItem({
             file,
@@ -2461,6 +3176,9 @@ function scanCodeComprehensive() {
     })
   })
   log(`✅ Processed ${processedCount} files (excluded ${codeFiles.length - processedCount})`)
+  if (parser.available && astParsed > 0) {
+    log(`📦 AST Parsing: ${astParsed} files parsed (${cacheHits} from cache, ${cacheMisses} new)`)
+  }
   
   // Scan config files for lazy patterns (if --configs or --all flag is set)
   if (includeConfigs) {
@@ -2886,6 +3604,140 @@ learnFromAnalysis()
 // CHECK FOR POTENTIALLY MISSED CRITICAL ISSUES
 const potentiallyMissed = checkForMissedCriticalIssues()
 
+// === DEDUPLICATION FUNCTION ===
+
+// Deduplicate issues by file:line, keeping only the highest priority issue
+// When priorities are equal, keeps the issue with higher category order
+function deduplicateIssues() {
+  // Priority order: 1 (blocker) > 2 (critical) > 3 (major) > 4 (minor)
+  const priorityOrder = { 1: 0, 2: 1, 3: 2, 4: 3 }
+  
+  // Category order (higher number = higher priority when priorities are equal)
+  // Order based on severity/impact: commented_code > security > explicit > temporal > incomplete > deceptive > technical_debt > temporary
+  const categoryOrder = {
+    'commented_code': 8,    // Blocks production - type errors
+    'security': 7,           // Security vulnerabilities
+    'explicit': 6,           // Explicit TODOs - intentional markers
+    'temporal': 5,           // Temporary code in production ("for now")
+    'incomplete': 4,         // Missing functionality
+    'deceptive': 3,          // Deceptive patterns (quality issues)
+    'technical_debt': 2,     // Code quality issues
+    'temporary': 1           // Temporary code (console.log, etc.)
+  }
+  
+  // Helper function to compare two issues and return the one to keep
+  const compareIssues = (existing, current) => {
+    // First compare by priority (lower number = higher priority)
+    const existingPriority = priorityOrder[existing.priority] ?? 999
+    const currentPriority = priorityOrder[current.priority] ?? 999
+    
+    if (currentPriority < existingPriority) {
+      // Current has higher priority
+      return current
+    } else if (currentPriority > existingPriority) {
+      // Existing has higher priority
+      return existing
+    } else {
+      // Priorities are equal, compare by category order
+      const existingCategoryOrder = categoryOrder[existing.category] ?? 0
+      const currentCategoryOrder = categoryOrder[current.category] ?? 0
+      
+      if (currentCategoryOrder > existingCategoryOrder) {
+        // Current has higher category order
+        return current
+      } else {
+        // Existing has higher or equal category order (keep existing)
+        return existing
+      }
+    }
+  }
+  
+  // Helper function to deduplicate an array of issues
+  const dedupeArray = (issues) => {
+    const seen = new Map()
+    const deduped = []
+    
+    for (const issue of issues) {
+      const key = `${issue.file}:${issue.line}`
+      const existing = seen.get(key)
+      
+      if (!existing) {
+        seen.set(key, issue)
+        deduped.push(issue)
+      } else {
+        // Compare and keep the better issue
+        const keepIssue = compareIssues(existing, issue)
+        
+        if (keepIssue !== existing) {
+          // Replace existing with current
+          const index = deduped.indexOf(existing)
+          if (index !== -1) {
+            deduped[index] = keepIssue
+            seen.set(key, keepIssue)
+          }
+        }
+        // If existing is better, do nothing (keep existing)
+      }
+    }
+    
+    return deduped
+  }
+  
+  // Collect all issues first
+  const allIssuesBefore = [...todos.explicit, ...todos.deceptive, ...todos.temporary, ...todos.incomplete, ...todos.commented_code]
+  
+  // Deduplicate across ALL categories (not per category)
+  // This ensures if the same line has issues from different categories, only the best one is kept
+  const allIssuesDeduped = dedupeArray(allIssuesBefore)
+  
+  // Rebuild category arrays from deduplicated issues
+  todos.explicit = allIssuesDeduped.filter(i => i.source === 'explicit_todo' || i.category === 'explicit')
+  todos.deceptive = allIssuesDeduped.filter(i => i.source === 'deceptive_language' && ['temporal', 'incomplete', 'deceptive', 'technical_debt'].includes(i.category))
+  todos.temporary = allIssuesDeduped.filter(i => i.source === 'temporary_code' || i.source === 'debug_statement' || i.category === 'temporary')
+  todos.incomplete = allIssuesDeduped.filter(i => i.source === 'incomplete_implementation' || i.source === 'code_pattern' || i.category === 'incomplete')
+  todos.commented_code = allIssuesDeduped.filter(i => i.source === 'commented_code' || i.category === 'commented_code')
+  
+  // Rebuild priority buckets
+  todos.critical = []
+  todos.high = []
+  todos.medium = []
+  todos.low = []
+  
+  allIssuesDeduped.forEach(item => {
+    switch (item.priority) {
+      case 1: todos.critical.push(item); break
+      case 2: todos.high.push(item); break
+      case 3: todos.medium.push(item); break
+      case 4: todos.low.push(item); break
+    }
+  })
+  
+  // Rebuild category buckets
+  todos.byCategory = {
+    temporal: allIssuesDeduped.filter(i => i.category === 'temporal'),
+    incomplete: allIssuesDeduped.filter(i => i.category === 'incomplete'),
+    deceptive: allIssuesDeduped.filter(i => i.category === 'deceptive'),
+    technical_debt: allIssuesDeduped.filter(i => i.category === 'technical_debt'),
+    explicit: allIssuesDeduped.filter(i => i.category === 'explicit'),
+    temporary: allIssuesDeduped.filter(i => i.category === 'temporary'),
+    commented_code: allIssuesDeduped.filter(i => i.category === 'commented_code'),
+    security: allIssuesDeduped.filter(i => i.category === 'security')
+  }
+  
+  // Rebuild priority analysis buckets
+  analysis.byPriority.blocker = allIssuesDeduped.filter(item => item.priority === 1)
+  analysis.byPriority.critical = allIssuesDeduped.filter(item => item.priority === 2)
+  analysis.byPriority.major = allIssuesDeduped.filter(item => item.priority === 3)
+  analysis.byPriority.minor = allIssuesDeduped.filter(item => item.priority === 4)
+  
+  const beforeCount = allIssuesBefore.length
+  const afterCount = allIssuesDeduped.length
+  
+  if (beforeCount !== afterCount) {
+    log(`🔄 Deduplicated issues: ${beforeCount} → ${afterCount} (removed ${beforeCount - afterCount} duplicates)`)
+  }
+}
+
 // === FILTERING FUNCTIONS ===
 
 // Filter issues by priority and category
@@ -2960,14 +3812,68 @@ function applyFilters() {
 
 // Generate JSON report
 function generateJSONReport() {
-  const allIssues = [...todos.explicit, ...todos.deceptive, ...todos.temporary, ...todos.incomplete, ...todos.commented_code]
+  // Collect all issues and deduplicate by file:line (in case an issue appears in multiple category arrays)
+  const allIssuesRaw = [...todos.explicit, ...todos.deceptive, ...todos.temporary, ...todos.incomplete, ...todos.commented_code]
+  
+  // Deduplicate by file:line, keeping highest priority/category order
+  const priorityOrder = { 1: 0, 2: 1, 3: 2, 4: 3 }
+  const categoryOrder = {
+    'commented_code': 8,
+    'security': 7,
+    'explicit': 6,
+    'temporal': 5,
+    'incomplete': 4,
+    'deceptive': 3,
+    'technical_debt': 2,
+    'temporary': 1
+  }
+  
+  const seen = new Map()
+  const allIssues = []
+  
+  for (const issue of allIssuesRaw) {
+    const key = `${issue.file}:${issue.line}`
+    const existing = seen.get(key)
+    
+    if (!existing) {
+      seen.set(key, issue)
+      allIssues.push(issue)
+    } else {
+      // Compare and keep the better issue
+      const existingPriority = priorityOrder[existing.priority] ?? 999
+      const currentPriority = priorityOrder[issue.priority] ?? 999
+      
+      if (currentPriority < existingPriority) {
+        // Current has higher priority, replace
+        const index = allIssues.indexOf(existing)
+        if (index !== -1) {
+          allIssues[index] = issue
+          seen.set(key, issue)
+        }
+      } else if (currentPriority === existingPriority) {
+        // Priorities equal, compare by category order
+        const existingCategoryOrder = categoryOrder[existing.category] ?? 0
+        const currentCategoryOrder = categoryOrder[issue.category] ?? 0
+        
+        if (currentCategoryOrder > existingCategoryOrder) {
+          // Current has higher category order, replace
+          const index = allIssues.indexOf(existing)
+          if (index !== -1) {
+            allIssues[index] = issue
+            seen.set(key, issue)
+          }
+        }
+      }
+    }
+  }
   
   return JSON.stringify({
     metadata: {
+      version: TODO_TRACKER_VERSION,
       timestamp: timestamp,
       date: dateOnly,
-      format: 'json',
-      version: '1.0.0'
+      time: timeOnly,
+      format: 'json'
     },
     summary: {
       total: allIssues.length,
@@ -3027,6 +3933,223 @@ function generateJSONReport() {
 }
 
 // Generate table report (console only)
+function generateHTMLReport() {
+  const allIssues = [...todos.explicit, ...todos.deceptive, ...todos.temporary, ...todos.incomplete, ...todos.commented_code]
+  
+  const priorityColors = {
+    blocker: '#d32f2f',
+    critical: '#f57c00',
+    major: '#fbc02d',
+    minor: '#388e3c'
+  }
+  
+  const priorityLabels = {
+    blocker: '🚫 Blocker',
+    critical: '🚨 Critical',
+    major: '⚠️ Major',
+    minor: 'ℹ️ Minor'
+  }
+  
+  function escapeHtml(text) {
+    if (!text) return ''
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;')
+  }
+  
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TODO Tracker Report v${TODO_TRACKER_VERSION} - ${dateOnly} ${timeOnly}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+    h1 {
+      color: #2c3e50;
+      border-bottom: 3px solid #3498db;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+    .summary-card {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 6px;
+      border-left: 4px solid #3498db;
+    }
+    .summary-card h3 {
+      font-size: 14px;
+      color: #7f8c8d;
+      margin-bottom: 5px;
+    }
+    .summary-card .value {
+      font-size: 32px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    .issue {
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 15px 0;
+      background: #fafafa;
+      transition: box-shadow 0.2s;
+    }
+    .issue:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .issue-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    .issue-file {
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 14px;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+    .issue-priority {
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: white;
+    }
+    .priority-blocker { background: ${priorityColors.blocker}; }
+    .priority-critical { background: ${priorityColors.critical}; }
+    .priority-major { background: ${priorityColors.major}; }
+    .priority-minor { background: ${priorityColors.minor}; }
+    .issue-type {
+      display: inline-block;
+      background: #ecf0f1;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      color: #7f8c8d;
+      margin-top: 5px;
+    }
+    .issue-text {
+      background: #fff;
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 13px;
+      margin-top: 10px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .issue-guidance {
+      margin-top: 10px;
+      padding: 10px;
+      background: #fff3cd;
+      border-left: 3px solid #ffc107;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .issue-blame {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+    .no-issues {
+      text-align: center;
+      padding: 40px;
+      color: #27ae60;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 TODO Tracker Report</h1>
+    <p style="color: #7f8c8d; margin-bottom: 20px;">
+      <strong>Version:</strong> ${TODO_TRACKER_VERSION}<br>
+      <strong>Analysis Date:</strong> ${dateOnly}<br>
+      <strong>Analysis Time:</strong> ${timeOnly}<br>
+      <strong>Generated:</strong> ${timestamp}<br>
+      <strong>Total Issues:</strong> ${allIssues.length}
+    </p>
+    
+    <div class="summary">
+      <div class="summary-card">
+        <h3>Blockers</h3>
+        <div class="value" style="color: ${priorityColors.blocker}">${analysis.byPriority.blocker.length}</div>
+      </div>
+      <div class="summary-card">
+        <h3>Critical</h3>
+        <div class="value" style="color: ${priorityColors.critical}">${analysis.byPriority.critical.length}</div>
+      </div>
+      <div class="summary-card">
+        <h3>Major</h3>
+        <div class="value" style="color: ${priorityColors.major}">${analysis.byPriority.major.length}</div>
+      </div>
+      <div class="summary-card">
+        <h3>Minor</h3>
+        <div class="value" style="color: ${priorityColors.minor}">${analysis.byPriority.minor.length}</div>
+      </div>
+    </div>
+    
+    ${allIssues.length === 0 ? `
+      <div class="no-issues">
+        ✅ Codebase is clean - no issues found!
+      </div>
+    ` : `
+      <h2 style="color: #34495e; margin-top: 30px; margin-bottom: 15px;">Issues Found (${allIssues.length})</h2>
+      ${allIssues.map(issue => {
+        const priorityClass = issue.priority === 1 ? 'blocker' : issue.priority === 2 ? 'critical' : issue.priority === 3 ? 'major' : 'minor'
+        return `
+          <div class="issue">
+            <div class="issue-header">
+              <div>
+                <div class="issue-file">${escapeHtml(issue.file)}:${issue.line}</div>
+                <div class="issue-type">${escapeHtml(issue.type)}</div>
+              </div>
+              <div class="issue-priority priority-${priorityClass}">
+                ${priorityLabels[priorityClass]}
+              </div>
+            </div>
+            <div class="issue-text">${escapeHtml(issue.text || '')}</div>
+            ${issue.guidance ? `<div class="issue-guidance">💡 ${escapeHtml(issue.guidance)}</div>` : ''}
+            ${issue.blame ? `<div class="issue-blame">👤 ${escapeHtml(issue.blame.author)}${issue.blame.date ? ` • ${new Date(issue.blame.date).toLocaleDateString()}` : ''}</div>` : ''}
+            ${issue.age ? `<div class="issue-blame">⏱️ Age: ${escapeHtml(issue.age)}</div>` : ''}
+          </div>
+        `
+      }).join('')}
+    `}
+  </div>
+</body>
+</html>`
+  
+  return html
+}
+
 function generateTableReport() {
   const allIssues = [...todos.explicit, ...todos.deceptive, ...todos.temporary, ...todos.incomplete, ...todos.commented_code]
   
@@ -3074,6 +4197,9 @@ function generateTableReport() {
 
 // Calculate totals
 const totalIssues = todos.explicit.length + todos.deceptive.length + todos.temporary.length + todos.incomplete.length + todos.commented_code.length
+
+// Deduplicate issues (keep only highest priority per file:line) before filtering
+deduplicateIssues()
 
 // Apply filters before generating report
 applyFilters()
@@ -3255,6 +4381,8 @@ report += `\n**Report:** ${reportFile}
 let outputContent
 if (outputFormat === 'json') {
   outputContent = generateJSONReport()
+} else if (outputFormat === 'html') {
+  outputContent = generateHTMLReport()
 } else if (outputFormat === 'table') {
   outputContent = generateTableReport()
   // Table format: print to console, don't write file

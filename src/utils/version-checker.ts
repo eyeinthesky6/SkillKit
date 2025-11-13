@@ -118,14 +118,67 @@ export function detectSkippedVersions(installed: string, current: string): {
   const skipped = majorChanged || minorSkipped || patchSkipped;
   const hasBreakingChanges = currentParsed.major > installedParsed.major;
 
-  // Generate list of skipped versions
-  // TODO: Enhance to parse CHANGELOG.md for actual skipped versions instead of estimating
+  // Generate list of skipped versions by parsing CHANGELOG.md
   const skippedVersions: string[] = [];
   if (skipped) {
-    // Estimate skipped versions based on major version increments
-    // In the future, this should parse CHANGELOG.md for accurate version history
-    for (let major = installedParsed.major; major < currentParsed.major; major++) {
-      skippedVersions.push(`${major + 1}.0.0`);
+    try {
+      // Try to parse CHANGELOG.md for actual versions
+      // Try multiple possible paths (works in both source and compiled code)
+      const possiblePaths = [
+        path.join(__dirname, '..', '..', 'CHANGELOG.md'),
+        path.join(process.cwd(), 'CHANGELOG.md'),
+        path.join(process.cwd(), '..', 'CHANGELOG.md'),
+      ];
+      
+      let changelogPath: string | null = null;
+      for (const p of possiblePaths) {
+        if (fs.existsSync(p)) {
+          changelogPath = p;
+          break;
+        }
+      }
+      
+      if (changelogPath) {
+        const changelogContent = fs.readFileSync(changelogPath, 'utf-8');
+        // Match version headers like "## [0.0.1] - 2025-11-07" or "## [0.0.1]"
+        const versionRegex = /^##\s*\[([\d.]+)\]/gm;
+        const matches = changelogContent.matchAll(versionRegex);
+        const allVersions: string[] = [];
+        
+        for (const match of matches) {
+          const version = match[1];
+          if (version) {
+            allVersions.push(version);
+          }
+        }
+        
+        // Filter versions between installed and current
+        const installedVersion = installedParsed.major * 10000 + installedParsed.minor * 100 + installedParsed.patch;
+        const currentVersion = currentParsed.major * 10000 + currentParsed.minor * 100 + currentParsed.patch;
+        
+        for (const version of allVersions) {
+          const parsed = parseVersion(version);
+          const versionNum = parsed.major * 10000 + parsed.minor * 100 + parsed.patch;
+          if (versionNum > installedVersion && versionNum < currentVersion) {
+            skippedVersions.push(version);
+          }
+        }
+        
+        // Sort versions (newest first)
+        skippedVersions.sort((a, b) => compareVersions(b, a));
+      }
+    } catch {
+      // Fallback to estimation if CHANGELOG.md parsing fails
+      for (let major = installedParsed.major; major < currentParsed.major; major++) {
+        skippedVersions.push(`${major + 1}.0.0`);
+      }
+    }
+    
+    // If no versions found from CHANGELOG, fallback to estimation
+    if (skippedVersions.length === 0) {
+      for (let major = installedParsed.major; major < currentParsed.major; major++) {
+        skippedVersions.push(`${major + 1}.0.0`);
+      }
     }
   }
 

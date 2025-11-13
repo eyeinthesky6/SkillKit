@@ -27,6 +27,9 @@ import { createAuditCommand } from './cli-commands/audit';
 import { createAuditFixCommand } from './cli-commands/audit-fix';
 import { createValidateWorkflowCommand } from './cli-commands/validate-workflow';
 import { createMetaCustomizeCommand } from './cli-commands/meta-customize';
+import { createSelfCheckCommand } from './cli-commands/self-check';
+import { createRunChecksCommand } from './cli-commands/run-checks';
+import { createVerifyCommandsCommand } from './cli-commands/verify-commands';
 import { ErrorFactory, SkillKitError } from './errors';
 import { discoverSkills } from './utils/skill-resolver';
 
@@ -266,6 +269,9 @@ program.addCommand(createAuditCommand());
 program.addCommand(createAuditFixCommand());
 program.addCommand(createValidateWorkflowCommand());
 program.addCommand(createMetaCustomizeCommand());
+program.addCommand(createSelfCheckCommand());
+program.addCommand(createRunChecksCommand());
+program.addCommand(createVerifyCommandsCommand());
 
 // Utility commands
 program.addCommand(createCompletionCommand());

@@ -178,6 +178,43 @@ export function createDedupeWorkflowsCommand(): Command {
           }
         }
         
+        // Before deleting, check if duplicates have customizations that should be preserved
+        const { compareAndMerge } = await import('../utils/workflow-customization-merger.js');
+        const customizationWarnings: string[] = [];
+        
+        for (const dup of duplicates) {
+          const canonicalVersion = [...canonical].find(c => 
+            c.toUpperCase() === dup.canonical
+          );
+          
+          if (canonicalVersion) {
+            const canonicalPath = path.join(commandsDir, canonicalVersion);
+            try {
+              const canonicalContent = await fs.readFile(canonicalPath, 'utf8');
+              
+              // Check if duplicate has customizations not in canonical
+              const comparison = await compareAndMerge(dup.path, canonicalContent);
+              if (comparison.hasCustomizations && comparison.customizations.length > 0) {
+                customizationWarnings.push(
+                  `⚠️  ${dup.name} has ${comparison.customizations.length} customization(s) not in ${canonicalVersion}`
+                );
+                
+                // Offer to merge customizations into canonical
+                console.log(chalk.yellow(`\n   💡 Found customizations in ${dup.name}`));
+                console.log(chalk.dim(`      Consider merging into ${canonicalVersion} before deletion`));
+              }
+            } catch {
+              // Can't read files, skip customization check
+            }
+          }
+        }
+        
+        if (customizationWarnings.length > 0 && !options.force) {
+          console.log(chalk.yellow('\n⚠️  Customizations detected in duplicates!'));
+          console.log(chalk.dim('   Run: tsk workflow --template <name> to merge customizations'));
+          console.log(chalk.dim('   Or: tsk dedupe-workflows --force to delete anyway\n'));
+        }
+        
         // Delete duplicates
         const deleteSpinner = ora('Deleting duplicates...').start();
         
