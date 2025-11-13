@@ -17,6 +17,8 @@ import { createSyncCommand } from './cli-commands/sync';
 import { createManageCommand } from './cli-commands/manage';
 import { createListCommand } from './cli-commands/list';
 import { createRunCommand } from './cli-commands/run';
+import { createPlanCommand } from './cli-commands/plan';
+import { createTaskCommand } from './cli-commands/task';
 import { createWorkflowGenCommand } from './cli-commands/workflow-gen';
 import { createSkillLoadCommand } from './cli-commands/skill-load';
 import { createBuildAgentsCommand } from './cli-commands/build-agents';
@@ -95,52 +97,73 @@ program
 // Run command - now modular
 program.addCommand(createRunCommand());
 
+// Planning and task execution commands
+program.addCommand(createPlanCommand());
+program.addCommand(createTaskCommand());
+
 program
   .command('stats')
-  .description('Summarize audit logs')
-  .argument('[logDir]', 'Audit log directory', path.join('logs', 'audit'))
-  .action(async (logDir: string) => {
-    const dir = resolveDir(logDir);
-    const files = fs.readdirSync(dir).filter((f) => f.endsWith('.jsonl'));
-    if (files.length === 0) {
-      console.log(chalk.yellow('No audit logs found.'));
-      return;
-    }
-    let runs = 0;
-    let success = 0;
-    let failure = 0;
-    let totalDuration = 0;
-    const bySkill = new Map<string, { runs: number; failures: number }>();
-
-    for (const f of files) {
-      const p = path.join(dir, f);
-      const lines = fs.readFileSync(p, 'utf8').split(/\r?\n/).filter(Boolean);
-      for (const line of lines) {
-        try {
-          const entry = JSON.parse(line);
-          runs++;
-          totalDuration += Number(entry.duration || 0);
-          const ok = !entry.error;
-          if (ok) success++;
-          else failure++;
-          const rec = bySkill.get(entry.skill) || { runs: 0, failures: 0 };
-          rec.runs += 1;
-          if (!ok) rec.failures += 1;
-          bySkill.set(entry.skill, rec);
-        } catch {
-          // skip malformed lines
+  .description('Summarize skill usage statistics')
+  .option('--json', 'Output as JSON', false)
+  .action(async (opts: { json?: boolean }) => {
+    try {
+      const { getSkillStats } = await import('./utils/telemetry.js');
+      const stats = await getSkillStats();
+      
+      if (opts.json) {
+        console.log(JSON.stringify({
+          totalRuns: stats.totalRuns,
+          successCount: stats.successCount,
+          failureCount: stats.failureCount,
+          avgDuration: Math.round(stats.avgDuration),
+          bySkill: Object.fromEntries(
+            Array.from(stats.bySkill.entries()).map(([skill, data]: [string, { runs: number; failures: number; avgDuration: number }]) => [
+              skill,
+              {
+                runs: data.runs,
+                failures: data.failures,
+                avgDuration: Math.round(data.avgDuration),
+                lastUsed: stats.lastUsed.get(skill) || null,
+              },
+            ])
+          ),
+        }, null, 2));
+      } else {
+        if (stats.totalRuns === 0) {
+          console.log(chalk.yellow('No skill usage recorded yet.'));
+          console.log(chalk.dim('Run "tsk task <description>" to start using skills.'));
+          return;
+        }
+        
+        console.log(chalk.bold('\n📊 Skill Usage Statistics\n'));
+        console.log(chalk.cyan('Total Runs:'), stats.totalRuns);
+        console.log(chalk.green('Success:'), stats.successCount);
+        console.log(chalk.red('Failures:'), stats.failureCount);
+        console.log(chalk.cyan('Avg Duration:'), `${Math.round(stats.avgDuration)}ms`);
+        
+        if (stats.bySkill.size > 0) {
+          console.log(chalk.bold('\nBy Skill:'));
+          type SkillStats = { runs: number; failures: number; avgDuration: number };
+          const entries = Array.from(stats.bySkill.entries()) as [string, SkillStats][];
+          const sorted = entries.sort((a, b) => b[1].runs - a[1].runs);
+          
+          for (const [skill, data] of sorted) {
+            const lastUsed = stats.lastUsed.get(skill);
+            const lastUsedStr = lastUsed
+              ? new Date(lastUsed).toLocaleString()
+              : 'Never';
+            
+            console.log(chalk.bold(`\n  ${skill}:`));
+            console.log(chalk.gray(`    Runs: ${data.runs}`));
+            console.log(chalk.gray(`    Failures: ${data.failures}`));
+            console.log(chalk.gray(`    Avg Duration: ${Math.round(data.avgDuration)}ms`));
+            console.log(chalk.gray(`    Last Used: ${lastUsedStr}`));
+          }
         }
       }
-    }
-
-    console.log(chalk.cyan('Audit stats'));
-    console.log(`runs: ${runs}`);
-    console.log(`success: ${success}`);
-    console.log(`failure: ${failure}`);
-    console.log(`avgDuration(ms): ${runs ? Math.round(totalDuration / runs) : 0}`);
-    console.log('bySkill:');
-    for (const [name, rec] of bySkill.entries()) {
-      console.log(`  ${name}: runs=${rec.runs}, failures=${rec.failures}`);
+    } catch (error) {
+      console.error(chalk.red(`Failed to get stats: ${error instanceof Error ? error.message : error}`));
+      process.exitCode = 1;
     }
   });
 

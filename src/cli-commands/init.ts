@@ -6,6 +6,8 @@ import inquirer from 'inquirer';
 import ora from 'ora';
 import { checkOpenSkills, installAnthropicSkills } from '../skill-loader.js';
 import { buildAgentsMD } from '../agents-builder.js';
+import { MultiLanguageAnalyzer } from '../intelligence/multi-language-analyzer.js';
+import { WorkflowAdapter } from '../intelligence/workflow-adapter.js';
 
 // Helper function to validate path is within project root (security)
 function validatePath(filePath: string, projectRoot: string): boolean {
@@ -224,6 +226,7 @@ export function createInitCommand(): Command {
     .option('--custom-header <text>', 'Custom header text for workflows')
     .option('--force', 'Overwrite existing files without prompting')
     .option('--dry-run', 'Show what would be done without making changes')
+    .option('--no-auto-customize', 'Skip automatic workflow customization based on project structure', false)
     .action(async (options) => {
       const projectRoot = process.cwd();
       
@@ -434,6 +437,7 @@ export function createInitCommand(): Command {
           'META_WORKFLOW_TEMPLATE.md',
           'HELP.md',
           'AUDIT_SKILLKIT.md',
+          'SKILLKIT_TASK.md',
         ];
 
         // Build source file paths
@@ -537,6 +541,45 @@ export function createInitCommand(): Command {
 
         console.log(chalk.bold('\n📝 Generating workflows...\n'));
 
+        // Analyze project for auto-customization (if enabled)
+        let project: Awaited<ReturnType<MultiLanguageAnalyzer['analyze']>> | null = null;
+        let adapter: WorkflowAdapter | null = null;
+
+        if (options.autoCustomize !== false && !options.dryRun) {
+          try {
+            console.log(chalk.gray('🔍 Analyzing project structure...'));
+            const analyzer = new MultiLanguageAnalyzer(projectRoot);
+            project = await analyzer.analyze();
+            adapter = new WorkflowAdapter(project);
+            
+            if (project.languages.length > 0) {
+              console.log(chalk.cyan(`\n📦 Detected ${project.languages.length} language stack(s):`));
+              for (const lang of project.languages) {
+                const tools = [
+                  lang.framework,
+                  lang.packageManager,
+                  lang.testFramework,
+                  lang.linter,
+                ].filter(Boolean).join(', ');
+                console.log(chalk.gray(`   • ${lang.language} (${path.relative(projectRoot, lang.rootPath) || '.'}) - ${tools || 'no tools detected'}`));
+              }
+              if (project.isMonorepo) {
+                console.log(chalk.yellow('   ⚠️  Monorepo detected - workflows will include all languages'));
+              }
+              console.log(chalk.green('   ✅ Workflows will be customized for your project\n'));
+            } else {
+              console.log(chalk.yellow('   ⚠️  No languages detected - using generic templates\n'));
+            }
+          } catch (error) {
+            console.log(chalk.yellow('   ⚠️  Could not analyze project - using generic templates'));
+            console.log(chalk.dim(`   Error: ${error instanceof Error ? error.message : 'Unknown error'}\n`));
+            project = null;
+            adapter = null;
+          }
+        } else if (options.autoCustomize === false) {
+          console.log(chalk.dim('   ⏭️  Auto-customization disabled - using generic templates\n'));
+        }
+
         let skipped = 0;
 
         // Load existing version data to check for intentional customizations
@@ -607,6 +650,21 @@ export function createInitCommand(): Command {
             // If placeholder not found, file doesn't need modification - skip silently
           }
 
+          // Auto-customize workflow based on detected project structure
+          if (adapter && project && project.languages.length > 0 && !options.dryRun) {
+            try {
+              const originalContent = content;
+              content = adapter.adaptTemplate(content, projectRoot);
+              // Only log if content actually changed
+              if (content !== originalContent) {
+                // Content was adapted - this will be shown in final status
+              }
+            } catch (error) {
+              // Fail gracefully - continue with unadapted template
+              console.log(chalk.dim(`   ⚠️  Could not customize ${file} - using generic version`));
+            }
+          }
+
           try {
             await fs.writeFile(targetPath, content);
             createdResources.push(targetPath);
@@ -615,10 +673,16 @@ export function createInitCommand(): Command {
             throw error;
           }
 
+          // Show status with customization indicator
+          const wasCustomized = adapter && project && project.languages.length > 0;
+          
           if (exists) {
-            console.log(chalk.yellow(`   ⚠️  ${file} (overwritten)`));
+            console.log(chalk.yellow(`   ⚠️  ${file} (overwritten${wasCustomized ? ', customized' : ''})`));
           } else {
-            console.log(chalk.green(`   ✅ ${file}`));
+            const status = wasCustomized 
+              ? chalk.green(`   ✅ ${file} (customized)`)
+              : chalk.green(`   ✅ ${file}`);
+            console.log(status);
           }
         }
 
