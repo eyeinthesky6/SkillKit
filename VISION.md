@@ -1,8 +1,8 @@
 # SkillKit Vision
 
-**Version:** 0.0.1 (Initial Release)  
-**Last Updated:** November 7, 2025  
-**Status:** ✅ SELF-CUSTOMIZING WORKFLOW ORCHESTRATION
+**Version:** 0.0.6 (Current Release)  
+**Last Updated:** November 13, 2025  
+**Status:** ✅ SELF-CUSTOMIZING WORKFLOW ORCHESTRATION WITH INTELLIGENT TASK PLANNING
 
 ---
 
@@ -12,9 +12,11 @@
 
 We enable developers and AI agents to:
 1. **Execute** systematic, repeatable development procedures with doc-based workflows
-2. **Customize** workflows automatically to adapt to YOUR specific project
-3. **Integrate** deep domain expertise on-demand via Anthropic skills
-4. **Evolve** continuously through META workflows that improve the system itself
+2. **Plan** tasks intelligently with automatic skill selection (`tsk plan` and `tsk task`)
+3. **Customize** workflows automatically to adapt to YOUR specific project (during `tsk init`)
+4. **Integrate** deep domain expertise on-demand via Anthropic skills
+5. **Track** usage and performance with built-in telemetry (`tsk stats`)
+6. **Evolve** continuously through META workflows that improve the system itself
 
 **The Innovation:** From generic text instructions to project-specific, self-improving workflows.
 
@@ -35,9 +37,12 @@ SkillKit builds on and integrates with the AI development ecosystem:
 ### What Makes SkillKit Unique
 SkillKit is the **first self-customizing workflow system** that:
 - ✅ **Hierarchical** - Workflows → Subtasks → Skills (like functions in programming)
-- ✅ **Self-Customizing** - META_CUSTOMIZE adapts ALL workflows to YOUR project
+- ✅ **Intelligent Planning** - `tsk plan` and `tsk task` automatically select the best skill for any task
+- ✅ **Auto-Customizing** - Workflows adapt to YOUR project automatically during `tsk init`
+- ✅ **Self-Customizing** - META_CUSTOMIZE allows fine-tuning of workflows
 - ✅ **Terminal-Aware** - Cross-platform execution (Windows/Mac/Linux) just works
 - ✅ **Community-Driven** - GitHub-based marketplace, one-command install
+- ✅ **Telemetry-Enabled** - Track skill usage and performance with `tsk stats`
 - ✅ **Self-Improving** - AUDIT_SKILLKIT evolves workflows based on usage
 
 **The Innovation:** Generic instructions become project-specific, self-improving procedures.
@@ -56,7 +61,7 @@ SkillKit is the **first self-customizing workflow system** that:
 │  • Multi-step procedures for AI agents          │
 │  • Cursor slash commands                        │
 │  • Show menus, route to workflows               │
-│  • 10 production workflows                      │
+│  • 13 production workflows (including SKILLKIT_TASK) │
 └─────────────────────────────────────────────────┘
                        ↓ calls
 ┌─────────────────────────────────────────────────┐
@@ -105,22 +110,55 @@ cd your-project
 tsk init --cursor
 
 # Result:
-# ✓ 10 workflows in .cursor/commands/
+# ✓ 13 workflows in .cursor/commands/ (auto-customized to your project)
 # ✓ Anthropic skills installed
 # ✓ AGENTS.md generated
+# ✓ Workflows adapted to your languages, package managers, and tools
 # ✓ Ready to use!
 ```
 
-**Customize to your project:**
+**Auto-customization (automatic during init):**
+```
+During tsk init:
+# → Automatically detects: pnpm (not npm)
+# → Automatically detects: TypeScript + Python (mixed language)
+# → Automatically detects: src/ directory structure
+# → Automatically detects: vitest, ESLint, Prettier
+# → Updates ALL workflows automatically
+# → "npm test" becomes "pnpm test" everywhere
+# → Commands adapted to your exact environment
+
+No manual step needed - it just works!
+```
+
+**Intelligent task execution:**
+```bash
+# Plan which skill to use
+tsk plan "fix all ESLint errors"
+# → Analyzes available skills
+# → Selects best match with confidence score
+
+# Execute task
+tsk task "fix all ESLint errors"
+# → Plans automatically
+# → Executes selected skill
+# → Logs usage for statistics
+
+# View usage stats
+tsk stats
+# → Shows skill usage counts
+# → Average execution times
+# → Success/failure rates
+```
+
+**Manual customization (optional):**
 ```
 In Cursor: /META_CUSTOMIZE
 
-# What happens:
-# → Detects: pnpm (not npm)
-# → Detects: src/ directory
-# → Detects: vitest (not jest)
-# → Updates ALL workflows automatically
-# → "npm test" becomes "pnpm test" everywhere
+For advanced fine-tuning:
+# → Customize specific workflow steps
+# → Add project-specific rules
+# → Override command mappings
 ```
 
 **Daily workflow:**
@@ -246,14 +284,18 @@ User installs skill (Layer 1)
 
 **What We Built:**
 - ✅ **Terminal-Aware Skill Loading** - Cross-platform skill execution (Windows/Mac/Linux)
-- ✅ **Hierarchical Workflow System** - 20+ granular subtasks, 10+ production workflows
+- ✅ **Hierarchical Workflow System** - 20+ granular subtasks, 13 production workflows
+- ✅ **Intelligent Task Planning** - `tsk plan` and `tsk task` for automatic skill selection
+- ✅ **Auto-Customization** - Workflows adapt automatically during `tsk init` (detects languages, package managers, tools)
 - ✅ **Unified AGENTS.md Generation** - Combines SkillKit workflows + Anthropic skills
-- ✅ **META Self-Customization** - Workflows adapt automatically to your project
+- ✅ **META Self-Customization** - Manual fine-tuning via `/META_CUSTOMIZE`
+- ✅ **Usage Telemetry** - Track skill usage and performance with `tsk stats`
 - ✅ **OpenSkills Integration** - Install Anthropic skills with one command
 - ✅ **Community Marketplace** - Install workflows/skills from GitHub (`tsk workflows:add`, `tsk skills:add`)
 - ✅ **AITracking System** - Mandatory AI action logging for all agents
+- ✅ **SKILLKIT_TASK Workflow** - Unified entry point that enforces SkillKit usage
 
-**Current Version:** v0.0.6 (ready for release)
+**Current Version:** v0.0.6 (production ready)
 
 ---
 
@@ -262,7 +304,7 @@ User installs skill (Layer 1)
 **Status:** ⏳ **IN PROGRESS** - Final polish before launch
 
 **Tasks:**
-- [ ] Update user-facing documentation (README.md, VISION.md)
+- [x] Update user-facing documentation (README.md, VISION.md)
 - [ ] End-to-end testing on Windows/Mac/Linux
 - [ ] Community example repositories
 - [ ] Demo video and launch materials

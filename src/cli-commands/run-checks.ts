@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import { MultiLanguageAnalyzer } from '../intelligence/multi-language-analyzer';
+import { MultiLanguageAnalyzer, type LanguageStack } from '../intelligence/multi-language-analyzer';
 
 interface CheckResult {
   language: string;
@@ -85,7 +85,7 @@ export function createRunChecksCommand(): Command {
   return cmd;
 }
 
-async function runLanguageChecks(languageStack: any, projectDir: string): Promise<CheckResult[]> {
+async function runLanguageChecks(languageStack: LanguageStack, projectDir: string): Promise<CheckResult[]> {
   const results: CheckResult[] = [];
   const checks = getLanguageChecks(languageStack);
 
@@ -113,9 +113,10 @@ async function runLanguageChecks(languageStack: any, projectDir: string): Promis
       result.output = output.trim();
       console.log(`    ✅ ${tool} passed`);
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       result.status = 'fail';
-      result.output = error.stdout || error.stderr || error.message;
+      const err = error as { stdout?: string; stderr?: string; message?: string };
+      result.output = err.stdout || err.stderr || err.message;
       console.log(`    ❌ ${tool} failed`);
     }
 
@@ -126,7 +127,7 @@ async function runLanguageChecks(languageStack: any, projectDir: string): Promis
   return results;
 }
 
-function getLanguageChecks(languageStack: any): LanguageChecks[string] {
+function getLanguageChecks(languageStack: LanguageStack): LanguageChecks[string] {
   const checks: LanguageChecks[string] = {};
 
   switch (languageStack.language) {

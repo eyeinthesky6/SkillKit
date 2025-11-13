@@ -18,11 +18,14 @@ A cross-platform system that combines intelligent workflows, terminal-aware skil
 **SkillKit** is a self-customizing workflow orchestration system focused on doc-based workflows:
 
 ### ✨ Key Features:
-- ✅ **12 Production Workflows** - BEGIN_SESSION, IMPLEMENT_FEATURE, FIX_BUGS, and more
+- ✅ **13 Production Workflows** - BEGIN_SESSION, IMPLEMENT_FEATURE, FIX_BUGS, SKILLKIT_TASK, and more
+- ✅ **Intelligent Task Planning** - `tsk plan` and `tsk task` for automatic skill selection and execution
+- ✅ **Auto-Customization** - Workflows automatically adapt to your project during `tsk init`
 - ✅ **Self-Customizing** - META workflows adapt to your project automatically
 - ✅ **Terminal-Aware** - Cross-platform skill loading (Windows/Mac/Linux)
 - ✅ **Community Marketplace** - Install workflows/skills from GitHub with one command
 - ✅ **System Auditing** - Comprehensive health checks with auto-fix
+- ✅ **Usage Telemetry** - Track skill usage and performance with `tsk stats`
 - ✅ **Anthropic Skills** - Integrated PDF, Excel, database expertise on-demand
 
 ### 🚀 IDE Support Status:
@@ -40,10 +43,11 @@ A cross-platform system that combines intelligent workflows, terminal-aware skil
 - **Skills** - Domain expertise (PDF, Excel, databases via Anthropic)
 - **Hierarchical** - Like functions in programming, workflows call subtasks call skills
 
-### 🎯 Self-Customization (The Moat!)
-- **META_CUSTOMIZE** - Automatically adapts workflows to YOUR project
-- **Detects** - Package manager (npm/pnpm/yarn), project structure, tech stack
-- **Adjusts** - All commands updated to match your environment
+### 🎯 Auto-Customization (The Moat!)
+- **Automatic During Init** - Workflows adapt to YOUR project during `tsk init`
+- **Intelligent Detection** - Detects languages, package managers, test frameworks, linters, formatters
+- **Smart Adaptation** - All workflow commands updated to match your environment
+- **Manual Override** - Use `--no-auto-customize` to skip, or `/META_CUSTOMIZE` for fine-tuning
 - **Evolves** - REVIEW_SKILLKIT continuously improves based on your usage
 
 ### 🌐 Terminal-Aware Cross-Platform
@@ -84,7 +88,8 @@ cd your-project
 tsk init --cursor
 
 # What this does:
-# ✓ Copies 12 workflows to .cursor/commands/
+# ✓ Copies 13 workflows to .cursor/commands/ (including SKILLKIT_TASK)
+# ✓ Auto-customizes workflows to your project (detects languages, package managers, tools)
 # ✓ Installs Anthropic skills (pdf, xlsx, docx, etc.)
 # ✓ Generates AGENTS.md catalog
 # ✓ Auto-deduplicates any conflicts
@@ -100,6 +105,7 @@ Type "/" in Cursor to see available workflows:
 /IMPLEMENT_FEATURE      → Build new feature
 /FIX_BUGS              → Fix bugs systematically
 /DEPLOY_PREP           → Pre-deployment checks
+/SKILLKIT_TASK         → Unified task execution (uses tsk plan/task)
 /CONTINUE              → Resume from last session
 /AUDIT_SKILLKIT        → System health check
 /SECURITY_AUDIT        → Security scan
@@ -107,20 +113,51 @@ Type "/" in Cursor to see available workflows:
 /HELP                  → Complete documentation
 ```
 
-### 🎯 Self-Customize to Your Project
+### 🎯 Auto-Customization (Automatic!)
+
+```
+During tsk init:
+✓ Automatically detects your languages (TypeScript, Python, etc.)
+✓ Detects package managers (npm/pnpm/yarn/poetry/pip)
+✓ Detects tools (ESLint, Prettier, Jest, pytest, etc.)
+✓ Adapts ALL workflow templates to YOUR project
+✓ Commands like "npm test" become "pnpm test" everywhere
+
+No manual step needed - it just works!
+```
+
+### 🧠 Intelligent Task Execution
+
+```bash
+# Plan which skill to use for a task
+tsk plan "fix all ESLint errors"
+# → Analyzes available skills
+# → Selects best match with confidence score
+# → Shows reasoning
+
+# Execute task through SkillKit
+tsk task "fix all ESLint errors"
+# → Plans automatically
+# → Executes selected skill
+# → Logs usage for statistics
+
+# View usage statistics
+tsk stats
+# → Shows skill usage counts
+# → Average execution times
+# → Success/failure rates
+```
+
+### 🎯 Manual Customization (Optional)
 
 ```
 In Cursor:
 /META_CUSTOMIZE
 
-What it does:
-✓ Detects your package manager (npm/pnpm/yarn)
-✓ Detects your project structure (src/, app/, etc.)
-✓ Tests all commands in your environment
-✓ Updates ALL workflows to match YOUR project
-✓ Workflows become project-specific!
-
-Result: Commands like "npm test" become "pnpm test" everywhere
+For advanced customization:
+✓ Fine-tune workflow steps
+✓ Add project-specific rules
+✓ Customize command mappings
 ```
 
 ### 📦 Skills Management
@@ -147,6 +184,11 @@ tsk skills:add alice/db-skills/postgres
 ### 🛠️ System Commands
 
 ```bash
+# Intelligent task planning and execution
+tsk plan "<task description>"     # Plan which skill to use
+tsk task "<task description>"      # Execute task (plan + run)
+tsk stats                          # View skill usage statistics
+
 # Run diagnostics
 tsk diagnose
 # → Auto-detects project type
@@ -162,6 +204,12 @@ tsk audit
 
 # Auto-fix safe issues
 tsk audit:fix --auto-safe
+
+# Code quality checks
+tsk run-checks
+# → Runs lint, typecheck, build
+# → Checks circular dependencies (madge)
+# → Generates comprehensive report
 
 # Sync AGENTS.md
 tsk sync

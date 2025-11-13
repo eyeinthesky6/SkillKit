@@ -3555,13 +3555,14 @@ function scanCodeComprehensive() {
         matched = true
       }
       
-      // Python - Functions that always return empty list/dict/None
-      if (/def\s+\w+(?:Data|List|Items|Results|Records|Users|Items)\w*\s*\([^)]*\)\s*:\s*return\s+\[\]\s*$/gm.test(trimmedLine)) {
+      // Python - Functions that always return empty list/dict/None (check return line + previous line for function def)
+      const prevLine = index > 0 ? lines[index - 1].trim() : ''
+      if (/^\s*return\s+\[\]\s*$/.test(trimmedLine) && /^def\s+\w+(?:Data|List|Items|Results|Records|Users|Items)\w*\s*\(/.test(prevLine)) {
         const todoItem = addGitInfoToTodoItem({
           file,
           line: lineNumber,
           type: "EMPTY_RETURN_PATTERN",
-          text: trimmedLine,
+          text: `${prevLine}\n${trimmedLine}`,
           priority: categorizeTodo(trimmedLine, "EMPTY_RETURN", "HIGH"),
           category: "incomplete",
           source: "code_pattern"
@@ -3570,12 +3571,12 @@ function scanCodeComprehensive() {
         todos.byCategory.incomplete.push(todoItem)
         matched = true
       }
-      if (/def\s+\w+(?:Data|Result|Response|Object|Config|Settings)\w*\s*\([^)]*\)\s*:\s*return\s+\{\}\s*$/gm.test(trimmedLine)) {
+      if (/^\s*return\s+\{\}\s*$/.test(trimmedLine) && /^def\s+\w+(?:Data|Result|Response|Object|Config|Settings)\w*\s*\(/.test(prevLine)) {
         const todoItem = addGitInfoToTodoItem({
           file,
           line: lineNumber,
           type: "EMPTY_RETURN_PATTERN",
-          text: trimmedLine,
+          text: `${prevLine}\n${trimmedLine}`,
           priority: categorizeTodo(trimmedLine, "EMPTY_RETURN", "HIGH"),
           category: "incomplete",
           source: "code_pattern"
@@ -3584,12 +3585,12 @@ function scanCodeComprehensive() {
         todos.byCategory.incomplete.push(todoItem)
         matched = true
       }
-      if (/def\s+\w+(?:Data|Result|Value|Item|User)\w*\s*\([^)]*\)\s*:\s*return\s+None\s*$/gm.test(trimmedLine)) {
+      if (/^\s*return\s+None\s*$/.test(trimmedLine) && /^def\s+\w+(?:Data|Result|Value|Item|User)\w*\s*\(/.test(prevLine)) {
         const todoItem = addGitInfoToTodoItem({
           file,
           line: lineNumber,
           type: "EMPTY_RETURN_PATTERN",
-          text: trimmedLine,
+          text: `${prevLine}\n${trimmedLine}`,
           priority: categorizeTodo(trimmedLine, "EMPTY_RETURN", "HIGH"),
           category: "incomplete",
           source: "code_pattern"
@@ -3600,12 +3601,12 @@ function scanCodeComprehensive() {
       }
       
       // Python - Validation functions that always return True/False
-      if (/def\s+(?:validate|check|verify|is_valid|can_access|has_permission)\w*\s*\([^)]*\)\s*:\s*return\s+(?:True|False)\s*$/gm.test(trimmedLine)) {
+      if (/^\s*return\s+(?:True|False)\s*$/.test(trimmedLine) && /^def\s+(?:validate|check|verify|is_valid|can_access|has_permission)\w*\s*\(/.test(prevLine)) {
         const todoItem = addGitInfoToTodoItem({
           file,
           line: lineNumber,
           type: "ALWAYS_RETURNS_BOOLEAN",
-          text: trimmedLine,
+          text: `${prevLine}\n${trimmedLine}`,
           priority: categorizeTodo(trimmedLine, "ALWAYS_RETURNS", "HIGH"),
           category: "incomplete",
           source: "code_pattern"
@@ -3615,13 +3616,13 @@ function scanCodeComprehensive() {
         matched = true
       }
       
-      // Python - Empty function bodies
-      if (/def\s+\w+(?:Data|Input|User|Value|Result|Process|Calculate|Transform|Compute)\w*\s*\([^)]*\)\s*:\s*(?:pass|return\s+(?:input|data|True|False|None|0|''|\[\]|\{\}))\s*$/gm.test(trimmedLine)) {
+      // Python - Empty function bodies (pass or return input/data)
+      if ((/^\s*pass\s*$/.test(trimmedLine) || /^\s*return\s+(?:input|data|True|False|None|0|''|\[\]|\{\})\s*$/.test(trimmedLine)) && /^def\s+\w+(?:Data|Input|User|Value|Result|Process|Calculate|Transform|Compute)\w*\s*\(/.test(prevLine)) {
         const todoItem = addGitInfoToTodoItem({
           file,
           line: lineNumber,
           type: "EMPTY_FUNCTION_BODY",
-          text: trimmedLine,
+          text: `${prevLine}\n${trimmedLine}`,
           priority: categorizeTodo(trimmedLine, "EMPTY_FUNCTION", "HIGH"),
           category: "incomplete",
           source: "code_pattern"
