@@ -659,7 +659,7 @@ export function createInitCommand(): Command {
               if (content !== originalContent) {
                 // Content was adapted - this will be shown in final status
               }
-            } catch (error) {
+            } catch {
               // Fail gracefully - continue with unadapted template
               console.log(chalk.dim(`   ⚠️  Could not customize ${file} - using generic version`));
             }
