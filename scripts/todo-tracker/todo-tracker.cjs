@@ -421,20 +421,94 @@ if (!outputArg) {
 // Combines deceptive language patterns with SEDI precision
 
 // 1. EXPLICIT TODO MARKERS (High Confidence)
+// Explicit TODO patterns - Cross-language comment syntax support
+// Detects TODO/FIXME/HACK/XXX/BUG across all comment syntaxes
 const explicitTodoPatterns = [
+  // JavaScript/TypeScript/Java/C#/Go/Rust/C/C++/Kotlin/Swift - Single line (//)
   /\/\/\s*TODO[\s:]/i,
   /\/\/\s*FIXME[\s:]/i,
   /\/\/\s*HACK[\s:]/i,
   /\/\/\s*XXX[\s:]/i,
   /\/\/\s*BUG[\s:]/i,
+  
+  // JavaScript/TypeScript/Java/C#/C/C++ - Multi-line (/* */)
   /\/\*\s*TODO[\s:]/i,
   /\/\*\s*FIXME[\s:]/i,
   /\/\*\s*HACK[\s:]/i,
+  /\/\*\s*XXX[\s:]/i,
+  /\/\*\s*BUG[\s:]/i,
+  
+  // Python/Ruby/Perl/Shell/Bash/Zsh/Elixir/YAML/Config files - Hash (#)
   /#\s*TODO[\s:]/i,
   /#\s*FIXME[\s:]/i,
   /#\s*HACK[\s:]/i,
   /#\s*XXX[\s:]/i,
   /#\s*BUG[\s:]/i,
+  
+  // SQL/Lua/Haskell/VHDL/Ada - Double dash (--)
+  /--\s*TODO[\s:]/i,
+  /--\s*FIXME[\s:]/i,
+  /--\s*HACK[\s:]/i,
+  /--\s*XXX[\s:]/i,
+  /--\s*BUG[\s:]/i,
+  
+  // Erlang/Matlab/Octave/TeX/LaTeX - Percent (%)
+  /%\s*TODO[\s:]/i,
+  /%\s*FIXME[\s:]/i,
+  /%\s*HACK[\s:]/i,
+  /%\s*XXX[\s:]/i,
+  /%\s*BUG[\s:]/i,
+  
+  // HTML/XML/SGML - Comment tags (<!-- -->)
+  /<!--\s*TODO[\s:]/i,
+  /<!--\s*FIXME[\s:]/i,
+  /<!--\s*HACK[\s:]/i,
+  /<!--\s*XXX[\s:]/i,
+  /<!--\s*BUG[\s:]/i,
+  
+  // Batch files (Windows) - REM
+  /REM\s+TODO[\s:]/i,
+  /REM\s+FIXME[\s:]/i,
+  /REM\s+HACK[\s:]/i,
+  /REM\s+XXX[\s:]/i,
+  /REM\s+BUG[\s:]/i,
+  
+  // Vim/Vi - Double quote (")
+  /"\s*TODO[\s:]/i,
+  /"\s*FIXME[\s:]/i,
+  /"\s*HACK[\s:]/i,
+  /"\s*XXX[\s:]/i,
+  /"\s*BUG[\s:]/i,
+  
+  // PowerShell - Hash (#) - already covered above, but ensure it's explicit
+  // Note: PowerShell also uses # for comments, so already handled
+  
+  // R - Hash (#) - already covered above
+  
+  // Fortran - Exclamation mark (!) or C for column 1
+  /!\s*TODO[\s:]/i,
+  /!\s*FIXME[\s:]/i,
+  /!\s*HACK[\s:]/i,
+  /!\s*XXX[\s:]/i,
+  /!\s*BUG[\s:]/i,
+  
+  // Assembly languages - Semicolon (;) or various
+  /;\s*TODO[\s:]/i,
+  /;\s*FIXME[\s:]/i,
+  /;\s*HACK[\s:]/i,
+  /;\s*XXX[\s:]/i,
+  /;\s*BUG[\s:]/i,
+  
+  // Makefile - Hash (#) - already covered above
+  
+  // Dockerfile - Hash (#) - already covered above
+  
+  // INI files - Semicolon (;) or Hash (#)
+  // Note: ; already covered above, # already covered above
+  
+  // YAML - Hash (#) - already covered above
+  
+  // TOML - Hash (#) - already covered above
 ]
 
 // 2. DECEPTIVE LANGUAGE PATTERNS (Enhanced with manual scan findings)
@@ -454,13 +528,89 @@ const deceptivePatterns = [
   // Only flag when words indicate incomplete work, not when used descriptively
   { regex: /\b(task|pending|defer|enhance|improve|future|planned|expand|refactor|optimi)\b.*(?:TODO|FIXME|HACK|XXX|TBD|NYI|WIP|not.*done|not.*implemented|not.*finished|incomplete|missing|unfinished|needs.*to|required.*to|to.*do|to.*be|should.*be|must.*be|will.*be|left.*to|remain.*to)/gi, type: "INCOMPLETE_MARKER", severity: "MEDIUM", category: "incomplete" },
   { regex: /(?:TODO|FIXME|HACK|XXX|TBD|NYI|WIP|not.*done|not.*implemented|not.*finished|incomplete|missing|unfinished|needs.*to|required.*to|to.*do|to.*be|should.*be|must.*be|will.*be|left.*to|remain.*to).*\b(task|pending|defer|enhance|improve|future|planned|expand|refactor|optimi)\b/gi, type: "INCOMPLETE_MARKER", severity: "MEDIUM", category: "incomplete" },
-  { regex: /\b(basic version|first version|MVP|initial implementation)\b/gi, type: "BASIC_VERSION", severity: "HIGH", category: "incomplete" },
+  { regex: /\b(basic version|first version|MVP|initial implementation|basic.*validation|simple.*approach|placeholder.*value|could be enhanced|basic.*implementation|simple.*implementation|minimal.*implementation)\b/gi, type: "BASIC_VERSION", severity: "HIGH", category: "incomplete" },
   // INCOMPLETE_WORK: Match in comments with incomplete work context
   // Only flag when words indicate incomplete work, not when used descriptively (e.g., "Adds two numbers")
   { regex: /\b(work finished|work complete|needs|add|left|remain|next step|follow up)\b.*(?:TODO|FIXME|HACK|XXX|TBD|NYI|WIP|not.*done|not.*implemented|not.*finished|incomplete|missing|unfinished|to.*do|to.*be|should.*be|must.*be|will.*be|left.*to|remain.*to|validation|implementation|error.*handling|testing|documentation)/gi, type: "INCOMPLETE_WORK", severity: "MEDIUM", category: "incomplete" },
   { regex: /(?:TODO|FIXME|HACK|XXX|TBD|NYI|WIP|not.*done|not.*implemented|not.*finished|incomplete|missing|unfinished|to.*do|to.*be|should.*be|must.*be|will.*be|left.*to|remain.*to).*\b(work finished|work complete|needs|add|left|remain|next step|follow up)\b/gi, type: "INCOMPLETE_WORK", severity: "MEDIUM", category: "incomplete" },
   { regex: /\b(to be done|to do|not yet|not finished|not complete|not ready)\b/gi, type: "INCOMPLETE_STATE", severity: "HIGH", category: "incomplete" },
   { regex: /\b(scheduled|planned|future release|future sprint|future work|future enhancement|future improvement|future expansion|future refactor|future optimization|future feature|future addition|future change|future update|future upgrade)\b/gi, type: "DEFERRED_TO_FUTURE", severity: "MEDIUM", category: "incomplete" },
+
+  // AI-Generated Code Specific Patterns
+  { regex: /\b(currently returns a placeholder|returns a placeholder value|placeholder calculation|simple equal weighting.*placeholder|basic error handling|could be enhanced|currently uses a simple|uses a simple.*approach)\b/gi, type: "AI_PLACEHOLDER_IMPLEMENTATION", severity: "HIGH", category: "incomplete" },
+  { regex: /\b(async function.*placeholder|await.*placeholder|async.*TODO|async.*FIXME)\b/gi, type: "AI_ASYNC_PLACEHOLDER", severity: "HIGH", category: "incomplete" },
+  { regex: /\b(mock service|mock data|mock implementation|dummy service|dummy data|fake service|fake data)\b.*\b(for testing|for development|placeholder)\b/gi, type: "AI_MOCK_PLACEHOLDER", severity: "MEDIUM", category: "temporary" },
+  { regex: /\b(basic logging|simple logging|placeholder logging|setup logging.*placeholder)\b/gi, type: "AI_BASIC_LOGGING", severity: "MEDIUM", category: "incomplete" },
+  { regex: /\b(empty array|empty object|empty list|empty dict).*placeholder\b/gi, type: "AI_EMPTY_COLLECTION_PLACEHOLDER", severity: "HIGH", category: "incomplete" },
+  
+  // AI-Generated Code Security & Quality Patterns (from research)
+  { regex: /\b(hardcoded|hard-coded).*(password|secret|key|token|credential|api.*key|api.*secret)\b/gi, type: "AI_HARDCODED_SECRET", severity: "CRITICAL", category: "security" },
+  { regex: /(?:password|secret|key|token|credential)\s*[:=]\s*["'][^"']+["']/gi, type: "AI_HARDCODED_SECRET_VALUE", severity: "CRITICAL", category: "security" },
+  { regex: /f["']SELECT.*\{.*\}.*FROM|f["']INSERT.*\{.*\}.*INTO|f["']UPDATE.*\{.*\}.*SET/gi, type: "AI_SQL_INJECTION_RISK", severity: "CRITICAL", category: "security" },
+  { regex: /except\s*:\s*pass|except\s*Exception\s*:\s*pass|except\s*:\s*#\s*TODO/gi, type: "AI_EMPTY_EXCEPTION_HANDLER", severity: "HIGH", category: "incomplete" },
+  { regex: /\b(TODO|FIXME).*(add|implement|add proper|add.*proper).*(error handling|exception handling|validation|input validation|sanitization|rate limiting|authentication|authorization|audit logging)\b/gi, type: "AI_MISSING_SECURITY_FEATURE", severity: "CRITICAL", category: "security" },
+  { regex: /\b(literal comment|obvious comment|restate code|increment.*by.*1|add.*to|set.*to)\b/gi, type: "AI_LITERAL_COMMENT", severity: "LOW", category: "deceptive" },
+  { regex: /\b(generic.*variable|variable.*name.*data|variable.*name.*result|variable.*name.*item|variable.*name.*temp)\b/gi, type: "AI_GENERIC_VARIABLE_NAME", severity: "LOW", category: "deceptive" },
+  { regex: /def\s+(process|handle|get|set|do|run|execute|perform)\s*\(/gi, type: "AI_GENERIC_FUNCTION_NAME", severity: "LOW", category: "deceptive" },
+  { regex: /\b(missing.*error.*handling|lack.*of.*error.*handling|no.*error.*handling|missing.*edge.*case|lack.*of.*edge.*case)\b/gi, type: "AI_MISSING_ERROR_HANDLING", severity: "HIGH", category: "incomplete" },
+
+  // Disabled/Skipped Tests (incomplete test coverage)
+  { regex: /(?:it|test|describe|context)\.(skip|only|xskip|xit|xtest)/gi, type: "DISABLED_TEST", severity: "HIGH", category: "incomplete" },
+  { regex: /@(?:skip|ignore|disabled)\s*(?:test|Test|it)/gi, type: "DISABLED_TEST_ANNOTATION", severity: "HIGH", category: "incomplete" },
+  { regex: /(?:test|it|describe)\([^)]*\)\s*=>\s*\{?\s*(?:skip|pending|todo)/gi, type: "PENDING_TEST", severity: "MEDIUM", category: "incomplete" },
+  { regex: /#\s*(?:skip|ignore|disabled).*test/gi, type: "DISABLED_TEST_COMMENT", severity: "MEDIUM", category: "incomplete" },
+  
+  // Feature Flags & Temporary Conditionals (commonly missed)
+  { regex: /if\s*\(\s*(?:true|false)\s*\)\s*\{/gi, type: "HARDCODED_FEATURE_FLAG", severity: "HIGH", category: "temporary" },
+  { regex: /if\s*\(\s*!?\s*(?:true|false)\s*\)/gi, type: "DEAD_CODE_CONDITIONAL", severity: "MEDIUM", category: "temporary" },
+  { regex: /#\s*(?:TODO|FIXME).*(?:remove|delete).*(?:feature.*flag|if.*true|if.*false)/gi, type: "TEMPORARY_FEATURE_FLAG", severity: "HIGH", category: "temporary" },
+  
+  // Deprecated Code Patterns (incomplete migration)
+  { regex: /@(?:deprecated|Deprecated)\s*(?!.*migration.*complete|.*replaced.*by)/gi, type: "DEPRECATED_CODE_NOT_MIGRATED", severity: "HIGH", category: "incomplete" },
+  { regex: /#\s*(?:deprecated|DEPRECATED|TODO.*deprecated|FIXME.*deprecated)/gi, type: "DEPRECATED_CODE_MARKER", severity: "MEDIUM", category: "incomplete" },
+  { regex: /\b(?:old|legacy|deprecated).*(?:code|function|method|class|API).*(?:TODO|FIXME|remove|replace)/gi, type: "LEGACY_CODE_NOT_REPLACED", severity: "HIGH", category: "incomplete" },
+  
+  // Magic Numbers & Hardcoded Values (incomplete configuration)
+  { regex: /(?:TODO|FIXME).*(?:extract|move|make.*configurable).*(?:magic.*number|hardcoded|constant)/gi, type: "MAGIC_NUMBER_TODO", severity: "MEDIUM", category: "incomplete" },
+  { regex: /(?:timeout|delay|retry|max|min|limit|threshold)\s*[:=]\s*\d+(?!\s*(?:ms|seconds?|minutes?|hours?))/gi, type: "HARDCODED_CONFIG_VALUE", severity: "MEDIUM", category: "incomplete" },
+  
+  // Incomplete Error Handling (catch but do nothing meaningful)
+  { regex: /catch\s*\([^)]*\)\s*\{?\s*(?:\/\/.*)?\s*\}?\s*(?!.*(?:log|throw|handle|error|warn|notify))/gi, type: "EMPTY_CATCH_BLOCK", severity: "HIGH", category: "incomplete" },
+  { regex: /catch\s*\([^)]*\)\s*\{?\s*(?:print|console\.log)\s*\([^)]*\)\s*\}?\s*(?!.*(?:throw|handle|error|warn|notify|recover))/gi, type: "INCOMPLETE_ERROR_HANDLING", severity: "HIGH", category: "incomplete" },
+  { regex: /except\s+(?:Exception|BaseException)\s*:\s*(?:pass|print|logging\.(?:debug|info))\s*$/gm, type: "PYTHON_INCOMPLETE_EXCEPTION", severity: "HIGH", category: "incomplete" },
+  
+  // Missing Null/Undefined Checks (incomplete validation)
+  { regex: /(?:TODO|FIXME).*(?:add|check|validate).*(?:null|undefined|None|nullable)/gi, type: "MISSING_NULL_CHECK_TODO", severity: "HIGH", category: "incomplete" },
+  
+  // Temporary Workarounds (commonly become permanent)
+  { regex: /#\s*(?:TODO|FIXME|HACK|XXX).*(?:workaround|temporary|quick.*fix|band.*aid|hack)/gi, type: "TEMPORARY_WORKAROUND", severity: "HIGH", category: "temporary" },
+  { regex: /\/\/\s*(?:TODO|FIXME|HACK|XXX).*(?:workaround|temporary|quick.*fix|band.*aid|hack)/gi, type: "TEMPORARY_WORKAROUND_COMMENT", severity: "HIGH", category: "temporary" },
+  { regex: /\b(?:workaround|temporary.*fix|quick.*fix|band.*aid)\s*(?:for|to|until)/gi, type: "WORKAROUND_PATTERN", severity: "MEDIUM", category: "temporary" },
+  
+  // Incomplete Refactoring (old and new code both present)
+  { regex: /(?:old|new|legacy|deprecated).*(?:implementation|version|code|function|method).*(?:TODO|FIXME|remove|delete|cleanup)/gi, type: "INCOMPLETE_REFACTORING", severity: "HIGH", category: "incomplete" },
+  { regex: /#\s*(?:TODO|FIXME).*(?:remove|delete|cleanup).*(?:old|legacy|deprecated|unused)/gi, type: "INCOMPLETE_CLEANUP", severity: "MEDIUM", category: "incomplete" },
+  { regex: /\/\/\s*(?:TODO|FIXME).*(?:remove|delete|cleanup).*(?:old|legacy|deprecated|unused)/gi, type: "INCOMPLETE_CLEANUP_COMMENT", severity: "MEDIUM", category: "incomplete" },
+  
+  // Stub Implementations in Production
+  { regex: /(?:stub|mock|fake|dummy).*(?:implementation|function|method|class|service).*(?!.*test|.*spec)/gi, type: "STUB_IN_PRODUCTION", severity: "CRITICAL", category: "incomplete" },
+  { regex: /(?:TODO|FIXME).*(?:replace|implement).*(?:stub|mock|fake|dummy)/gi, type: "STUB_REPLACEMENT_TODO", severity: "HIGH", category: "incomplete" },
+  
+  // Missing Type Definitions (incomplete type safety)
+  { regex: /:\s*any\s*(?!\s*\/\/\s*(?:temporary|TODO|FIXME))/gi, type: "ANY_TYPE_USAGE", severity: "LOW", category: "incomplete" },
+  { regex: /(?:TODO|FIXME).*(?:add|define|implement).*(?:type|interface|typedef)/gi, type: "MISSING_TYPE_DEFINITION", severity: "MEDIUM", category: "incomplete" },
+  { regex: /#\s*type:\s*ignore(?!\s*#\s*(?:temporary|TODO|FIXME))/gi, type: "TYPE_IGNORE_WITHOUT_TODO", severity: "LOW", category: "incomplete" },
+  
+  // Incomplete Resource Cleanup
+  { regex: /(?:TODO|FIXME).*(?:close|cleanup|release|dispose).*(?:resource|connection|file|stream|socket)/gi, type: "MISSING_RESOURCE_CLEANUP", severity: "HIGH", category: "incomplete" },
+  
+  // Missing Configuration/Environment Variables
+  { regex: /(?:TODO|FIXME).*(?:move|extract|use|add).*(?:config|environment|env|setting|variable)/gi, type: "MISSING_CONFIG_TODO", severity: "MEDIUM", category: "incomplete" },
+  { regex: /(?:hardcoded|hard.*coded).*(?:config|setting|value|parameter).*(?:TODO|FIXME|move|extract)/gi, type: "HARDCODED_CONFIG_TODO", severity: "MEDIUM", category: "incomplete" },
+  
+  // Incomplete Dependency Management
+  { regex: /(?:TODO|FIXME).*(?:update|upgrade|replace|remove).*(?:dependency|package|library|version)/gi, type: "INCOMPLETE_DEPENDENCY_MANAGEMENT", severity: "MEDIUM", category: "incomplete" },
+  { regex: /(?:deprecated|outdated|old|legacy).*(?:dependency|package|library).*(?:TODO|FIXME)/gi, type: "OUTDATED_DEPENDENCY", severity: "MEDIUM", category: "incomplete" },
 
   // Python-specific incomplete implementation patterns
   { regex: /raise\s+NotImplementedError\s*\(/gi, type: "PYTHON_NOT_IMPLEMENTED_ERROR", severity: "CRITICAL", category: "incomplete" },
@@ -748,7 +898,36 @@ const deceptivePatterns = [
   { regex: /catch\s*\([^)]*\)\s*\{[^}]*\/\/.*(?:TODO|FIXME|handle|implement)[^}]*\}/gi, type: "INADEQUATE_ERROR_HANDLING", severity: "HIGH", category: "incomplete" },
 
   // EMPTY FUNCTION BODIES (descriptive names but empty/basic implementation)
+  // JavaScript/TypeScript
   { regex: /function\s+\w+(?:Data|Input|User|Value|Result|Process|Calculate|Transform|Compute)\w*\s*\([^)]*\)\s*\{[^}]*?(?:pass|return\s*(?:input|data|true|false|null|undefined|0|''|\[\]|\{\}))[^}]*\}/gi, type: "EMPTY_FUNCTION_BODY", severity: "HIGH", category: "incomplete" },
+  { regex: /function\s+\w+\s*\([^)]*\)\s*\{[^}]*\/\/.*(?:TODO|FIXME|implement|complete)[^}]*\}/gi, type: "EMPTY_FUNCTION_BODY", severity: "HIGH", category: "incomplete" },
+  
+  // Python - Empty function bodies
+  { regex: /def\s+\w+(?:Data|Input|User|Value|Result|Process|Calculate|Transform|Compute)\w*\s*\([^)]*\)\s*:\s*(?:pass|return\s+(?:input|data|True|False|None|0|''|\[\]|\{\}))\s*$/gm, type: "EMPTY_FUNCTION_BODY", severity: "HIGH", category: "incomplete" },
+  { regex: /def\s+\w+\s*\([^)]*\)\s*:\s*(?:pass|#.*(?:TODO|FIXME|implement|complete))\s*$/gm, type: "EMPTY_FUNCTION_BODY", severity: "HIGH", category: "incomplete" },
+  
+  // Java - Empty method bodies
+  { regex: /(?:public|private|protected)?\s*\w+\s+\w+(?:Data|Input|User|Value|Result|Process|Calculate|Transform|Compute)\w*\s*\([^)]*\)\s*\{[^}]*?(?:return\s+(?:input|data|true|false|null|0|""|new\s+\w+\s*\(\)))\s*;?\s*\}/gi, type: "EMPTY_FUNCTION_BODY", severity: "HIGH", category: "incomplete" },
+  { regex: /(?:public|private|protected)?\s*\w+\s+\w+\s*\([^)]*\)\s*\{[^}]*\/\/.*(?:TODO|FIXME|implement|complete)[^}]*\}/gi, type: "EMPTY_FUNCTION_BODY", severity: "HIGH", category: "incomplete" },
+  
+  // C# - Empty method bodies
+  { regex: /(?:public|private|protected)?\s*\w+\s+\w+(?:Data|Input|User|Value|Result|Process|Calculate|Transform|Compute)\w*\s*\([^)]*\)\s*\{[^}]*?(?:return\s+(?:input|data|true|false|null|0|""|new\s+\w+\s*\(\)))\s*;?\s*\}/gi, type: "EMPTY_FUNCTION_BODY", severity: "HIGH", category: "incomplete" },
+  { regex: /(?:public|private|protected)?\s*\w+\s+\w+\s*\([^)]*\)\s*\{[^}]*\/\/.*(?:TODO|FIXME|implement|complete)[^}]*\}/gi, type: "EMPTY_FUNCTION_BODY", severity: "HIGH", category: "incomplete" },
+  
+  // Go - Empty function bodies
+  { regex: /func\s+\w+(?:Data|Input|User|Value|Result|Process|Calculate|Transform|Compute)\w*\s*\([^)]*\)\s+\w+\s*\{[^}]*?(?:return\s+(?:input|data|true|false|nil|0|""|\[\]\w+))\s*\}/gi, type: "EMPTY_FUNCTION_BODY", severity: "HIGH", category: "incomplete" },
+  { regex: /func\s+\w+\s*\([^)]*\)\s*\{[^}]*\/\/.*(?:TODO|FIXME|implement|complete)[^}]*\}/gi, type: "EMPTY_FUNCTION_BODY", severity: "HIGH", category: "incomplete" },
+  
+  // Rust - Empty function bodies
+  { regex: /fn\s+\w+(?:Data|Input|User|Value|Result|Process|Calculate|Transform|Compute)\w*\s*\([^)]*\)\s*->\s*\w+\s*\{[^}]*?(?:input|data|true|false|None|0|vec!\s*\[\])\s*\}/gi, type: "EMPTY_FUNCTION_BODY", severity: "HIGH", category: "incomplete" },
+  { regex: /fn\s+\w+\s*\([^)]*\)\s*\{[^}]*\/\/.*(?:TODO|FIXME|implement|complete)[^}]*\}/gi, type: "EMPTY_FUNCTION_BODY", severity: "HIGH", category: "incomplete" },
+  
+  // Ruby - Empty method bodies
+  { regex: /def\s+\w+(?:Data|Input|User|Value|Result|Process|Calculate|Transform|Compute)\w*\s*\([^)]*\)\s*(?:input|data|true|false|nil|0|\[\]|\{\})\s*$/gm, type: "EMPTY_FUNCTION_BODY", severity: "HIGH", category: "incomplete" },
+  { regex: /def\s+\w+\s*\([^)]*\)\s*(?:#.*(?:TODO|FIXME|implement|complete))\s*$/gm, type: "EMPTY_FUNCTION_BODY", severity: "HIGH", category: "incomplete" },
+  
+  // PHP - Empty function bodies
+  { regex: /function\s+\w+(?:Data|Input|User|Value|Result|Process|Calculate|Transform|Compute)\w*\s*\([^)]*\)\s*\{[^}]*?(?:return\s+(?:input|data|true|false|null|0|''|\[\]|\{\}))\s*;?\s*\}/gi, type: "EMPTY_FUNCTION_BODY", severity: "HIGH", category: "incomplete" },
   { regex: /function\s+\w+\s*\([^)]*\)\s*\{[^}]*\/\/.*(?:TODO|FIXME|implement|complete)[^}]*\}/gi, type: "EMPTY_FUNCTION_BODY", severity: "HIGH", category: "incomplete" },
 
   // COMMENT MISMATCH (comment claims functionality but code doesn't implement it)
@@ -781,16 +960,109 @@ const temporaryCodePatterns = [
 ]
 
 // DEBUG STATEMENT PATTERNS (only checked if --debug flag is set)
+// Cross-language debug/logging patterns
 const debugStatementPatterns = [
-  /console\.(log|error|warn|info|debug)\s*\(/gi,
+  // JavaScript/TypeScript/Node.js
+  /console\.(log|error|warn|info|debug|trace|dir|table|group|groupEnd|time|timeEnd|assert)\s*\(/gi,
   /\bdebugger\s*;/gi,
   /\balert\s*\(/gi,
-  /console\.(trace|dir|table|group|groupEnd)\s*\(/gi,
+  
+  // Python
+  /print\s*\(/gi,
+  /logging\.(debug|info|warning|warn|error|critical)\s*\(/gi,
+  /logger\.(debug|info|warning|warn|error|critical)\s*\(/gi,
+  /sys\.stderr\.write\s*\(/gi,
+  /sys\.stdout\.write\s*\(/gi,
+  
+  // Java
+  /System\.out\.(print|println|printf)\s*\(/gi,
+  /System\.err\.(print|println|printf)\s*\(/gi,
+  /logger\.(debug|info|warn|error|trace|fatal)\s*\(/gi,
+  /log\.(debug|info|warn|error|trace|fatal)\s*\(/gi,
+  /Log\.(d|i|w|e|v)\s*\(/gi, // Android Log.d, Log.i, etc.
+  
+  // C#
+  /Console\.(Write|WriteLine|WriteLine)\s*\(/gi,
+  /Debug\.(Write|WriteLine|Assert)\s*\(/gi,
+  /Trace\.(Write|WriteLine)\s*\(/gi,
+  /_logger\.(LogDebug|LogInformation|LogWarning|LogError)\s*\(/gi,
+  /logger\.(LogDebug|LogInformation|LogWarning|LogError)\s*\(/gi,
+  
+  // PHP
+  /error_log\s*\(/gi,
+  /var_dump\s*\(/gi,
+  /print_r\s*\(/gi,
+  /var_export\s*\(/gi,
+  /echo\s+\$[a-zA-Z_]/gi, // echo $variable (simple debug)
+  
+  // Ruby
+  /puts\s+/gi,
+  /\bp\s+[a-zA-Z_]/gi, // p variable
+  /\bpp\s+[a-zA-Z_]/gi, // pp variable
+  /logger\.(debug|info|warn|error|fatal)\s*\(/gi,
+  /Rails\.logger\.(debug|info|warn|error|fatal)\s*\(/gi,
+  
+  // Go
+  /fmt\.(Print|Println|Printf)\s*\(/gi,
+  /log\.(Print|Println|Printf|Fatal|Fatalf|Fatalln)\s*\(/gi,
+  
+  // Rust
+  /println!\s*\(/gi,
+  /eprintln!\s*\(/gi,
+  /print!\s*\(/gi,
+  /eprint!\s*\(/gi,
+  /dbg!\s*\(/gi,
+  /debug_assert!\s*\(/gi,
+  
+  // Kotlin
+  /println\s*\(/gi,
+  /print\s*\(/gi,
+  /Log\.(d|i|w|e|v)\s*\(/gi, // Android Log
+  /logger\.(debug|info|warn|error|trace)\s*\(/gi,
+  
+  // Swift
+  /print\s*\(/gi,
+  /NSLog\s*\(/gi,
+  /os_log\s*\(/gi,
+  /debugPrint\s*\(/gi,
+  
+  // C/C++
+  /printf\s*\(/gi,
+  /fprintf\s*\(/gi,
+  /std::cout\s*<</gi,
+  /std::cerr\s*<</gi,
+  /cout\s*<</gi,
+  /cerr\s*<</gi,
+  
+  // Dart
+  /print\s*\(/gi,
+  /debugPrint\s*\(/gi,
+  
+  // R
+  /print\s*\(/gi,
+  /cat\s*\(/gi,
+  /message\s*\(/gi,
+  /warning\s*\(/gi,
+  
+  // Shell scripts (bash/zsh)
+  /echo\s+["']?\$[a-zA-Z_]/gi, // echo $variable
+  /printf\s+["']/gi,
+  
+  // Scala
+  /println\s*\(/gi,
+  /print\s*\(/gi,
+  /Logger\.(debug|info|warn|error)\s*\(/gi,
+  
+  // General patterns (catch-all for common debug functions)
+  /debug\s*\(/gi,
+  /dump\s*\(/gi,
+  /trace\s*\(/gi,
 ]
 
 // 4. INCOMPLETE IMPLEMENTATION PATTERNS (SEDI-style + Code Pattern Detection)
+// Cross-language incomplete implementation patterns
 const incompletePatterns = [
-  // Explicit incomplete implementations
+  // Explicit incomplete implementations - JavaScript/TypeScript
   /throw new Error\s*\(\s*["'].*not implemented.*["']\s*\)/i,
   /throw new Error\s*\(\s*["'].*temporarily unavailable.*["']\s*\)/i,
   /throw new Error\s*\(\s*["'].*not yet implemented.*["']\s*\)/i,
@@ -798,12 +1070,70 @@ const incompletePatterns = [
   /throw new Error\s*\(\s*["'].*TODO.*["']\s*\)/i,
   /return null\s*\/\/.*\b(implement|add|complete)\b/i,
   /return undefined\s*\/\/.*\b(implement|add|complete)\b/i,
-  /\/\/.*\b(not implemented|not finished|incomplete)\b/i,
-  /\/\/.*\b(stub|placeholder)\b.*\b(replace|implement)\b/i,
   
-  // Generic throw errors (AI often generates these)
+  // Python incomplete implementations
+  /raise\s+(?:NotImplementedError|RuntimeError|ValueError)\s*\(\s*["'].*not implemented.*["']\s*\)/i,
+  /raise\s+(?:NotImplementedError|RuntimeError|ValueError)\s*\(\s*["'].*not yet implemented.*["']\s*\)/i,
+  /raise\s+(?:NotImplementedError|RuntimeError|ValueError)\s*\(\s*["'].*TODO.*["']\s*\)/i,
+  /return None\s*#.*\b(implement|add|complete)\b/i,
+  
+  // Java incomplete implementations
+  /throw new (?:RuntimeException|IllegalStateException|UnsupportedOperationException)\s*\(\s*["'].*not implemented.*["']\s*\)/i,
+  /throw new (?:RuntimeException|IllegalStateException|UnsupportedOperationException)\s*\(\s*["'].*TODO.*["']\s*\)/i,
+  /return null\s*;?\s*\/\/.*\b(implement|add|complete)\b/i,
+  
+  // C# incomplete implementations
+  /throw new (?:NotImplementedException|InvalidOperationException)\s*\(\s*["'].*not implemented.*["']\s*\)/i,
+  /throw new (?:NotImplementedException|InvalidOperationException)\s*\(\s*["'].*TODO.*["']\s*\)/i,
+  /return null\s*;?\s*\/\/.*\b(implement|add|complete)\b/i,
+  
+  // Go incomplete implementations
+  /panic\s*\(\s*["'].*not implemented.*["']\s*\)/i,
+  /panic\s*\(\s*["'].*TODO.*["']\s*\)/i,
+  /return nil\s*\/\/.*\b(implement|add|complete)\b/i,
+  
+  // Rust incomplete implementations
+  /panic!\s*\(\s*["'].*not implemented.*["']\s*\)/i,
+  /panic!\s*\(\s*["'].*TODO.*["']\s*\)/i,
+  /unimplemented!\s*\(/i,
+  /todo!\s*\(/i,
+  
+  // PHP incomplete implementations
+  /throw new (?:Exception|RuntimeException)\s*\(\s*["'].*not implemented.*["']\s*\)/i,
+  /throw new (?:Exception|RuntimeException)\s*\(\s*["'].*TODO.*["']\s*\)/i,
+  /return null\s*;?\s*\/\/.*\b(implement|add|complete)\b/i,
+  
+  // Ruby incomplete implementations
+  /raise\s+(?:NotImplementedError|RuntimeError)\s*,\s*["'].*not implemented.*["']/i,
+  /raise\s+(?:NotImplementedError|RuntimeError)\s*,\s*["'].*TODO.*["']/i,
+  /return nil\s*#.*\b(implement|add|complete)\b/i,
+  
+  // Kotlin incomplete implementations
+  /throw (?:NotImplementedError|IllegalStateException)\s*\(\s*["'].*not implemented.*["']\s*\)/i,
+  /throw (?:NotImplementedError|IllegalStateException)\s*\(\s*["'].*TODO.*["']\s*\)/i,
+  /return null\s*\/\/.*\b(implement|add|complete)\b/i,
+  
+  // Swift incomplete implementations
+  /fatalError\s*\(\s*["'].*not implemented.*["']\s*\)/i,
+  /fatalError\s*\(\s*["'].*TODO.*["']\s*\)/i,
+  /preconditionFailure\s*\(\s*["'].*not implemented.*["']\s*\)/i,
+  
+  // C/C++ incomplete implementations
+  /abort\s*\(\s*\)/i, // abort() without message
+  /exit\s*\(\s*1\s*\)/i, // exit(1) without proper error handling
+  
+  // Cross-language comment patterns
+  /\/\/.*\b(not implemented|not finished|incomplete)\b/i, // JavaScript/TypeScript/C/C++/Java/C#/Go
+  /#.*\b(not implemented|not finished|incomplete)\b/i, // Python/Ruby
+  /\/\*.*\b(not implemented|not finished|incomplete)\b.*\*\//i, // Multi-line comments
+  /\/\/.*\b(stub|placeholder)\b.*\b(replace|implement)\b/i,
+  /#.*\b(stub|placeholder)\b.*\b(replace|implement)\b/i,
+  
+  // Generic throw/raise/panic errors (AI often generates these)
   /throw new Error\s*\(\s*["'](?:An error occurred|Something went wrong|Error|Exception|Failed)["']\s*\)/i,
   /throw new Error\s*\(\s*["'][^"']{0,15}["']\s*\)/i, // Very short error messages (< 15 chars)
+  /raise\s+(?:Exception|RuntimeError|ValueError)\s*\(\s*["'](?:An error occurred|Something went wrong|Error|Exception|Failed)["']\s*\)/i,
+  /panic\s*\(\s*["'](?:An error occurred|Something went wrong|Error|Exception|Failed)["']\s*\)/i,
   
   // Zod schema patterns (incomplete/superficial validation)
   /z\.(?:string|number|boolean)\s*\(\s*\)\s*$/m, // Empty Zod schema
@@ -811,33 +1141,151 @@ const incompletePatterns = [
   /z\.(?:string|number|boolean)\s*\(\s*\)\s*\.(?:optional|nullable)\s*\(\s*\)/i, // Superficial validation
   
   // CODE PATTERNS: Functions that always return empty/null/undefined (symptomatic of lazy coding)
-  // Functions that always return empty array
+  // JavaScript/TypeScript - Functions that always return empty array
   /function\s+\w+(?:Data|List|Items|Results|Records|Users|Items)\w*\s*\([^)]*\)\s*\{[^}]*return\s+\[\]\s*;?\s*\}/gi,
-  // Functions that always return empty object
+  // JavaScript/TypeScript - Functions that always return empty object
   /function\s+\w+(?:Data|Result|Response|Object|Config|Settings)\w*\s*\([^)]*\)\s*\{[^}]*return\s+\{\}\s*;?\s*\}/gi,
-  // Functions that always return null
+  // JavaScript/TypeScript - Functions that always return null
   /function\s+\w+(?:Data|Result|Value|Item|User)\w*\s*\([^)]*\)\s*\{[^}]*return\s+null\s*;?\s*\}/gi,
-  // Functions that always return undefined
+  // JavaScript/TypeScript - Functions that always return undefined
   /function\s+\w+(?:Data|Result|Value)\w*\s*\([^)]*\)\s*\{[^}]*return\s+undefined\s*;?\s*\}/gi,
   
-  // Async functions that immediately resolve (no-op async)
+  // Python - Functions that always return empty list/dict/None
+  /def\s+\w+(?:Data|List|Items|Results|Records|Users|Items)\w*\s*\([^)]*\)\s*:\s*return\s+\[\]\s*$/gm,
+  /def\s+\w+(?:Data|Result|Response|Object|Config|Settings)\w*\s*\([^)]*\)\s*:\s*return\s+\{\}\s*$/gm,
+  /def\s+\w+(?:Data|Result|Value|Item|User)\w*\s*\([^)]*\)\s*:\s*return\s+None\s*$/gm,
+  
+  // Java - Functions that always return empty collection/null
+  /(?:public|private|protected)?\s*\w+\s+\w+(?:Data|List|Items|Results|Records|Users|Items)\w*\s*\([^)]*\)\s*\{[^}]*return\s+(?:new\s+ArrayList\s*\(\)|new\s+LinkedList\s*\(\)|Collections\.emptyList\s*\(\)|null)\s*;?\s*\}/gi,
+  /(?:public|private|protected)?\s*\w+\s+\w+(?:Data|Result|Response|Object|Config|Settings)\w*\s*\([^)]*\)\s*\{[^}]*return\s+(?:new\s+HashMap\s*\(\)|new\s+LinkedHashMap\s*\(\)|Collections\.emptyMap\s*\(\)|null)\s*;?\s*\}/gi,
+  /(?:public|private|protected)?\s*\w+\s+\w+(?:Data|Result|Value|Item|User)\w*\s*\([^)]*\)\s*\{[^}]*return\s+null\s*;?\s*\}/gi,
+  
+  // C# - Functions that always return empty collection/null
+  /(?:public|private|protected)?\s*\w+\s+\w+(?:Data|List|Items|Results|Records|Users|Items)\w*\s*\([^)]*\)\s*\{[^}]*return\s+(?:new\s+List\s*<[^>]+>\s*\(\)|Enumerable\.Empty\s*<[^>]+>\s*\(\)|null)\s*;?\s*\}/gi,
+  /(?:public|private|protected)?\s*\w+\s+\w+(?:Data|Result|Response|Object|Config|Settings)\w*\s*\([^)]*\)\s*\{[^}]*return\s+(?:new\s+Dictionary\s*<[^>]+>\s*\(\)|null)\s*;?\s*\}/gi,
+  /(?:public|private|protected)?\s*\w+\s+\w+(?:Data|Result|Value|Item|User)\w*\s*\([^)]*\)\s*\{[^}]*return\s+null\s*;?\s*\}/gi,
+  
+  // Go - Functions that always return empty slice/map/nil
+  /func\s+\w+(?:Data|List|Items|Results|Records|Users|Items)\w*\s*\([^)]*\)\s+\[\]\w+\s*\{[^}]*return\s+\[\]\w+\s*\}/gi,
+  /func\s+\w+(?:Data|Result|Response|Object|Config|Settings)\w*\s*\([^)]*\)\s+map\[[^\]]+\]\w+\s*\{[^}]*return\s+make\s*\(map\[[^\]]+\]\w+\)\s*\}/gi,
+  /func\s+\w+(?:Data|Result|Value|Item|User)\w*\s*\([^)]*\)\s+\*?\w+\s*\{[^}]*return\s+nil\s*\}/gi,
+  
+  // Rust - Functions that always return empty vector/map/None
+  /fn\s+\w+(?:Data|List|Items|Results|Records|Users|Items)\w*\s*\([^)]*\)\s*->\s*Vec\s*<[^>]+>\s*\{[^}]*vec!\s*\[\]\s*\}/gi,
+  /fn\s+\w+(?:Data|Result|Response|Object|Config|Settings)\w*\s*\([^)]*\)\s*->\s*HashMap\s*<[^>]+>\s*\{[^}]*HashMap::new\s*\(\s*\)\s*\}/gi,
+  /fn\s+\w+(?:Data|Result|Value|Item|User)\w*\s*\([^)]*\)\s*->\s*Option\s*<[^>]+>\s*\{[^}]*None\s*\}/gi,
+  
+  // Ruby - Functions that always return empty array/hash/nil
+  /def\s+\w+(?:Data|List|Items|Results|Records|Users|Items)\w*\s*\([^)]*\)\s*\[\]\s*$/gm,
+  /def\s+\w+(?:Data|Result|Response|Object|Config|Settings)\w*\s*\([^)]*\)\s*\{\}\s*$/gm,
+  /def\s+\w+(?:Data|Result|Value|Item|User)\w*\s*\([^)]*\)\s*nil\s*$/gm,
+  
+  // PHP - Functions that always return empty array/null
+  /function\s+\w+(?:Data|List|Items|Results|Records|Users|Items)\w*\s*\([^)]*\)\s*\{[^}]*return\s+\[\]\s*;?\s*\}/gi,
+  /function\s+\w+(?:Data|Result|Response|Object|Config|Settings)\w*\s*\([^)]*\)\s*\{[^}]*return\s+\[\]\s*;?\s*\}/gi,
+  /function\s+\w+(?:Data|Result|Value|Item|User)\w*\s*\([^)]*\)\s*\{[^}]*return\s+null\s*;?\s*\}/gi,
+  
+  // Kotlin - Functions that always return empty list/map/null
+  /fun\s+\w+(?:Data|List|Items|Results|Records|Users|Items)\w*\s*\([^)]*\)\s*:\s*List\s*<[^>]+>\s*\{[^}]*return\s+emptyList\s*\(\s*\)\s*\}/gi,
+  /fun\s+\w+(?:Data|Result|Response|Object|Config|Settings)\w*\s*\([^)]*\)\s*:\s*Map\s*<[^>]+>\s*\{[^}]*return\s+emptyMap\s*\(\s*\)\s*\}/gi,
+  /fun\s+\w+(?:Data|Result|Value|Item|User)\w*\s*\([^)]*\)\s*:\s*\w+\?\s*\{[^}]*return\s+null\s*\}/gi,
+  
+  // Async functions that immediately resolve (no-op async) - JavaScript/TypeScript
   /async\s+function\s+\w+\s*\([^)]*\)\s*\{[^}]*return\s+Promise\.resolve\s*\([^)]*\)\s*;?\s*\}/gi,
   /async\s+function\s+\w+\s*\([^)]*\)\s*\{[^}]*return\s+Promise\.resolve\(\)\s*;?\s*\}/gi,
   
-  // Validation functions that always return true/false
+  // Python - Async functions that return immediately
+  /async\s+def\s+\w+\s*\([^)]*\)\s*:\s*return\s+(?:\[\]|\{\}|None)\s*$/gm,
+  
+  // C# - Async functions that return immediately
+  /async\s+Task\s*<[^>]+>\s+\w+\s*\([^)]*\)\s*\{[^}]*return\s+Task\.FromResult\s*\([^)]*\)\s*;?\s*\}/gi,
+  
+  // Rust - Async functions that return immediately
+  /async\s+fn\s+\w+\s*\([^)]*\)\s*->\s*Result\s*<[^>]+>\s*\{[^}]*Ok\s*\([^)]*\)\s*\}/gi,
+  
+  // Validation functions that always return true/false - JavaScript/TypeScript
   /function\s+(?:validate|check|verify|isValid|canAccess|hasPermission)\w*\s*\([^)]*\)\s*\{[^}]*return\s+(?:true|false)\s*;?\s*\}/gi,
   
-  // Database/API functions that return hardcoded data
+  // Python - Validation functions that always return True/False
+  /def\s+(?:validate|check|verify|is_valid|can_access|has_permission)\w*\s*\([^)]*\)\s*:\s*return\s+(?:True|False)\s*$/gm,
+  
+  // Java - Validation methods that always return true/false
+  /(?:public|private|protected)?\s*boolean\s+(?:validate|check|verify|isValid|canAccess|hasPermission)\w*\s*\([^)]*\)\s*\{[^}]*return\s+(?:true|false)\s*;?\s*\}/gi,
+  
+  // C# - Validation methods that always return true/false
+  /(?:public|private|protected)?\s*bool\s+(?:Validate|Check|Verify|IsValid|CanAccess|HasPermission)\w*\s*\([^)]*\)\s*\{[^}]*return\s+(?:true|false)\s*;?\s*\}/gi,
+  
+  // Go - Validation functions that always return true/false
+  /func\s+(?:validate|check|verify|isValid|canAccess|hasPermission)\w*\s*\([^)]*\)\s+bool\s*\{[^}]*return\s+(?:true|false)\s*\}/gi,
+  
+  // Rust - Validation functions that always return true/false
+  /fn\s+(?:validate|check|verify|is_valid|can_access|has_permission)\w*\s*\([^)]*\)\s*->\s*bool\s*\{[^}]*return\s+(?:true|false)\s*;?\s*\}/gi,
+  
+  // Ruby - Validation methods that always return true/false
+  /def\s+(?:validate|check|verify|is_valid|can_access|has_permission)\w*\s*\([^)]*\)\s*(?:true|false)\s*$/gm,
+  
+  // PHP - Validation functions that always return true/false
+  /function\s+(?:validate|check|verify|isValid|canAccess|hasPermission)\w*\s*\([^)]*\)\s*\{[^}]*return\s+(?:true|false)\s*;?\s*\}/gi,
+  
+  // Database/API functions that return hardcoded data - JavaScript/TypeScript
   /function\s+(?:fetch|get|query|load|retrieve)\w*(?:Data|User|Item|Record)\w*\s*\([^)]*\)\s*\{[^}]*return\s+\{[^}]*:\s*['"][^'"]*['"][^}]*\}\s*;?\s*\}/gi,
+  
+  // Python - Functions that return hardcoded data
+  /def\s+(?:fetch|get|query|load|retrieve)\w*(?:Data|User|Item|Record)\w*\s*\([^)]*\)\s*:\s*return\s+\{[^}]*:\s*['"][^'"]*['"][^}]*\}\s*$/gm,
+  
+  // Java - Methods that return hardcoded data
+  /(?:public|private|protected)?\s*\w+\s+(?:fetch|get|query|load|retrieve)\w*(?:Data|User|Item|Record)\w*\s*\([^)]*\)\s*\{[^}]*return\s+new\s+\w+\s*\([^)]*['"][^'"]*['"][^}]*\)\s*;?\s*\}/gi,
 ]
 
 // 5. COMMENTED OUT CODE PATTERNS (TOP BLOCKER - Must Uncomment)
 // Focus on actual executable code, exclude documentation and examples
+// Cross-language commented code patterns
 const commentedCodePatterns = [
-  // Commented out actual function/class declarations (not examples)
+  // JavaScript/TypeScript - Commented out function/class declarations
   /^\s*\/\/\s*(export\s+)?(async\s+)?function\s+\w+\s*\(/i,
   /^\s*\/\/\s*(private|public|protected)?\s*(async\s+)?\w+\s*\(/i, // method declarations
   /^\s*\/\/\s*(export\s+)?class\s+\w+\s*\{/i,
+  
+  // Python - Commented out function/class declarations
+  /^\s*#\s*def\s+\w+\s*\(/i,
+  /^\s*#\s*class\s+\w+\s*\(/i,
+  /^\s*#\s*async\s+def\s+\w+\s*\(/i,
+  
+  // Java/C# - Commented out method/class declarations
+  /^\s*\/\/\s*(public|private|protected|static)?\s*(async\s+)?\w+\s+\w+\s*\(/i,
+  /^\s*\/\/\s*(public|private|protected)?\s*class\s+\w+\s*\{/i,
+  
+  // Go - Commented out function declarations
+  /^\s*\/\/\s*func\s+\w+\s*\(/i,
+  
+  // Rust - Commented out function/struct/enum declarations
+  /^\s*\/\/\s*(pub\s+)?fn\s+\w+\s*\(/i,
+  /^\s*\/\/\s*(pub\s+)?struct\s+\w+\s*\{/i,
+  /^\s*\/\/\s*(pub\s+)?enum\s+\w+\s*\{/i,
+  
+  // PHP - Commented out function/class declarations
+  /^\s*\/\/\s*function\s+\w+\s*\(/i,
+  /^\s*\/\/\s*class\s+\w+\s*\{/i,
+  
+  // Ruby - Commented out method/class declarations
+  /^\s*#\s*def\s+\w+\s*\(/i,
+  /^\s*#\s*class\s+\w+\s*\(/i,
+  
+  // Kotlin - Commented out function/class declarations
+  /^\s*\/\/\s*(fun|class)\s+\w+\s*\(/i,
+  
+  // Swift - Commented out function/class declarations
+  /^\s*\/\/\s*func\s+\w+\s*\(/i,
+  /^\s*\/\/\s*class\s+\w+\s*\{/i,
+  
+  // C/C++ - Commented out function declarations
+  /^\s*\/\/\s*\w+\s+\w+\s*\(/i,
+  
+  // Multi-line comment patterns (/* */ style)
+  /\/\*\s*(export\s+)?(async\s+)?function\s+\w+\s*\(/i,
+  /\/\*\s*def\s+\w+\s*\(/i,
+  /\/\*\s*func\s+\w+\s*\(/i,
+  /\/\*\s*(pub\s+)?fn\s+\w+\s*\(/i,
 
   // Commented out variable assignments with actual values
   /^\s*\/\/\s*(export\s+)?(const|let|var)\s+\w+\s*=\s*(async\s+)?\(/i,
@@ -1136,6 +1584,82 @@ function getIssueGuidance(issueType) {
     PYTHON_PLACEHOLDER_COMMENT: "Replace placeholder implementation with real code",
     PYTHON_NEEDS_IMPLEMENTATION: "Complete the noted implementation",
     PYTHON_WIP_COMMENT: "Finish the work in progress",
+
+    // AI-Generated Code Patterns - REPLACE PLACEHOLDERS
+    AI_PLACEHOLDER_IMPLEMENTATION: "Replace placeholder implementation with actual logic",
+    AI_ASYNC_PLACEHOLDER: "Implement proper async logic instead of placeholder",
+    AI_MOCK_PLACEHOLDER: "Replace mock implementation with real functionality",
+    AI_BASIC_LOGGING: "Implement comprehensive logging configuration",
+    AI_EMPTY_COLLECTION_PLACEHOLDER: "Populate collection with actual data instead of empty placeholder",
+    
+    // AI-Generated Code Security & Quality Issues (from research)
+    AI_HARDCODED_SECRET: "CRITICAL: Remove hardcoded secrets - use environment variables or secure storage",
+    AI_HARDCODED_SECRET_VALUE: "CRITICAL: Move secrets to environment variables - security vulnerability",
+    AI_SQL_INJECTION_RISK: "CRITICAL: Use parameterized queries - f-string SQL is vulnerable to injection",
+    AI_EMPTY_EXCEPTION_HANDLER: "Add proper error handling - empty exception handlers hide errors",
+    AI_MISSING_SECURITY_FEATURE: "CRITICAL: Implement missing security feature (validation, auth, etc.)",
+    AI_LITERAL_COMMENT: "Improve comment quality - literal comments that restate code are AI-generated pattern",
+    AI_GENERIC_VARIABLE_NAME: "Use descriptive variable names - generic names (data, result, item) indicate AI code",
+    AI_GENERIC_FUNCTION_NAME: "Use specific function names - generic names (process, handle, get) indicate AI code",
+    AI_MISSING_ERROR_HANDLING: "Add error handling and edge case consideration - AI code often lacks this",
+    
+    // Disabled/Skipped Tests (incomplete test coverage)
+    DISABLED_TEST: "Re-enable skipped tests or remove if no longer needed - incomplete test coverage",
+    DISABLED_TEST_ANNOTATION: "Re-enable disabled tests or document why they're skipped",
+    PENDING_TEST: "Complete pending tests - incomplete test implementation",
+    DISABLED_TEST_COMMENT: "Re-enable commented-out tests or remove if obsolete",
+    
+    // Feature Flags & Temporary Conditionals (commonly missed)
+    HARDCODED_FEATURE_FLAG: "Replace hardcoded true/false with proper feature flag system",
+    DEAD_CODE_CONDITIONAL: "Remove dead code conditional - always true/false branches",
+    TEMPORARY_FEATURE_FLAG: "Remove temporary feature flag - should be properly implemented or removed",
+    
+    // Deprecated Code Patterns (incomplete migration)
+    DEPRECATED_CODE_NOT_MIGRATED: "Migrate deprecated code to new implementation - incomplete migration",
+    DEPRECATED_CODE_MARKER: "Complete migration from deprecated code - old code still present",
+    LEGACY_CODE_NOT_REPLACED: "Replace legacy code with modern implementation - incomplete replacement",
+    
+    // Magic Numbers & Hardcoded Values (incomplete configuration)
+    HARDCODED_CONFIG_VALUE: "Move hardcoded configuration value to config file or environment variable",
+    MAGIC_NUMBER_TODO: "Extract magic number to constant as noted in TODO",
+    
+    // Incomplete Error Handling (catch but do nothing meaningful)
+    EMPTY_CATCH_BLOCK: "Add proper error handling - empty catch blocks hide errors",
+    INCOMPLETE_ERROR_HANDLING: "Complete error handling - only logging is insufficient",
+    PYTHON_INCOMPLETE_EXCEPTION: "Add proper exception handling - pass/print is insufficient",
+    
+    // Missing Null/Undefined Checks (incomplete validation)
+    MISSING_NULL_CHECK_TODO: "Add null/undefined validation as noted in TODO",
+    
+    // Temporary Workarounds (commonly become permanent)
+    TEMPORARY_WORKAROUND: "Replace temporary workaround with proper solution - workarounds become permanent",
+    TEMPORARY_WORKAROUND_COMMENT: "Replace temporary workaround with proper solution",
+    WORKAROUND_PATTERN: "Replace workaround with proper implementation - temporary fixes become permanent",
+    
+    // Incomplete Refactoring (old and new code both present)
+    INCOMPLETE_REFACTORING: "Complete refactoring - remove old code after migration",
+    INCOMPLETE_CLEANUP: "Complete cleanup - remove old/legacy/deprecated code",
+    INCOMPLETE_CLEANUP_COMMENT: "Complete cleanup - remove old/legacy/deprecated code as noted",
+    
+    // Stub Implementations in Production
+    STUB_IN_PRODUCTION: "CRITICAL: Replace stub/mock implementation with real production code",
+    STUB_REPLACEMENT_TODO: "Replace stub/mock implementation with real code as noted in TODO",
+    
+    // Missing Type Definitions (incomplete type safety)
+    ANY_TYPE_USAGE: "Replace 'any' type with proper type definition for type safety",
+    MISSING_TYPE_DEFINITION: "Add proper type definition as noted in TODO",
+    TYPE_IGNORE_WITHOUT_TODO: "Add TODO explaining why type ignore is needed, or fix the type issue",
+    
+    // Incomplete Resource Cleanup
+    MISSING_RESOURCE_CLEANUP: "Add proper resource cleanup (close/cleanup/release/dispose) as noted in TODO",
+    
+    // Missing Configuration/Environment Variables
+    MISSING_CONFIG_TODO: "Move configuration to config file or environment variable as noted in TODO",
+    HARDCODED_CONFIG_TODO: "Extract hardcoded configuration to config file as noted in TODO",
+    
+    // Incomplete Dependency Management
+    INCOMPLETE_DEPENDENCY_MANAGEMENT: "Complete dependency update/upgrade/replacement as noted in TODO",
+    OUTDATED_DEPENDENCY: "Update outdated dependency to current version - security and compatibility risk",
 
     // Commented out code - TOP BLOCKER - UNCOMMENT IMMEDIATELY
     COMMENTED_OUT_CODE: "Uncomment code to resolve type errors and wire up with corresponding consumers",
@@ -3015,7 +3539,7 @@ function scanCodeComprehensive() {
         matched = true
       }
       
-      // Validation functions that always return true/false (no validation logic)
+      // Validation functions that always return true/false (no validation logic) - JavaScript/TypeScript
       if (/function\s+(?:validate|check|verify|isValid|canAccess|hasPermission)\w*\s*\([^)]*\)\s*\{[^}]*return\s+(?:true|false)\s*;?\s*\}/gi.test(trimmedLineForCode)) {
         const todoItem = addGitInfoToTodoItem({
           file,
@@ -3023,6 +3547,82 @@ function scanCodeComprehensive() {
           type: "ALWAYS_RETURNS_BOOLEAN",
           text: trimmedLine,
           priority: categorizeTodo(trimmedLine, "ALWAYS_RETURNS", "HIGH"),
+          category: "incomplete",
+          source: "code_pattern"
+        }, file, lineNumber)
+        todos.incomplete.push(todoItem)
+        todos.byCategory.incomplete.push(todoItem)
+        matched = true
+      }
+      
+      // Python - Functions that always return empty list/dict/None
+      if (/def\s+\w+(?:Data|List|Items|Results|Records|Users|Items)\w*\s*\([^)]*\)\s*:\s*return\s+\[\]\s*$/gm.test(trimmedLine)) {
+        const todoItem = addGitInfoToTodoItem({
+          file,
+          line: lineNumber,
+          type: "EMPTY_RETURN_PATTERN",
+          text: trimmedLine,
+          priority: categorizeTodo(trimmedLine, "EMPTY_RETURN", "HIGH"),
+          category: "incomplete",
+          source: "code_pattern"
+        }, file, lineNumber)
+        todos.incomplete.push(todoItem)
+        todos.byCategory.incomplete.push(todoItem)
+        matched = true
+      }
+      if (/def\s+\w+(?:Data|Result|Response|Object|Config|Settings)\w*\s*\([^)]*\)\s*:\s*return\s+\{\}\s*$/gm.test(trimmedLine)) {
+        const todoItem = addGitInfoToTodoItem({
+          file,
+          line: lineNumber,
+          type: "EMPTY_RETURN_PATTERN",
+          text: trimmedLine,
+          priority: categorizeTodo(trimmedLine, "EMPTY_RETURN", "HIGH"),
+          category: "incomplete",
+          source: "code_pattern"
+        }, file, lineNumber)
+        todos.incomplete.push(todoItem)
+        todos.byCategory.incomplete.push(todoItem)
+        matched = true
+      }
+      if (/def\s+\w+(?:Data|Result|Value|Item|User)\w*\s*\([^)]*\)\s*:\s*return\s+None\s*$/gm.test(trimmedLine)) {
+        const todoItem = addGitInfoToTodoItem({
+          file,
+          line: lineNumber,
+          type: "EMPTY_RETURN_PATTERN",
+          text: trimmedLine,
+          priority: categorizeTodo(trimmedLine, "EMPTY_RETURN", "HIGH"),
+          category: "incomplete",
+          source: "code_pattern"
+        }, file, lineNumber)
+        todos.incomplete.push(todoItem)
+        todos.byCategory.incomplete.push(todoItem)
+        matched = true
+      }
+      
+      // Python - Validation functions that always return True/False
+      if (/def\s+(?:validate|check|verify|is_valid|can_access|has_permission)\w*\s*\([^)]*\)\s*:\s*return\s+(?:True|False)\s*$/gm.test(trimmedLine)) {
+        const todoItem = addGitInfoToTodoItem({
+          file,
+          line: lineNumber,
+          type: "ALWAYS_RETURNS_BOOLEAN",
+          text: trimmedLine,
+          priority: categorizeTodo(trimmedLine, "ALWAYS_RETURNS", "HIGH"),
+          category: "incomplete",
+          source: "code_pattern"
+        }, file, lineNumber)
+        todos.incomplete.push(todoItem)
+        todos.byCategory.incomplete.push(todoItem)
+        matched = true
+      }
+      
+      // Python - Empty function bodies
+      if (/def\s+\w+(?:Data|Input|User|Value|Result|Process|Calculate|Transform|Compute)\w*\s*\([^)]*\)\s*:\s*(?:pass|return\s+(?:input|data|True|False|None|0|''|\[\]|\{\}))\s*$/gm.test(trimmedLine)) {
+        const todoItem = addGitInfoToTodoItem({
+          file,
+          line: lineNumber,
+          type: "EMPTY_FUNCTION_BODY",
+          text: trimmedLine,
+          priority: categorizeTodo(trimmedLine, "EMPTY_FUNCTION", "HIGH"),
           category: "incomplete",
           source: "code_pattern"
         }, file, lineNumber)
