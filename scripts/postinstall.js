@@ -146,6 +146,64 @@ function checkBuild() {
   }
 }
 
+function isProjectDirectory(cwd) {
+  // Check if we're in a project directory
+  const hasPackageJson = fs.existsSync(path.join(cwd, 'package.json'));
+  const hasGit = fs.existsSync(path.join(cwd, '.git'));
+  const hasPyProject = fs.existsSync(path.join(cwd, 'pyproject.toml'));
+  const hasCargoToml = fs.existsSync(path.join(cwd, 'Cargo.toml'));
+  const hasPomXml = fs.existsSync(path.join(cwd, 'pom.xml'));
+  const hasGoMod = fs.existsSync(path.join(cwd, 'go.mod'));
+  
+  return hasPackageJson || hasGit || hasPyProject || hasCargoToml || hasPomXml || hasGoMod;
+}
+
+function isAlreadyInitialized(cwd) {
+  // Check if SkillKit is already initialized
+  const versionFile = path.join(cwd, '.skillkit', 'version.json');
+  return fs.existsSync(versionFile);
+}
+
+function autoInitialize(cwd) {
+  try {
+    log('Detected project directory - auto-initializing SkillKit...', 'info');
+    
+    // Detect environment
+    const hasCursorDir = fs.existsSync(path.join(cwd, '.cursor'));
+    const isCursor = hasCursorDir || process.env['TERM_PROGRAM'] === 'cursor';
+    
+    // Build command with smart defaults
+    let initCommand = 'tsk init';
+    
+    if (isCursor) {
+      initCommand += ' --cursor --rules';
+    } else {
+      initCommand += ' --workflows';
+    }
+    
+    // Add --force to skip prompts if already exists (will update)
+    if (isAlreadyInitialized(cwd)) {
+      initCommand += ' --force';
+    }
+    
+    // Run init non-interactively
+    log('Running: ' + initCommand, 'info');
+    execSync(initCommand, {
+      cwd: cwd,
+      stdio: 'inherit',
+      env: { ...process.env, SKILLKIT_AUTO_INIT: 'true' }
+    });
+    
+    log('SkillKit auto-initialized successfully!', 'success');
+    log('Workflows are ready to use in your project.', 'info');
+    return true;
+  } catch (error) {
+    log(`Auto-initialization failed: ${error.message}`, 'warning');
+    log('You can manually initialize with: tsk init', 'info');
+    return false;
+  }
+}
+
 function main() {
   log(`\nVerifying ${PACKAGE_NAME} installation...\n`, 'info');
   
@@ -177,10 +235,35 @@ function main() {
     console.log('');
   }
   
-  log('Next steps:', 'info');
-  log('  1. Run: tsk --version', 'info');
-  log('  2. Initialize in a project: tsk init --cursor', 'info');
-  log('  3. See README.md for more information', 'info');
+  // Auto-initialize if in a project directory
+  const cwd = process.cwd();
+  const skipAutoInit = process.env['SKILLKIT_NO_AUTO_INIT'] === 'true';
+  
+  if (!skipAutoInit && isProjectDirectory(cwd)) {
+    if (isAlreadyInitialized(cwd)) {
+      log('SkillKit is already initialized in this project.', 'success');
+      log('Run "tsk init --force" to update if needed.', 'info');
+    } else {
+      // Only auto-init if CLI is working
+      if (checkCLI()) {
+        autoInitialize(cwd);
+      } else {
+        log('CLI not ready - skipping auto-initialization.', 'warning');
+        log('Run "tsk init" manually after fixing build issues.', 'info');
+      }
+    }
+  } else {
+    if (skipAutoInit) {
+      log('Auto-initialization skipped (SKILLKIT_NO_AUTO_INIT=true)', 'info');
+    } else {
+      log('Not in a project directory - skipping auto-initialization.', 'info');
+    }
+    log('Next steps:', 'info');
+    log('  1. Run: tsk --version', 'info');
+    log('  2. Initialize in a project: tsk init --cursor', 'info');
+    log('  3. See README.md for more information', 'info');
+  }
+  
   console.log('');
 }
 
@@ -194,5 +277,15 @@ if (require.main === module) {
   }
 }
 
-module.exports = { main, checkCLI, checkDependencies, checkNodeVersion, checkOpenSkills, checkBuild };
+module.exports = { 
+  main, 
+  checkCLI, 
+  checkDependencies, 
+  checkNodeVersion, 
+  checkOpenSkills, 
+  checkBuild,
+  isProjectDirectory,
+  isAlreadyInitialized,
+  autoInitialize
+};
 

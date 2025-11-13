@@ -54,35 +54,77 @@ wsl openskills read <skill-name>
 openskills read <skill-name>
 ```
 
-## Example Usage
+## 🚨 CRITICAL: Explicit Terminal Execution Required
 
+**You MUST use the terminal tool to run this command. Do NOT just mention it in prose.**
+
+### Step-by-Step Execution
+
+1. **Open terminal tool in Cursor**
+2. **Run the command:**
+   ```bash
+   tsk skill:load <skill-name>
+   ```
+3. **Wait for command to complete**
+4. **Read ALL terminal output carefully** - this contains the full SKILL.md content
+5. **The skill instructions are now in your context** - use them for the task
+
+### Example Usage
+
+**For PDF work:**
 ```bash
-# User needs to extract PDF tables:
+# YOU MUST RUN THIS IN TERMINAL:
 tsk skill:load pdf
 
-# User needs to create Excel report:
+# After running, you will see 200-600 lines of PDF expertise
+# Read the entire output - it contains:
+# - Detailed instructions
+# - Code examples
+# - Best practices
+# - Common pitfalls
+```
+
+**For Excel/spreadsheet work:**
+```bash
+# YOU MUST RUN THIS IN TERMINAL:
 tsk skill:load xlsx
 
-# User needs to edit Word doc:
+# Read the full output before proceeding
+```
+
+**For Word documents:**
+```bash
+# YOU MUST RUN THIS IN TERMINAL:
 tsk skill:load docx
+
+# Read the full output before proceeding
 ```
 
 ## After Loading
 
-1. **Read the full skill content** (200-600 lines of detailed instructions)
-2. **Apply domain expertise** to your specific task
-3. **Use provided code examples** (they're battle-tested!)
-4. **Return to main workflow** when done
+**MANDATORY STEPS:**
+
+1. ✅ **Verify command executed** - Check terminal shows "✓ Loaded <skill> skill"
+2. ✅ **Read the full skill content** - The terminal output contains 200-600 lines of detailed instructions
+3. ✅ **Confirm you see the skill instructions** - Look for sections like "When to use", "Approach", "Examples"
+4. ✅ **Apply domain expertise** - Use the instructions for your specific task
+5. ✅ **Use provided code examples** - They're battle-tested!
+6. ✅ **Return to main workflow** - Continue with the skill knowledge in context
 
 ## Verification
 
-Skill loaded successfully if you see:
+**Skill loaded successfully if terminal shows:**
 
 ```
 ✓ Loaded <skill> skill
+────────────────────────────────────────────────────────
+[Full SKILL.md content appears here - 200-600 lines]
+────────────────────────────────────────────────────────
+💡 Tip: The skill content is now in your context.
+   Follow the instructions above to complete your task.
 ```
 
-Followed by detailed instructions (200+ lines).
+**If you don't see the full skill content in terminal output, the skill was NOT loaded properly.**
 
 ---
 

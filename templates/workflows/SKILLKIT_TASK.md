@@ -45,7 +45,34 @@ The planner will show:
 - Consider if task needs a different approach
 - Ask user for clarification if needed
 
-### Step 3: Execute the Task
+### Step 3: Load Required Skills (if needed)
+
+**If the plan indicates a skill is needed, you MUST load it first:**
+
+**🚨 CRITICAL: You MUST use the terminal tool to load skills.**
+
+```bash
+# Example: If working with PDFs:
+tsk skill:load pdf
+
+# Example: If working with spreadsheets:
+tsk skill:load xlsx
+```
+
+**What happens:**
+1. Command outputs full SKILL.md content (200-600 lines)
+2. Skill instructions appear in terminal output
+3. **You MUST read the entire terminal output**
+4. Skill knowledge is now in your context
+
+**Verification:**
+- ✅ Check terminal shows "✓ Loaded <skill> skill"
+- ✅ Full skill instructions visible (200-600 lines)
+- ✅ Sections like "When to use", "Approach", "Examples" present
+
+**If you don't see full skill content, the skill was NOT loaded. Re-run the command.**
+
+### Step 4: Execute the Task
 
 Run the task through SkillKit:
 
@@ -64,13 +91,16 @@ tsk task "<task description>"
 tsk task "fix ESLint errors in TypeScript files"
 ```
 
-### Step 4: Report Results
+**Important:** If you loaded a skill in Step 3, you MUST use that skill's instructions when executing the task.
+
+### Step 5: Report Results
 
 After execution:
 1. Show the selected skill and confidence
 2. Display execution results (success/failure)
 3. Show any output from the skill
 4. Report execution time
+5. Confirm skill knowledge was applied (if skill was loaded)
 
 **If execution fails:**
 - Show the error message
@@ -148,20 +178,26 @@ This command integrates with other workflows:
 **User:** "Fix all ESLint errors"
 
 **Agent actions:**
-1. Run: `tsk plan "fix all ESLint errors"`
+1. Run: `tsk plan "fix all ESLint errors"` (in terminal)
 2. Review plan (e.g., selects "fix-eslint" skill, 85% confidence)
-3. Run: `tsk task "fix all ESLint errors"`
-4. Report: "Fixed 23 ESLint errors using fix-eslint skill"
+3. If skill is needed, load it: `tsk skill:load fix-eslint` (in terminal)
+4. Read the full terminal output from skill load
+5. Run: `tsk task "fix all ESLint errors"` (in terminal)
+6. Apply skill knowledge from Step 3 when executing
+7. Report: "Fixed 23 ESLint errors using fix-eslint skill"
 
-### Example 2: Add New Feature
+### Example 2: Work with PDFs
 
-**User:** "Add user authentication"
+**User:** "Extract all tables from this PDF file"
 
 **Agent actions:**
-1. Run: `tsk plan "add user authentication"`
-2. If no skill matches, inform user
-3. Proceed with manual implementation OR
-4. Create new skill for authentication tasks
+1. Run: `tsk plan "extract tables from PDF"` (in terminal)
+2. Review plan (e.g., selects "pdf" skill, 90% confidence)
+3. **MUST load skill:** `tsk skill:load pdf` (in terminal)
+4. **MUST read full terminal output** - contains 200-600 lines of PDF expertise
+5. Verify skill loaded: Check terminal shows full skill instructions
+6. Use the skill's approach to extract tables (reference the loaded instructions)
+7. Report: "Extracted 5 tables from PDF using pdf skill approach"
 
 ### Example 3: Refactor Code
 

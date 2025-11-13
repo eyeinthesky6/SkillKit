@@ -2099,6 +2099,139 @@ function shouldExclude(line, file) {
   return false
 }
 
+// === CONTEXT-AWARE ANALYSIS FUNCTIONS ===
+// Based on research: CodeT5, CodeBERT, InferCode - context window analysis improves accuracy
+//
+// Research Attributions:
+// - CodeT5: Wang et al. (2021) - Salesforce Research - arXiv:2109.00859
+//   Context window analysis techniques for code understanding
+// - CodeBERT: Feng et al. (2020) - Microsoft Research - arXiv:2002.08155
+//   Semantic understanding approach for confidence scoring
+// - InferCode: Bui et al. (2020) - Monash University - arXiv:2012.07023
+//   Structural understanding techniques using AST subtrees
+// - Code Comment Analysis: MDPI Mathematics 12(7):1073 (2024)
+//   Comment analysis techniques for functional similarity
+
+/**
+ * Analyze context window around a line for better pattern detection
+ * @param {string[]} lines - All lines in the file
+ * @param {number} index - Current line index
+ * @param {number} windowSize - Number of lines before/after to analyze (default: 3)
+ * @returns {Object} Context analysis results
+ */
+function analyzeContextWindow(lines, index, windowSize = 3) {
+  const start = Math.max(0, index - windowSize)
+  const end = Math.min(lines.length, index + windowSize + 1)
+  const context = lines.slice(start, end)
+  const currentIndex = index - start
+  
+  const before = context.slice(0, currentIndex)
+  const current = context[currentIndex] || ''
+  const after = context.slice(currentIndex + 1)
+  
+  // Check if there's active code after the current line
+  const hasActiveCodeAfter = after.some(line => {
+    const trimmed = line.trim()
+    // Active code: not a comment, not empty, not just whitespace
+    return trimmed && !trimmed.match(/^\s*(\/\/|\/\*|\*)/) && trimmed.length > 0
+  })
+  
+  // Check if we're in a comment block
+  const isInCommentBlock = context.some(line => {
+    return /\/\*/.test(line) || /\*\//.test(line) || /^\s*\*/.test(line.trim())
+  })
+  
+  // Check if context has code structure (functions, classes, etc.)
+  const hasCodeStructure = context.some(line => {
+    return /(function|class|const|let|var|if|for|while|return|throw|export|import|def|async|await)/.test(line)
+  })
+  
+  // Check if current line is a descriptive comment (followed by active code)
+  const isDescriptiveComment = /^\s*\/\//.test(current.trim()) && hasActiveCodeAfter
+  
+  // Check for code-like syntax in comment (potential commented-out code)
+  const hasCodeLikeSyntax = /\/\/\s*(export|function|class|const|let|var|if|for|while|return|throw|def|async|await|import)/.test(current)
+  
+  return {
+    before,
+    current,
+    after,
+    hasActiveCodeAfter,
+    isInCommentBlock,
+    hasCodeStructure,
+    isDescriptiveComment,
+    hasCodeLikeSyntax,
+    contextLines: context
+  }
+}
+
+/**
+ * Calculate confidence score based on multiple indicators
+ * Higher score = more likely to be a real issue
+ * @param {string} line - Current line
+ * @param {Object} context - Context analysis from analyzeContextWindow
+ * @param {string} patternType - Type of pattern being checked
+ * @returns {number} Confidence score (0-10)
+ */
+function calculateConfidenceScore(line, context, patternType) {
+  let score = 0
+  const lowerLine = line.toLowerCase()
+  
+  // Base score for pattern type
+  const baseScores = {
+    'EXPLICIT_TODO': 10, // Explicit markers are always high confidence
+    'FOR_NOW': 8,
+    'IN_PRODUCTION': 8,
+    'COMMENTED_OUT_CODE': 5, // Lower base, needs context
+    'INCOMPLETE_MARKER': 4,
+    'BASIC_VERSION': 3,
+    'PLACEHOLDER': 3
+  }
+  
+  score = baseScores[patternType] || 2
+  
+  // Boost confidence for multiple indicators
+  const indicators = {
+    'simple': /simple|basic|minimal/i,
+    'placeholder': /placeholder|stub|mock|dummy|temporary/i,
+    'todo': /todo|fixme|hack|xxx|tbd|nyi|wip/i,
+    'incomplete': /not implemented|incomplete|missing|unfinished/i,
+    'temporary': /for now|temporary|temp|workaround/i
+  }
+  
+  let indicatorCount = 0
+  for (const [name, regex] of Object.entries(indicators)) {
+    if (regex.test(line)) {
+      indicatorCount++
+      score += 1
+    }
+  }
+  
+  // Context-based adjustments
+  if (patternType === 'COMMENTED_OUT_CODE') {
+    // High confidence if comment has code-like syntax AND no active code follows
+    if (context.hasCodeLikeSyntax && !context.hasActiveCodeAfter) {
+      score += 3
+    }
+    // Low confidence if it's a descriptive comment (followed by active code)
+    if (context.isDescriptiveComment) {
+      score = 0 // Descriptive comments are not commented-out code
+    }
+  }
+  
+  // Boost if multiple indicators found
+  if (indicatorCount >= 2) {
+    score += 2
+  }
+  
+  // Boost if explicit TODO/FIXME present
+  if (/(TODO|FIXME|HACK|XXX)/i.test(line)) {
+    score += 2
+  }
+  
+  return Math.min(10, score) // Cap at 10
+}
+
 // Helper function to check if commented line is documentation/example vs actual code
 function isDocumentationComment(line) {
   const lowerLine = line.toLowerCase()
@@ -3319,6 +3452,21 @@ function scanCodeComprehensive() {
           continue
         }
         
+        // CONTEXT-AWARE: Calculate confidence score
+        const context = analyzeContextWindow(lines, index, 3)
+        const confidence = calculateConfidenceScore(line, context, pattern.type)
+        
+        // Skip low-confidence matches for certain patterns
+        // This reduces false positives from isolated keywords
+        if (['BASIC_VERSION', 'PLACEHOLDER_VALUES', 'INCOMPLETE_MARKER', 'INCOMPLETE_WORK'].includes(pattern.type) && confidence < 4) {
+          continue
+        }
+        
+        // For other patterns, require minimum confidence
+        if (confidence < 3) {
+          continue
+        }
+        
         const todoItem = addGitInfoToTodoItem({
             file,
             line: lineNumber,
@@ -3327,7 +3475,8 @@ function scanCodeComprehensive() {
             priority: categorizeTodo(trimmedLine, pattern.type, pattern.severity),
             category: pattern.category,
             severity: pattern.severity,
-            source: "deceptive_language"
+            source: "deceptive_language",
+            confidence: confidence // Add confidence score
           }, file, lineNumber)
           todos.deceptive.push(todoItem)
           todos.byCategory[pattern.category].push(todoItem)
@@ -3752,10 +3901,35 @@ function scanCodeComprehensive() {
 
       // 5. Check for commented out code patterns (TOP BLOCKER)
       // Only flag actual executable code, not documentation
+      // CONTEXT-AWARE: Use context window to distinguish descriptive comments from commented-out code
+      const context = analyzeContextWindow(lines, index, 3)
+      
       for (const pattern of commentedCodePatterns) {
         if (pattern.test(line) && !isDocumentationComment(line)) {
           // Check if COMMENTED_OUT_CODE is excluded
           if (isPatternExcluded("COMMENTED_OUT_CODE")) continue
+          
+          // CONTEXT-AWARE CHECK: Skip if this is a descriptive comment (followed by active code)
+          // Descriptive comments like "// Delete duplicates" are NOT commented-out code
+          if (context.isDescriptiveComment) {
+            // This is a descriptive comment explaining code below, not commented-out code
+            continue
+          }
+          
+          // Only flag if comment has code-like syntax AND no active code follows
+          // This indicates actual commented-out code, not a descriptive comment
+          if (!context.hasCodeLikeSyntax && context.hasActiveCodeAfter) {
+            // Descriptive comment, not commented-out code
+            continue
+          }
+          
+          // Calculate confidence score
+          const confidence = calculateConfidenceScore(line, context, "COMMENTED_OUT_CODE")
+          
+          // Only flag if confidence is high enough (>= 5)
+          if (confidence < 5) {
+            continue
+          }
           
           const todoItem = addGitInfoToTodoItem({
             file,
@@ -3764,7 +3938,8 @@ function scanCodeComprehensive() {
             text: trimmedLine,
             priority: 1, // Always blocker priority for commented code
             category: "commented_code",
-            source: "commented_code"
+            source: "commented_code",
+            confidence: confidence // Add confidence score for reporting
           }, file, lineNumber)
           todos.commented_code.push(todoItem)
           todos.byCategory.commented_code.push(todoItem)
