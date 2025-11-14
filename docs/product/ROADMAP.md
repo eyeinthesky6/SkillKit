@@ -1,8 +1,8 @@
 # SkillKit Product Roadmap
 
-**Version:** 2.0  
-**Last Updated:** November 5, 2025  
-**Status:** ✅ VALUE-PRIORITIZED
+**Version:** 2.0
+**Last Updated:** November 13, 2025
+**Status:** ✅ IMPLEMENTATION ROADMAP
 
 ---
 
@@ -14,57 +14,79 @@ Install skills → Execute them → Orchestrate workflows → Adapt to environme
 
 ---
 
-## 📅 4-Week Launch Plan
+## 📅 Implementation Timeline
 
-### Week 1: Package Management (Nov 5-11, 2025)
+### ✅ v1.0.0 - Core Complete (Nov 5, 2025)
+**Core CLI, skill execution, documentation**
+- Skill execution engine with sandboxed environment
+- Basic CLI interface (list, execute, help)
+- Comprehensive documentation setup
 
-**Goal:** OpenSkills compatibility
+### 🔄 v1.1.0 - Workflow System (Nov 19, 2025)
+**Convert 19 workflows to skills + framework adapters**
+- Transform ProfitPilot workflows to SKILL.md format
+- Framework adapter API (TypeScript, Python, Java)
+- Workflow orchestrator with context passing
+- Project stack auto-detection
 
-**Commands to ship:**
-```bash
-tsk install anthropics/skills  # Interactive TUI
-tsk list                        # Show installed
-tsk sync                        # Generate AGENTS.md
-tsk manage                      # Remove skills
-```
+### 📋 v1.2.0 - MCP Integration (Dec 3, 2025)
+**Universal IDE access via MCP protocol**
+- MCP server implementation
+- Skills as MCP tools with JSON schemas
+- Workflows as MCP slash commands
+- Cross-IDE compatibility (Cursor, Windsurf, Cody)
 
----
+### 📋 v1.3.0 - Community Platform (Dec 17, 2025)
+**GitHub-based skill registry + language adapters**
+- GitHub skill discovery and installation
+- Language adapter templates (Python, Java, Go)
+- Community workflow contribution system
+- Skill showcase gallery
 
-### Week 2: Execution (Nov 12-18, 2025)
-
-**Goal:** Make skills executable
-
-**Commands to ship:**
-```bash
-tsk run pdf extract --input doc.pdf
-tsk run xlsx create --json
-```
-
----
-
-### Week 3: Workflows (Nov 19-25, 2025)
-
-**Goal:** Multi-step orchestration
-
-**Commands to ship:**
-```bash
-tsk init --cursor              # Generate workflows
-@BEGIN_SESSION.md              # In Cursor IDE
-```
+### 📋 v1.4.0 - Launch & Polish (Dec 31, 2025)
+**VS Code extension + documentation site**
+- Native VS Code integration
+- Comprehensive docs site with tutorials
+- Rich CLI with autocomplete and completions
 
 ---
 
-### Week 4: Intelligence (Nov 26-Dec 2, 2025)
+## 🚀 Short-term Launch Plan
 
-**Goal:** Environment adaptation
+### Week 1: Package Management (Nov 5-11)
+- OpenSkills compatibility: `tsk install`, `tsk list`, `tsk sync`
 
-**Commands to ship:**
-```bash
-tsk diagnose                   # Auto-detect and run
-tsk exec quality-gate          # Adapt to project
-```
+### Week 2: Execution (Nov 12-18)
+- Skill execution: `tsk run pdf extract`, `tsk run xlsx create`
+
+### Week 3: Workflows (Nov 19-25)
+- Orchestration: `tsk init --cursor`, workflow execution
+
+### Week 4: Intelligence (Nov 26-Dec 2)
+- Adaptation: `tsk diagnose`, `tsk exec quality-gate`
 
 ---
 
-See [BUILD_ORDER_CORRECTED.md](../BUILD_ORDER_CORRECTED.md) for detailed implementation plan.
+## 🔮 Future Vision (Q1-Q2 2026)
+
+### Agent Role-Aware Workflows
+**Context-aware workflow generation based on agent roles**
+- Role detection (frontend, backend, testing, devops)
+- Contextual commands with role-specific priorities
+- Expert-based routing and collaboration workflows
+
+### Dynamic Task Orchestration
+**Hephaestus-inspired autonomous workflow expansion**
+- Dynamic task spawning based on discoveries
+- Guardian agent monitoring and drift prevention
+- Multi-agent parallel execution with coordination
+- Task board visualization and dependency tracking
+
+---
+
+## 📊 Key Milestones
+
+- **Q4 2025:** Core functionality → Workflow system → MCP integration
+- **Q1 2026:** Agent role awareness → Enhanced orchestration
+- **Q2 2026:** AI-powered optimization → Autonomous adaptation
 
