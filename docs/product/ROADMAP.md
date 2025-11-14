@@ -1,6 +1,6 @@
 # SkillKit Product Roadmap
 
-**Version:** 2.0
+**Version:** 0.0.6 (Current)
 **Last Updated:** November 13, 2025
 **Status:** ✅ IMPLEMENTATION ROADMAP
 
@@ -16,34 +16,36 @@ Install skills → Execute them → Orchestrate workflows → Adapt to environme
 
 ## 📅 Implementation Timeline
 
-### ✅ v1.0.0 - Core Complete (Nov 5, 2025)
+### ✅ 0.0.6 - Core Complete (Nov 5, 2025)
 **Core CLI, skill execution, documentation**
 - Skill execution engine with sandboxed environment
 - Basic CLI interface (list, execute, help)
 - Comprehensive documentation setup
+- Workflow templates and Cursor integration
+- Multi-language support and testing infrastructure
 
-### 🔄 v1.1.0 - Workflow System (Nov 19, 2025)
+### 🔄 0.1.0 - Workflow System (Nov 19, 2025)
 **Convert 19 workflows to skills + framework adapters**
 - Transform ProfitPilot workflows to SKILL.md format
 - Framework adapter API (TypeScript, Python, Java)
 - Workflow orchestrator with context passing
 - Project stack auto-detection
 
-### 📋 v1.2.0 - MCP Integration (Dec 3, 2025)
+### 📋 0.2.0 - MCP Integration (Dec 3, 2025)
 **Universal IDE access via MCP protocol**
 - MCP server implementation
 - Skills as MCP tools with JSON schemas
 - Workflows as MCP slash commands
 - Cross-IDE compatibility (Cursor, Windsurf, Cody)
 
-### 📋 v1.3.0 - Community Platform (Dec 17, 2025)
+### 📋 0.3.0 - Community Platform (Dec 17, 2025)
 **GitHub-based skill registry + language adapters**
 - GitHub skill discovery and installation
 - Language adapter templates (Python, Java, Go)
 - Community workflow contribution system
 - Skill showcase gallery
 
-### 📋 v1.4.0 - Launch & Polish (Dec 31, 2025)
+### 📋 0.4.0 - Launch & Polish (Dec 31, 2025)
 **VS Code extension + documentation site**
 - Native VS Code integration
 - Comprehensive docs site with tutorials
@@ -86,7 +88,7 @@ Install skills → Execute them → Orchestrate workflows → Adapt to environme
 
 ## 📊 Key Milestones
 
-- **Q4 2025:** Core functionality → Workflow system → MCP integration
-- **Q1 2026:** Agent role awareness → Enhanced orchestration
-- **Q2 2026:** AI-powered optimization → Autonomous adaptation
+- **Q4 2025:** 0.0.6 (Core) → 0.1.0 (Workflows) → 0.2.0 (MCP)
+- **Q1 2026:** 0.3.0 (Community) → 0.4.0 (Launch) → Agent role awareness
+- **Q2 2026:** Enhanced orchestration → AI-powered optimization → Autonomous adaptation
 
