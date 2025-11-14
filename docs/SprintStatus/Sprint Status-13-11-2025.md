@@ -567,24 +567,37 @@ All changes successful. Repository is clean and properly configured.
 
 ---
 
-## Repository Organization Updates
+## Repository Organization Corrections
 
 ### ✅ Implementation Complete:
-- **Examples folder moved**: `examples/` → `docs/examples/` (better documentation organization)
-- **Git ignore updated**: Added `.docusaurus/` to ignore Docusaurus build cache
-- **Repository structure**: Examples now properly located with documentation
+- **Templates moved back**: `docs/templates/` → `templates/` (published with package)
+- **Examples moved back**: `docs/examples/` → `examples/` (reference material, not published)
+- **Package.json updated**: References corrected to point to root-level locations
+- **README.md updated**: Fixed roadmap references to correct filenames
 
 ### ✅ Changes Committed:
-- Moved 36 example files (9 skills + 1 workflow) to `docs/examples/`
-- Added `.docusaurus/` to `.gitignore` for build cache exclusion
-- Maintained all example functionality and references
+- Moved templates back to root (they're part of npm package distribution)
+- Moved examples back to root (they're reference implementations)
+- Updated package.json files array and code references
+- Fixed documentation links
 
-### ✅ Docs-site Analysis:
-**docs-site should be pushed** - it's the source repository for Docusaurus documentation:
-- Contains source files (docusaurus.config.ts, sidebars.ts, package.json)
-- Has 23 tracked files with documentation content
-- Includes build scripts and dependencies
-- Not a build output - it's the source that generates the website
+### ✅ Package Distribution Analysis:
+**Only these docs are published with npm package:**
+- `templates/**/*.md` - Workflow templates (installed with `tsk init --cursor`)
+- `docs/workflows/subtasks/**/*.md` - Workflow subtasks
+- All other docs (tech/, product/, etc.) are pure documentation
+
+**Repository structure corrected:**
+```
+Root level (published):
+├── templates/          # ✅ PUBLISHED - Workflow templates
+├── examples/           # Reference implementations
+└── docs/               # Documentation only
+    ├── workflows/subtasks/  # ✅ PUBLISHED - Subtask templates
+    ├── tech/           # Technical docs
+    ├── product/        # Product docs
+    └── ...
+```
 
 ---
 
