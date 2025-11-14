@@ -21,7 +21,7 @@
 **Purpose:** Product strategy, roadmaps, feature planning
 
 **Files:**
-- `ROADMAP_VALUE_PRIORITIZED.md` - Prioritized feature roadmap
+- `ROADMAP.md` - Product roadmap and implementation timeline
 - `EXECUTION_PLAN.md` - Implementation timeline
 - `WORKFLOW_INTEGRATION_STRATEGY.md` - Workflow system strategy
 - `EVOLUTION_PLAN.md` - Long-term vision
@@ -80,7 +80,7 @@
 **Need to:**
 - Understand SkillKit? → `/docs/overview.md`
 - Get started? → `/docs/getting-started.md`
-- See roadmap? → `/docs/roadmap.json` or `/docs/product/ROADMAP_VALUE_PRIORITIZED.md`
+- See roadmap? → `/docs/product/ROADMAP.md` or `/docs/roadmap.json`
 - Review architecture? → `/docs/audit/architecture/`
 - Check progress? → `/docs/AITracking/` or `/docs/SprintStatus/`
 - Understand a conversation? → `/docs/dev-conversations/`
