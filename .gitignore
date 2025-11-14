@@ -121,7 +121,6 @@ archive/
 backups/
 backup/
 compressed/
-packages/
 releases/
 
 # Archive file extensions
