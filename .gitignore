@@ -114,3 +114,25 @@ yarn.lock
 .env.local
 .env.*.local
 *.local
+
+# Archives and compressed files
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.tar.bz2
+*.tar.xz
+*.rar
+*.7z
+*.bz2
+*.xz
+*.gz
+*.bz
+*.deb
+*.rpm
+*.pkg
+*.dmg
+*.iso
+*.cab
+*.msi
+*.exe
