@@ -700,6 +700,173 @@ class HybridProvider implements AIProvider {
 
 ---
 
-**Last Updated:** 2025-11-13  
+---
+
+## 9. Free Models from arXiv & Open Source (Updated 2025-01-XX)
+
+### Models Available for Local Inference (Free)
+
+#### A. CodeBERT (Microsoft Research)
+**Paper:** [CodeBERT: A Pre-Trained Model for Programming and Natural Languages](https://arxiv.org/abs/2002.08155)  
+**License:** MIT  
+**Implementation:** `@xenova/transformers` (transformers.js)
+
+**Features:**
+- Bimodal pre-trained model (code + natural language)
+- Code understanding and generation
+- Runs locally with transformers.js
+- No API costs
+
+**Use Case:**
+- Code embedding generation
+- Semantic code similarity
+- Pattern matching with semantic understanding
+
+**Integration:**
+```javascript
+import { pipeline } from '@xenova/transformers';
+
+const codeEmbedder = await pipeline(
+  'feature-extraction',
+  'microsoft/codebert-base'
+);
+
+// Generate embeddings for code patterns
+const embedding = await codeEmbedder(code);
+```
+
+#### B. CodeT5 (Salesforce Research)
+**Paper:** [CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code Understanding and Generation](https://arxiv.org/abs/2109.00859)  
+**License:** Apache 2.0  
+**Implementation:** `@xenova/transformers`
+
+**Features:**
+- Identifier-aware pre-training
+- Code understanding and generation
+- Supports code defect detection
+- Runs locally
+
+**Use Case:**
+- Code pattern classification
+- Incomplete code detection
+- Code understanding tasks
+
+**Integration:**
+```javascript
+import { pipeline } from '@xenova/transformers';
+
+const codeClassifier = await pipeline(
+  'text-classification',
+  'Salesforce/codet5-base'
+);
+
+// Classify code patterns
+const result = await codeClassifier(code);
+```
+
+#### C. StarCoder (BigCode)
+**Paper:** [StarCoder: May the source be with you!](https://arxiv.org/abs/2305.06161)  
+**License:** BigCode OpenRAIL-M  
+**Implementation:** `@xenova/transformers`
+
+**Features:**
+- Large code language model
+- Code generation and analysis
+- Trained on 80+ programming languages
+- Runs locally (requires more memory)
+
+**Use Case:**
+- Advanced code analysis
+- Pattern generation
+- Code understanding
+
+#### D. AutoPruner (False Positive Reduction)
+**Paper:** [AutoPruner: Transformer-Based Call Graph Pruning](https://arxiv.org/abs/2209.03230)  
+**License:** Research (check paper)
+
+**Features:**
+- Reduces false positives in static analysis
+- Uses Transformer to capture semantic relationships
+- Improves precision in identifying true positives
+
+**Use Case:**
+- False positive reduction
+- Pattern validation
+- Suppression analysis
+
+**Key Insight:**
+- Can be adapted to learn from suppressions
+- Uses semantic understanding to filter false positives
+
+#### E. MLScent (ML-Specific Pattern Detection)
+**Paper:** [MLScent: Detecting Code Smells in Machine Learning Projects](https://arxiv.org/abs/2502.18466)  
+**License:** Research (check paper)
+
+**Features:**
+- AST-based analysis
+- ML-specific code smell detection
+- Framework-aware detection
+
+**Use Case:**
+- Pattern detection in specific domains
+- AST-based pattern mining
+- Framework-specific patterns
+
+### Transformers.js - Free Local Inference
+
+**Repository:** [xenova/transformers.js](https://github.com/xenova/transformers.js)  
+**License:** MIT  
+**Status:** ✅ Production-ready
+
+**Features:**
+- Runs in Node.js and browser
+- No API costs
+- Privacy-friendly (local processing)
+- Supports CodeBERT, CodeT5, StarCoder
+
+**Installation:**
+```bash
+npm install @xenova/transformers
+```
+
+**Example Usage:**
+```javascript
+import { pipeline } from '@xenova/transformers';
+
+// Code embedding
+const embedder = await pipeline(
+  'feature-extraction',
+  'microsoft/codebert-base'
+);
+
+// Pattern classification
+const classifier = await pipeline(
+  'text-classification',
+  'Salesforce/codet5-base'
+);
+
+// Use for pattern detection
+const codeEmbedding = await embedder(code);
+const patternMatch = await classifier(code);
+```
+
+### Comparison: Free Models vs API Models
+
+| Model | Type | Cost | Speed | Accuracy | Use Case |
+|-------|------|------|-------|----------|----------|
+| **CodeBERT** (local) | Embedding | $0 | Fast | High | Pattern matching |
+| **CodeT5** (local) | Classification | $0 | Fast | High | Pattern classification |
+| **StarCoder** (local) | Generation | $0 | Medium | Very High | Advanced analysis |
+| **GPT-4** (API) | Generation | $0.03/1K tokens | Slow | Very High | Explanations |
+| **Claude** (API) | Generation | $0.015/1K tokens | Slow | Very High | Explanations |
+
+**Recommendation:**
+- **Detection:** Use local models (CodeBERT/CodeT5) - free, fast
+- **Explanations:** Use API models (optional) - better explanations
+- **Hybrid:** Local for detection, API for explanations
+
+---
+
+**Last Updated:** 2025-01-XX  
 **Status:** Research Complete - Ready for Implementation
 
