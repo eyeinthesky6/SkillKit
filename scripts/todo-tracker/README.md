@@ -25,13 +25,15 @@ See [CONTEXT_AWARE_README.md](./CONTEXT_AWARE_README.md) for details and researc
 
 ### 🎯 Core Capabilities
 
-1. **Explicit TODO Markers** - Detects TODO/FIXME/HACK/XXX/BUG comments
-2. **Deceptive Language Detection** - Finds 50+ patterns like "simplified", "workaround", "for now"
+1. **Explicit TODO Markers** - Detects TODO/FIXME/HACK/XXX/BUG comments (60+ comment syntaxes)
+2. **Deceptive Language Detection** - Finds 100+ patterns like "simplified", "workaround", "for now"
 3. **Commented Code Detection** - Identifies commented-out executable code (TOP BLOCKER)
 4. **Incomplete Implementation Detection** - Finds stubs, placeholders, "not implemented" patterns
-5. **Priority Classification** - Domain-aware blocker/critical/major/minor prioritization
-6. **Business Logic Filtering** - Reduces false positives with domain-specific exclusions
-7. **Action Guidance** - Provides one-liner guidance for each issue type
+5. **Developer Forum Patterns** - Detects unused code, duplicates, complex code, performance issues (from Cursor/VSCode forums)
+6. **Priority Classification** - Domain-aware blocker/critical/major/minor prioritization
+7. **Business Logic Filtering** - Reduces false positives with domain-specific exclusions
+8. **Context-Aware Detection** - Analyzes surrounding code for better accuracy (82% false positive reduction)
+9. **Action Guidance** - Provides one-liner guidance for each issue type
 
 ### 📊 Detection Categories
 
@@ -119,6 +121,9 @@ Currently uses hardcoded patterns. Future enhancements will support:
 - [docs/todo-tracker/CONTEXT_AWARE_IMPROVEMENTS_13-11-2025.md](../docs/todo-tracker/CONTEXT_AWARE_IMPROVEMENTS_13-11-2025.md) - Improvement plan
 - [docs/todo-tracker/CONTEXT_AWARE_IMPLEMENTATION_13-11-2025.md](../docs/todo-tracker/CONTEXT_AWARE_IMPLEMENTATION_13-11-2025.md) - Implementation details
 
+### Developer Forum Patterns
+- [docs/todo-tracker/DEVELOPER_FORUM_PATTERNS_13-11-2025.md](../docs/todo-tracker/DEVELOPER_FORUM_PATTERNS_13-11-2025.md) - Patterns from Cursor/VSCode forums (15 new patterns)
+
 ### Other Documentation
 See `docs/todo-tracker/` folder for:
 - `TODO_Tracker_Comparison_10-11-2025.md` - Comparison with leasot
@@ -170,6 +175,20 @@ scripts/todo-tracker/
 This is an experimental project folder. Feel free to experiment and enhance!
 
 **Note:** Scripts directory is gitignored, so changes here won't affect the main repository.
+
+---
+
+---
+
+## 🚀 Package Transformation Roadmap
+
+**Coming Soon:** This tool will be transformed into a production-ready npm package with AI integration.
+
+See [PACKAGE_TRANSFORMATION_ROADMAP_13-11-2025.md](./PACKAGE_TRANSFORMATION_ROADMAP_13-11-2025.md) for:
+- Modular architecture plan
+- AI integration strategy
+- Implementation roadmap
+- Migration guide
 
 ---
 

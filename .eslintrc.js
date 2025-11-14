@@ -18,7 +18,7 @@ module.exports = {
     project: './tsconfig.json',
   },
   plugins: ['@typescript-eslint', 'import', 'prettier'],
-  ignorePatterns: ['dist', 'node_modules', 'coverage'],
+  ignorePatterns: ['dist', 'node_modules', 'coverage', 'test-projects'],
   rules: {
     // TypeScript
     '@typescript-eslint/explicit-function-return-type': 'error',

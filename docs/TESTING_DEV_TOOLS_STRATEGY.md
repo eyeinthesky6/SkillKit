@@ -208,6 +208,7 @@ RUN npm test
 
 #### **Layer 2: Integration Tests with Test Projects** (IN WORKSPACE ✅)
 - **CRITICAL: Keep test projects IN workspace** (`test-projects/`)
+- **NOTE: Test projects are gitignored** (see `.gitignore`) - they stay local
 - Test real workflows on real project types
 - Use `pnpm link` to test local builds
 - **Capture all results to structured files** for AI visibility
@@ -218,16 +219,20 @@ test-projects/
 ├── typescript-project/     # TypeScript + npm
 ├── python-project/        # Python + poetry (exists ✅)
 ├── nodejs-project/        # Node.js + pnpm
+├── mixed-language-project/ # Complex: Python + TypeScript + Go (NEW)
 └── empty-project/         # Fresh project
 
-test-results/              # NEW: AI-readable test results
+test-results/              # NEW: AI-readable test results (also gitignored)
 ├── integration/
 │   ├── 2025-01-XX-typescript-project.jsonl
 │   ├── 2025-01-XX-python-project.jsonl
+│   ├── 2025-01-XX-mixed-language-project.jsonl
 │   └── summary.json
 └── reports/
     └── 2025-01-XX-integration-test-report.md
 ```
+
+**Note:** Test projects are gitignored to keep them local and avoid committing test artifacts. Results are captured to `test-results/` for AI visibility.
 
 #### **Layer 3: Automated Test Runner with Result Capture** (NEW 📝)
 - Script that runs tests on all test-projects
