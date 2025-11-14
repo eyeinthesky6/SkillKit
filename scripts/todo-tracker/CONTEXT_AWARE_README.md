@@ -93,6 +93,46 @@ This implementation is based on research from the following papers and models:
 - **Year:** 2024
 - **Contribution:** Research on analyzing code comments to reveal functional similarities. Our approach uses similar comment analysis techniques.
 
+### 5. CodeMirage: A Comprehensive Benchmark for AI-Generated Code Detection
+- **Paper:** [arXiv:2506.11059](https://arxiv.org/abs/2506.11059)
+- **Year:** 2025
+- **Contribution:** Comprehensive benchmark spanning 10 programming languages with outputs from 10 state-of-the-art LLMs. Provides evaluation framework for AI-generated code detectors. Our pattern detection benefits from understanding common AI-generated code characteristics identified in this benchmark.
+
+### 6. ACW: AI Code Watermarking for Traceability
+- **Paper:** [arXiv:2402.07518](https://arxiv.org/abs/2402.07518)
+- **Year:** 2024
+- **Contribution:** Semantic-preserving code transformations for AI-generated code watermarking. While we don't implement watermarking, the semantic-preserving transformation concepts inform our context-aware analysis of code patterns.
+
+### 7. DroidCollection & DroidDetect: Machine-Generated Code Detection
+- **Paper:** [arXiv:2507.10583](https://arxiv.org/abs/2507.10583)
+- **Year:** 2025
+- **Contribution:** Extensive dataset (1M+ code samples) and encoder-only detectors for machine-generated code. The multi-task objective and generalization techniques inform our multi-indicator confidence scoring approach.
+
+### 8. Detecting AI-Generated Code: Current Challenges and Future Directions
+- **Journal:** Frontiers in Computer Science
+- **Paper:** [Frontiers in Computer Science](https://www.frontiersin.org/journals/computer-science/articles/10.3389/fcomp.2025.1549761/full)
+- **Year:** 2025
+- **Contribution:** Analysis of challenges in detecting AI-generated code, including limitations of traditional plagiarism detection tools. Highlights the need for specialized approaches, which our context-aware detection addresses.
+
+### 9. Codetector: Zero-Shot Detection Framework
+- **Paper:** [OpenReview](https://openreview.net/forum?id=ljhqiC4Api)
+- **Year:** 2025
+- **Contribution:** Zero-shot detection framework for AI-generated code. The evaluation methodology and multi-model analysis inform our pattern detection approach.
+
+### 10. Assessing AI Detectors in Identifying AI-Generated Code: Implications for Education
+- **Paper:** [ResearchGate](https://www.researchgate.net/publication/380873289_Assessing_AI_Detectors_in_Identifying_AI-Generated_Code_Implications_for_Education)
+- **Journal:** International Journal for Educational Integrity
+- **Year:** 2023
+- **Contribution:** Assessment of AI detector effectiveness, particularly noting reduced accuracy when applied to code. This research validates the need for specialized code-focused detection methods like ours.
+
+### 11. Stylometric Analysis for Code Detection
+- **Technique:** Stylometric analysis (coding style and structure)
+- **Contribution:** Research on using coding style patterns to distinguish human vs AI-generated code. Our pattern detection incorporates similar stylistic analysis through context-aware keyword detection and code structure analysis.
+
+### 12. Statistical Analysis Techniques for AI Code Detection
+- **Technique:** Statistical analysis (perplexity, code metrics)
+- **Contribution:** Research on quantifiable aspects of code (language model perplexity, stylometric features) to identify AI generation patterns. Our confidence scoring system uses similar multi-indicator statistical approaches.
+
 ---
 
 ## 🛠️ Implementation Details
@@ -194,12 +234,17 @@ Current confidence thresholds:
 ## 🙏 Acknowledgments
 
 This implementation is inspired by research from:
-- **Salesforce Research** (CodeT5)
-- **Microsoft Research** (CodeBERT)
-- **Monash University** (InferCode)
-- **MDPI Mathematics** (Code Comment Analysis)
+- **Salesforce Research** (CodeT5) - Context window analysis
+- **Microsoft Research** (CodeBERT) - Semantic understanding
+- **Monash University** (InferCode) - Structural understanding
+- **MDPI Mathematics** (Code Comment Analysis) - Comment analysis
+- **CodeMirage Research** - AI-generated code benchmark and patterns
+- **ACW Research** - Semantic-preserving transformations
+- **DroidCollection/DroidDetect Research** - Machine-generated code detection
+- **Frontiers in Computer Science** - AI-generated code detection challenges
+- **Educational Integrity Research** - AI detector assessment
 
-We thank the researchers for their contributions to code understanding and semantic analysis.
+We thank all researchers and institutions for their contributions to code understanding, semantic analysis, and AI-generated code detection.
 
 ---
 
@@ -212,6 +257,12 @@ This implementation uses techniques inspired by the research papers mentioned ab
 - CodeBERT techniques: Based on Feng et al. (2020) - Microsoft Research
 - InferCode techniques: Based on Bui et al. (2020) - Monash University
 - Comment analysis: Based on MDPI Mathematics (2024)
+- CodeMirage patterns: Based on CodeMirage benchmark (2025)
+- ACW concepts: Based on ACW watermarking research (2024)
+- DroidCollection techniques: Based on DroidCollection/DroidDetect (2025)
+- Detection challenges: Based on Frontiers in Computer Science (2025)
+- Stylometric analysis: Based on research on coding style patterns
+- Statistical analysis: Based on research on code metrics and perplexity
 
 ---
 

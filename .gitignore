@@ -62,6 +62,9 @@ coverage/
 *.test-output
 *.test-results
 
+# Test projects (local testing only)
+test-projects/
+
 # Generated todo tracker files
 todo-tracker-*.json
 blockers.json

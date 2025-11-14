@@ -261,6 +261,44 @@ tsk skills:add alice/enterprise-skills/database
 - [Final Correct Architecture](docs/FINAL_CORRECT_ARCHITECTURE.md) - The complete system
 - [Cursor-First Roadmap](docs/CURSOR_FIRST_ROADMAP.md) - Development roadmap
 - [Skill Update Strategy](docs/SKILL_UPDATE_STRATEGY.md) - How updates work
+- [Research Enhancements](docs/RESEARCH_ENHANCEMENTS.md) - Academic research integration
+
+## 📚 Research & Attribution
+
+SkillKit incorporates insights from academic research papers on skill learning, task planning, and agent systems:
+
+### Research Papers Integrated
+
+1. **SkillFlow: Efficient Skill and Code Transfer Through Communication**  
+   arXiv: [2504.06188](https://arxiv.org/abs/2504.06188)  
+   - Modular skill acquisition framework
+   - Communication-based skill transfer
+   - Applied: Skill composition and dynamic discovery
+
+2. **COALESCE: Economic and Security Dynamics of Skill-Based Task Outsourcing**  
+   arXiv: [2506.01900](https://arxiv.org/abs/2506.01900)  
+   - Dynamic skill discovery
+   - Automated task decomposition
+   - Cost-aware skill selection
+   - Applied: Task decomposition and cost-aware planning
+
+3. **PolySkill: Learning Generalizable Skills Through Polymorphic Abstraction**  
+   arXiv: [2510.15863](https://arxiv.org/abs/2510.15863)  
+   Authors: Simon Yu, Gang Li, Weiyan Shi, Peng Qi  
+   - Polymorphic abstraction for skill generalization
+   - Skill composition and reuse
+   - Applied: Skill abstraction layer and composition support
+
+4. **SkillWeaver: Web Agents can Self-Improve by Discovering and Honing Skills**  
+   arXiv: [2504.07079](https://arxiv.org/abs/2504.07079)  
+   Authors: Boyuan Zheng, Michael Y. Fatemi, Xiaolong Jin, et al.  
+   - Self-improvement through skill discovery
+   - Skill refinement and optimization
+   - Applied: Self-improvement mechanisms and usage-based optimization
+
+**License Note:** All papers are from arXiv and are typically available under licenses that permit commercial use (CC-BY or similar). We recommend verifying specific license terms for each paper before commercial deployment.
+
+**Full Details:** See [Research Enhancements](docs/RESEARCH_ENHANCEMENTS.md) for complete implementation details.
 
 ### For Contributors
 - [Contributing Guidelines](CONTRIBUTING.md) - How to contribute

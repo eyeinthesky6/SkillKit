@@ -178,7 +178,7 @@ OPTIONS:
   --debug                 Include debug statements (console.log, debugger, etc.) in scan
   --configs               Scan config files (.yaml, .yml, .json, .toml, etc.) in addition to code files
   --scripts               Scan scripts folder/files (normally excluded)
-  --check-exclusions      Detect misuse of todo-tracker exclusions (agents bypassing issues)
+  --check-exclusions      Detect misuse of todo-tracker exclusions (inline code, exclusion files, and config files)
   --format=<format>       Output format: markdown (default), json, or table
   --output=<path>         Custom output file path (default: docs/todo-tracker/Comprehensive_TODO_Analysis_YYYY-MM-DD.md)
   --priority=<level>      Filter by priority: blocker, critical, major, minor, or all (default: all)
@@ -218,7 +218,7 @@ EXAMPLES:
   # Scan everything with --all flag (equivalent to --scripts --debug --configs --check-exclusions)
   node scripts/todo-tracker/todo-tracker.cjs --all
 
-  # Check for misuse of exclusions (agents bypassing issues)
+  # Check for misuse of exclusions (inline code, exclusion files, and configs)
   node scripts/todo-tracker/todo-tracker.cjs --check-exclusions
 
   # Output as JSON format
@@ -611,6 +611,51 @@ const deceptivePatterns = [
   // Incomplete Dependency Management
   { regex: /(?:TODO|FIXME).*(?:update|upgrade|replace|remove).*(?:dependency|package|library|version)/gi, type: "INCOMPLETE_DEPENDENCY_MANAGEMENT", severity: "MEDIUM", category: "incomplete" },
   { regex: /(?:deprecated|outdated|old|legacy).*(?:dependency|package|library).*(?:TODO|FIXME)/gi, type: "OUTDATED_DEPENDENCY", severity: "MEDIUM", category: "incomplete" },
+  
+  // Developer Forum Patterns - Code Quality Issues (commonly reported in Cursor/VSCode forums)
+  // Unused Code Patterns
+  { regex: /(?:TODO|FIXME).*(?:remove|delete|cleanup).*(?:unused|dead|unreachable).*(?:code|variable|function|import|class|method)/gi, type: "UNUSED_CODE_TODO", severity: "MEDIUM", category: "incomplete" },
+  { regex: /(?:TODO|FIXME).*(?:unused|dead|unreachable).*(?:code|variable|function|import|class|method).*(?:remove|delete|cleanup)/gi, type: "UNUSED_CODE_TODO", severity: "MEDIUM", category: "incomplete" },
+  { regex: /\/\/\s*(?:unused|dead|unreachable).*(?:code|variable|function|import|class|method).*(?:TODO|FIXME|remove|delete)/gi, type: "UNUSED_CODE_COMMENT", severity: "MEDIUM", category: "incomplete" },
+  { regex: /#\s*(?:unused|dead|unreachable).*(?:code|variable|function|import|class|method).*(?:TODO|FIXME|remove|delete)/gi, type: "UNUSED_CODE_COMMENT", severity: "MEDIUM", category: "incomplete" },
+  
+  // Code Duplication Patterns (commonly reported in AI-generated code)
+  { regex: /(?:TODO|FIXME).*(?:remove|refactor|consolidate|deduplicate).*(?:duplicate|duplicated|copy.*paste|repeated|redundant).*(?:code|function|method|class|logic)/gi, type: "DUPLICATE_CODE_TODO", severity: "HIGH", category: "incomplete" },
+  { regex: /(?:TODO|FIXME).*(?:duplicate|duplicated|copy.*paste|repeated|redundant).*(?:code|function|method|class|logic).*(?:remove|refactor|consolidate|deduplicate)/gi, type: "DUPLICATE_CODE_TODO", severity: "HIGH", category: "incomplete" },
+  { regex: /\/\/\s*(?:duplicate|duplicated|copy.*paste|repeated|redundant).*(?:code|function|method|class|logic).*(?:TODO|FIXME|remove|refactor)/gi, type: "DUPLICATE_CODE_COMMENT", severity: "HIGH", category: "incomplete" },
+  { regex: /#\s*(?:duplicate|duplicated|copy.*paste|repeated|redundant).*(?:code|function|method|class|logic).*(?:TODO|FIXME|remove|refactor)/gi, type: "DUPLICATE_CODE_COMMENT", severity: "HIGH", category: "incomplete" },
+  
+  // Overly Complex Code Patterns (commonly reported)
+  { regex: /(?:TODO|FIXME).*(?:simplify|refactor|break.*down|split).*(?:complex|complicated|too.*complex|overly.*complex|nested|deeply.*nested).*(?:code|function|method|logic|routine)/gi, type: "COMPLEX_CODE_TODO", severity: "MEDIUM", category: "incomplete" },
+  { regex: /(?:TODO|FIXME).*(?:complex|complicated|too.*complex|overly.*complex|nested|deeply.*nested).*(?:code|function|method|logic|routine).*(?:simplify|refactor|break.*down|split)/gi, type: "COMPLEX_CODE_TODO", severity: "MEDIUM", category: "incomplete" },
+  { regex: /\/\/\s*(?:complex|complicated|too.*complex|overly.*complex|nested|deeply.*nested).*(?:code|function|method|logic|routine).*(?:TODO|FIXME|simplify|refactor)/gi, type: "COMPLEX_CODE_COMMENT", severity: "MEDIUM", category: "incomplete" },
+  { regex: /#\s*(?:complex|complicated|too.*complex|overly.*complex|nested|deeply.*nested).*(?:code|function|method|logic|routine).*(?:TODO|FIXME|simplify|refactor)/gi, type: "COMPLEX_CODE_COMMENT", severity: "MEDIUM", category: "incomplete" },
+  
+  // Disabled Code Blocks (software defect indicator)
+  { regex: /\/\/\s*(?:disabled|commented.*out|temporarily.*disabled|temp.*disabled).*(?:code|function|method|class|feature|logic).*(?:TODO|FIXME|remove|delete|enable|fix)/gi, type: "DISABLED_CODE_BLOCK", severity: "HIGH", category: "incomplete" },
+  { regex: /#\s*(?:disabled|commented.*out|temporarily.*disabled|temp.*disabled).*(?:code|function|method|class|feature|logic).*(?:TODO|FIXME|remove|delete|enable|fix)/gi, type: "DISABLED_CODE_BLOCK", severity: "HIGH", category: "incomplete" },
+  { regex: /(?:TODO|FIXME).*(?:remove|delete|enable|fix).*(?:disabled|commented.*out|temporarily.*disabled|temp.*disabled).*(?:code|function|method|class|feature|logic)/gi, type: "DISABLED_CODE_TODO", severity: "HIGH", category: "incomplete" },
+  
+  // Copy-Paste Code Patterns (AI often generates similar blocks)
+  { regex: /(?:TODO|FIXME).*(?:copy.*paste|copy.*pasted|copied.*from|pasted.*from).*(?:code|function|method|class|logic)/gi, type: "COPY_PASTE_CODE", severity: "MEDIUM", category: "incomplete" },
+  { regex: /\/\/\s*(?:copy.*paste|copy.*pasted|copied.*from|pasted.*from).*(?:code|function|method|class|logic).*(?:TODO|FIXME|refactor)/gi, type: "COPY_PASTE_CODE", severity: "MEDIUM", category: "incomplete" },
+  { regex: /#\s*(?:copy.*paste|copy.*pasted|copied.*from|pasted.*from).*(?:code|function|method|class|logic).*(?:TODO|FIXME|refactor)/gi, type: "COPY_PASTE_CODE", severity: "MEDIUM", category: "incomplete" },
+  
+  // Performance Issues (commonly reported in AI-generated code)
+  { regex: /(?:TODO|FIXME).*(?:optimize|improve.*performance|fix.*performance|performance.*issue).*(?:slow|inefficient|bottleneck|N\+1|n\+1)/gi, type: "PERFORMANCE_TODO", severity: "MEDIUM", category: "incomplete" },
+  { regex: /(?:TODO|FIXME).*(?:slow|inefficient|bottleneck|N\+1|n\+1).*(?:optimize|improve.*performance|fix.*performance|performance.*issue)/gi, type: "PERFORMANCE_TODO", severity: "MEDIUM", category: "incomplete" },
+  { regex: /\/\/\s*(?:slow|inefficient|bottleneck|N\+1|n\+1|performance.*issue).*(?:TODO|FIXME|optimize|improve.*performance)/gi, type: "PERFORMANCE_COMMENT", severity: "MEDIUM", category: "incomplete" },
+  { regex: /#\s*(?:slow|inefficient|bottleneck|N\+1|n\+1|performance.*issue).*(?:TODO|FIXME|optimize|improve.*performance)/gi, type: "PERFORMANCE_COMMENT", severity: "MEDIUM", category: "incomplete" },
+  
+  // Inconsistent Code Patterns (AI often generates inconsistent style)
+  { regex: /(?:TODO|FIXME).*(?:standardize|consistent|consistency|inconsistent).*(?:naming|style|format|convention|pattern)/gi, type: "INCONSISTENT_CODE_TODO", severity: "LOW", category: "incomplete" },
+  { regex: /\/\/\s*(?:inconsistent|inconsistency).*(?:naming|style|format|convention|pattern).*(?:TODO|FIXME|standardize)/gi, type: "INCONSISTENT_CODE_COMMENT", severity: "LOW", category: "incomplete" },
+  { regex: /#\s*(?:inconsistent|inconsistency).*(?:naming|style|format|convention|pattern).*(?:TODO|FIXME|standardize)/gi, type: "INCONSISTENT_CODE_COMMENT", severity: "LOW", category: "incomplete" },
+  
+  // Missing Edge Cases (commonly reported)
+  { regex: /(?:TODO|FIXME).*(?:add|handle|implement).*(?:edge.*case|edge.*cases|corner.*case|corner.*cases|boundary.*condition)/gi, type: "MISSING_EDGE_CASE_TODO", severity: "HIGH", category: "incomplete" },
+  { regex: /\/\/\s*(?:missing|add|handle).*(?:edge.*case|edge.*cases|corner.*case|corner.*cases|boundary.*condition).*(?:TODO|FIXME)/gi, type: "MISSING_EDGE_CASE_COMMENT", severity: "HIGH", category: "incomplete" },
+  { regex: /#\s*(?:missing|add|handle).*(?:edge.*case|edge.*cases|corner.*case|corner.*cases|boundary.*condition).*(?:TODO|FIXME)/gi, type: "MISSING_EDGE_CASE_COMMENT", severity: "HIGH", category: "incomplete" },
 
   // Python-specific incomplete implementation patterns
   { regex: /raise\s+NotImplementedError\s*\(/gi, type: "PYTHON_NOT_IMPLEMENTED_ERROR", severity: "CRITICAL", category: "incomplete" },
@@ -759,6 +804,21 @@ const deceptivePatterns = [
   { regex: /quick.*hack|quick.*fix|Quick.*hack|Quick.*fix/gi, type: "QUICK_FIX", severity: "HIGH", category: "deceptive" },
   { regex: /partial.*implementation|partial.*feature|Partial.*implementation|Partial.*feature/gi, type: "PARTIAL_IMPLEMENTATION", severity: "HIGH", category: "incomplete" },
   { regex: /acceptable.*exceed|exceed.*acceptable/gi, type: "ACCEPTABLE_EXCEEDED", severity: "HIGH", category: "deceptive" },
+  
+  // Blame Shifting Patterns (from real codebases)
+  { regex: /\b(was like this|was like that|inherited from|not my code|from old system|when I got here|don't touch|was already there)\b/gi, type: "BLAME_SHIFTING", severity: "MEDIUM", category: "deceptive" },
+  
+  // Known Issue Acceptance (common in production)
+  { regex: /\b(known issue|known bug|rare bug|performance acceptable|not critical|acceptable performance|performance is fine)\b/gi, type: "KNOWN_ISSUE_ACCEPTANCE", severity: "HIGH", category: "deceptive" },
+  
+  // Specific Deferred Work (never happens)
+  { regex: /\b(next sprint|will fix|will be implemented|will add|will improve|will refactor|will clean up)\b/gi, type: "DEFERRED_WORK_SPECIFIC", severity: "MEDIUM", category: "temporal" },
+  
+  // False Quality Claims (standalone - claims quality but code contradicts)
+  { regex: /(?:^|\s|#|\/\/)\s*(?:Optimized|Tested|Reviewed|Refactored|Clean code|No errors|Safe|Fast|Simple|Works|Efficient|Production ready)\s*(?:-|:|\/\/|#|$)/gi, type: "FALSE_QUALITY_CLAIM", severity: "HIGH", category: "deceptive" },
+  
+  // Source Attribution (unverified code)
+  { regex: /\b(copy.*paste|copied|pasted).*(?:from|Stack Overflow|SO|stackoverflow|GitHub|Reddit|forum)\b/gi, type: "COPY_PASTE_SOURCE", severity: "MEDIUM", category: "incomplete" },
 
   // False success patterns (exclude legitimate API responses)
   { regex: /completed successfully.*(?:but|however|actually|really)/gi, type: "FALSE_SUCCESS", severity: "HIGH", category: "deceptive" },
@@ -805,6 +865,42 @@ const deceptivePatterns = [
   // Hardcoded fake API responses
   { regex: /(?:return|response|data)\s*[:=]\s*\{[^}]*['"](?:success|ok|true)['"][^}]*\}/gi, type: "HARDCODED_DUMMY_RESPONSE", severity: "HIGH", category: "incomplete" },
   { regex: /(?:return|response|data)\s*[:=]\s*\[[^\]]*\{[^}]*['"](?:John|Jane|Test|Demo|Sample|Dummy|Fake|Example|test@example)/gi, type: "HARDCODED_DUMMY_RESPONSE", severity: "HIGH", category: "incomplete" },
+  
+  // SILENT FALLBACKS (catch returning null/empty without logging - passes tests but hides errors)
+  { regex: /catch\s*\([^)]*\)\s*\{[^}]*return\s+(?:null|undefined|\[\]|\{\}|false|0|''|"")\s*;?\s*\}/gi, type: "SILENT_FALLBACK", severity: "CRITICAL", category: "incomplete" },
+  { regex: /except\s+(?:Exception|BaseException|.*):\s*return\s+(?:None|\[\]|\{\}|False|0|''|"")\s*$/gm, type: "SILENT_FALLBACK", severity: "CRITICAL", category: "incomplete" },
+  { regex: /catch\s*\([^)]*\)\s*\{[^}]*return\s+(?:null|undefined|\[\]|\{\}|false|0)\s*;?\s*\/\/.*(?:fallback|default|for now|temporary)/gi, type: "SILENT_FALLBACK", severity: "CRITICAL", category: "incomplete" },
+  
+  // HARDCODED CONDITIONALS (always true/false - passes tests but indicates incomplete logic)
+  { regex: /if\s*\(\s*(?:true|false)\s*\)\s*\{[^}]*return/gi, type: "HARDCODED_CONDITIONAL", severity: "HIGH", category: "incomplete" },
+  { regex: /if\s*\(\s*!?\s*(?:true|false)\s*\)\s*\{[^}]*\/\/.*(?:TODO|FIXME|implement|replace)/gi, type: "HARDCODED_CONDITIONAL", severity: "HIGH", category: "incomplete" },
+  { regex: /const\s+\w*[Ff]lag\w*\s*=\s*(?:true|false)\s*;?\s*\/\/.*(?:TODO|FIXME|remove|replace)/gi, type: "HARDCODED_FEATURE_FLAG", severity: "HIGH", category: "temporary" },
+  
+  // DEFAULT VALUES THAT ARE PLACEHOLDERS (looks like real defaults but are actually incomplete)
+  { regex: /(?:const|let|var)\s+\w+\s*=\s*(?:null|undefined|\[\]|\{\}|''|""|0|false)\s*;?\s*\/\/.*(?:TODO|FIXME|implement|replace|placeholder)/gi, type: "PLACEHOLDER_DEFAULT", severity: "HIGH", category: "incomplete" },
+  { regex: /function\s+\w+\s*\([^)]*\w+\s*=\s*(?:null|undefined|\[\]|\{\}|''|"")\s*\)/gi, type: "PLACEHOLDER_DEFAULT", severity: "MEDIUM", category: "incomplete" },
+  { regex: /def\s+\w+\s*\([^)]*\w+\s*=\s*(?:None|\[\]|\{\}|''|"")\s*\)/gi, type: "PLACEHOLDER_DEFAULT", severity: "MEDIUM", category: "incomplete" },
+  
+  // MOCK DATA IN PRODUCTION CODE (not in test files)
+  { regex: /(?:const|let|var|export\s+const)\s+\w*[Mm]ock\w*\s*=\s*\{/gi, type: "MOCK_IN_PRODUCTION", severity: "CRITICAL", category: "incomplete" },
+  { regex: /(?:const|let|var|export\s+const)\s+\w*[Dd]ummy\w*\s*=\s*\{/gi, type: "MOCK_IN_PRODUCTION", severity: "CRITICAL", category: "incomplete" },
+  { regex: /(?:const|let|var|export\s+const)\s+\w*[Ff]ake\w*\s*=\s*\{/gi, type: "MOCK_IN_PRODUCTION", severity: "CRITICAL", category: "incomplete" },
+  
+  // EMPTY ERROR HANDLERS (catch/except that just return without handling)
+  { regex: /catch\s*\([^)]*\)\s*\{[^}]*\/\/.*(?:ignore|skip|silent|swallow)[^}]*return/gi, type: "EMPTY_ERROR_HANDLER", severity: "CRITICAL", category: "incomplete" },
+  { regex: /except\s+(?:Exception|BaseException|.*):\s*\/\/.*(?:ignore|skip|silent|swallow)\s*return/gi, type: "EMPTY_ERROR_HANDLER", severity: "CRITICAL", category: "incomplete" },
+  { regex: /catch\s*\([^)]*\)\s*\{[^}]*return\s+(?:null|undefined|\[\]|\{\})\s*;?\s*\/\/.*(?:error|exception|fail)/gi, type: "EMPTY_ERROR_HANDLER", severity: "CRITICAL", category: "incomplete" },
+  
+  // FALLBACK TO HARDCODED VALUES (looks like error handling but just returns hardcoded data)
+  { regex: /catch\s*\([^)]*\)\s*\{[^}]*return\s+(?:['"](?:test|demo|sample|dummy|fake|example)['"]|123|true|false)\s*;?\s*\}/gi, type: "FALLBACK_TO_HARDCODED", severity: "HIGH", category: "incomplete" },
+  { regex: /except\s+(?:Exception|BaseException|.*):\s*return\s+(?:['"](?:test|demo|sample|dummy|fake|example)['"]|123|True|False)\s*$/gm, type: "FALLBACK_TO_HARDCODED", severity: "HIGH", category: "incomplete" },
+  
+  // ALWAYS RETURNS SAME VALUE (function that always returns same result regardless of input)
+  { regex: /function\s+\w+\s*\([^)]+\)\s*\{[^}]*return\s+(?:true|false|null|undefined|0|''|""|\[\]|\{\})\s*;?\s*\}/gi, type: "ALWAYS_RETURNS_SAME", severity: "HIGH", category: "incomplete" },
+  { regex: /def\s+\w+\s*\([^)]+\)\s*:\s*return\s+(?:True|False|None|0|''|""|\[\]|\{\})\s*$/gm, type: "ALWAYS_RETURNS_SAME", severity: "HIGH", category: "incomplete" },
+  
+  // CONDITIONAL THAT ALWAYS EVALUATES TO SAME (if/ternary that always returns same)
+  { regex: /(?:return\s+)?(?:condition|value|input|param)\s*\?\s*(?:true|false|null|undefined|0|''|""|\[\]|\{\})\s*:\s*(?:true|false|null|undefined|0|''|""|\[\]|\{\})\s*;?/gi, type: "ALWAYS_SAME_CONDITIONAL", severity: "MEDIUM", category: "incomplete" },
 
   // Unsafe assumptions and hardcoded values
   { regex: /assume|assumed|Assume|Assumed/gi, type: "UNSAFE_ASSUMPTIONS", severity: "HIGH", category: "deceptive" },
@@ -1660,6 +1756,24 @@ function getIssueGuidance(issueType) {
     // Incomplete Dependency Management
     INCOMPLETE_DEPENDENCY_MANAGEMENT: "Complete dependency update/upgrade/replacement as noted in TODO",
     OUTDATED_DEPENDENCY: "Update outdated dependency to current version - security and compatibility risk",
+    
+    // Developer Forum Patterns - Code Quality Issues
+    UNUSED_CODE_TODO: "Remove unused/dead code as noted in TODO - reduces maintenance burden",
+    UNUSED_CODE_COMMENT: "Remove unused/dead code - commonly reported in developer forums",
+    DUPLICATE_CODE_TODO: "Refactor duplicate code as noted in TODO - AI often generates redundant blocks",
+    DUPLICATE_CODE_COMMENT: "Refactor duplicate code - commonly reported in AI-generated code",
+    COMPLEX_CODE_TODO: "Simplify complex code as noted in TODO - improve maintainability",
+    COMPLEX_CODE_COMMENT: "Simplify complex code - overly complex routines are defect indicators",
+    DISABLED_CODE_BLOCK: "Remove or enable disabled code - disabled code is a software defect indicator",
+    DISABLED_CODE_TODO: "Remove or enable disabled code as noted in TODO",
+    COPY_PASTE_CODE: "Refactor copy-paste code - AI often generates similar blocks",
+    COPY_PASTE_SOURCE: "Verify copy-paste code from external sources (Stack Overflow, etc.) - unverified code may have issues",
+    PERFORMANCE_TODO: "Optimize performance issue as noted in TODO - AI code often has performance problems",
+    PERFORMANCE_COMMENT: "Optimize performance - commonly reported in AI-generated code",
+    INCONSISTENT_CODE_TODO: "Standardize inconsistent code style as noted in TODO",
+    INCONSISTENT_CODE_COMMENT: "Standardize inconsistent code style - AI often generates inconsistent patterns",
+    MISSING_EDGE_CASE_TODO: "Add edge case handling as noted in TODO - AI code often misses edge cases",
+    MISSING_EDGE_CASE_COMMENT: "Add edge case handling - commonly reported missing in AI-generated code",
 
     // Commented out code - TOP BLOCKER - UNCOMMENT IMMEDIATELY
     COMMENTED_OUT_CODE: "Uncomment code to resolve type errors and wire up with corresponding consumers",
@@ -1670,6 +1784,12 @@ function getIssueGuidance(issueType) {
 
     // Uncertain language - CLARIFY
     UNCERTAIN_LANGUAGE: "Clarify uncertainty - replace tentative language with concrete implementation",
+    
+    // New patterns from test projects analysis
+    BLAME_SHIFTING: "Address blame-shifting comments - take ownership of code quality issues",
+    KNOWN_ISSUE_ACCEPTANCE: "Fix known issues instead of accepting them - 'known issue' often means 'won't fix'",
+    DEFERRED_WORK_SPECIFIC: "Complete deferred work - 'will fix' and 'next sprint' often never happen",
+    FALSE_QUALITY_CLAIM: "Verify quality claims match code reality - comments may claim quality code doesn't have",
     AI_GENERATED_PHRASING: "Review for accuracy - AI-generated phrasing may be generic",
 
     // Generic comments - IMPROVE
@@ -3961,7 +4081,7 @@ function scanCodeComprehensive() {
     scanConfigFilesForLazyPatterns(rootDir, codeFiles)
   }
   
-  // Check exclusion file for misuse (if --check-exclusions flag is set)
+  // Check exclusion files and configs for misuse (if --check-exclusions flag is set)
   if (checkExclusions) {
     checkExclusionFileMisuse(rootDir)
   }
@@ -4158,6 +4278,13 @@ function checkExclusionFileMisuse(rootDir) {
   
   const exclusionFile = path.join(rootDir, '.todo-tracker.exclude')
   const exclusionFileJson = path.join(rootDir, '.todo-tracker.exclusions.json')
+  const configFile = path.join(rootDir, configPath)
+  
+  // Track exclusion statistics
+  let totalExclusions = 0
+  let exclusionsWithoutReason = 0
+  let blockerExclusions = 0
+  let broadExclusions = 0
   
   // Check simple exclusion file
   if (fs.existsSync(exclusionFile)) {
@@ -4169,13 +4296,55 @@ function checkExclusionFileMisuse(rootDir) {
         const trimmed = line.trim()
         if (!trimmed || trimmed.startsWith('#')) return
         
+        totalExclusions++
+        
         // Check for exclusion without reason (format: file:line:pattern:reason)
         const parts = trimmed.split(':')
         if (parts.length >= 3) {
+          const filePattern = parts[0].trim()
+          const linePattern = parts[1].trim()
+          const patternType = parts[2].trim()
           const reason = parts.slice(3).join(':').trim()
+          
+          // Check for broad file patterns (excludes too much)
+          if (filePattern === '**' || filePattern === '**/*' || filePattern === '*') {
+            broadExclusions++
+            const todoItem = {
+              file: exclusionFile,
+              line: index + 1,
+              type: "BROAD_EXCLUSION_PATTERN",
+              text: trimmed,
+              priority: 1, // Blocker - too broad
+              category: "deceptive",
+              severity: "CRITICAL",
+              source: "exclusion_misuse"
+            }
+            todos.deceptive.push(todoItem)
+            todos.byCategory.deceptive.push(todoItem)
+            todos.blocker.push(todoItem)
+          }
+          
+          // Check for file-level exclusion (excludes entire file)
+          if (linePattern === '*' && !filePattern.includes('test') && !filePattern.includes('spec')) {
+            broadExclusions++
+            const todoItem = {
+              file: exclusionFile,
+              line: index + 1,
+              type: "FILE_LEVEL_EXCLUSION",
+              text: trimmed,
+              priority: 2, // Critical - excludes entire file
+              category: "deceptive",
+              severity: "HIGH",
+              source: "exclusion_misuse"
+            }
+            todos.deceptive.push(todoItem)
+            todos.byCategory.deceptive.push(todoItem)
+            todos.critical.push(todoItem)
+          }
           
           // No reason or very short reason (likely lazy exclusion)
           if (!reason || reason.length < 10) {
+            exclusionsWithoutReason++
             const todoItem = {
               file: exclusionFile,
               line: index + 1,
@@ -4192,8 +4361,9 @@ function checkExclusionFileMisuse(rootDir) {
           }
           
           // Check for exclusion of blocker patterns
-          const patternType = parts[2].trim()
-          if (['COMMENTED_OUT_CODE', 'FOR_NOW', 'IN_PRODUCTION'].includes(patternType)) {
+          const blockerPatterns = ['COMMENTED_OUT_CODE', 'FOR_NOW', 'IN_PRODUCTION', 'SILENT_FALLBACK', 'EMPTY_ERROR_HANDLER', 'MOCK_IN_PRODUCTION']
+          if (blockerPatterns.includes(patternType)) {
+            blockerExclusions++
             const todoItem = {
               file: exclusionFile,
               line: index + 1,
@@ -4207,6 +4377,24 @@ function checkExclusionFileMisuse(rootDir) {
             todos.deceptive.push(todoItem)
             todos.byCategory.deceptive.push(todoItem)
             todos.blocker.push(todoItem)
+          }
+          
+          // Check for generic/vague reasons
+          const vagueReasons = ['ok', 'fine', 'works', 'ignore', 'skip', 'known', 'accepted', 'temporary']
+          if (vagueReasons.some(v => reason.toLowerCase().includes(v)) && reason.length < 30) {
+            const todoItem = {
+              file: exclusionFile,
+              line: index + 1,
+              type: "VAGUE_EXCLUSION_REASON",
+              text: trimmed,
+              priority: 3, // High
+              category: "deceptive",
+              severity: "MEDIUM",
+              source: "exclusion_misuse"
+            }
+            todos.deceptive.push(todoItem)
+            todos.byCategory.deceptive.push(todoItem)
+            todos.high.push(todoItem)
           }
         }
       })
@@ -4222,11 +4410,32 @@ function checkExclusionFileMisuse(rootDir) {
       
       if (exclusionData.patterns) {
         exclusionData.patterns.forEach((exclusion, index) => {
+          totalExclusions++
           const patternType = exclusion.pattern || exclusion.type
           const reason = exclusion.reason || ''
+          const filePattern = exclusion.file || exclusion.files || ''
+          
+          // Check for broad file patterns
+          if (filePattern === '**' || filePattern === '**/*' || filePattern === '*') {
+            broadExclusions++
+            const todoItem = {
+              file: exclusionFileJson,
+              line: index + 1,
+              type: "BROAD_EXCLUSION_PATTERN",
+              text: JSON.stringify(exclusion),
+              priority: 1, // Blocker
+              category: "deceptive",
+              severity: "CRITICAL",
+              source: "exclusion_misuse"
+            }
+            todos.deceptive.push(todoItem)
+            todos.byCategory.deceptive.push(todoItem)
+            todos.blocker.push(todoItem)
+          }
           
           // Check for exclusion without reason
           if (!reason || reason.length < 10) {
+            exclusionsWithoutReason++
             const todoItem = {
               file: exclusionFileJson,
               line: index + 1,
@@ -4243,7 +4452,9 @@ function checkExclusionFileMisuse(rootDir) {
           }
           
           // Check for exclusion of blocker patterns
-          if (['COMMENTED_OUT_CODE', 'FOR_NOW', 'IN_PRODUCTION'].includes(patternType)) {
+          const blockerPatterns = ['COMMENTED_OUT_CODE', 'FOR_NOW', 'IN_PRODUCTION', 'SILENT_FALLBACK', 'EMPTY_ERROR_HANDLER', 'MOCK_IN_PRODUCTION']
+          if (blockerPatterns.includes(patternType)) {
+            blockerExclusions++
             const todoItem = {
               file: exclusionFileJson,
               line: index + 1,
@@ -4263,6 +4474,63 @@ function checkExclusionFileMisuse(rootDir) {
     } catch (error) {
       warn(`⚠️  Failed to check JSON exclusion file ${exclusionFileJson}: ${error.message}`)
     }
+  }
+  
+  // Check config file for pattern exclusions
+  if (checkExclusions && fs.existsSync(configFile)) {
+    try {
+      const configContent = fs.readFileSync(configFile, 'utf8')
+      // Check if config has patternExclusions
+      if (config && config.patternExclusions && Array.isArray(config.patternExclusions)) {
+        config.patternExclusions.forEach((exclusion, index) => {
+          totalExclusions++
+          const reason = exclusion.reason || ''
+          const filePattern = exclusion.file || exclusion.files || ''
+          
+          // Check for broad patterns
+          if (filePattern === '**' || filePattern === '**/*' || filePattern === '*') {
+            broadExclusions++
+            const todoItem = {
+              file: configFile,
+              line: index + 1,
+              type: "BROAD_EXCLUSION_IN_CONFIG",
+              text: JSON.stringify(exclusion),
+              priority: 1, // Blocker
+              category: "deceptive",
+              severity: "CRITICAL",
+              source: "exclusion_misuse"
+            }
+            todos.deceptive.push(todoItem)
+            todos.byCategory.deceptive.push(todoItem)
+            todos.blocker.push(todoItem)
+          }
+          
+          // Check for exclusion without reason
+          if (!reason || reason.length < 10) {
+            exclusionsWithoutReason++
+            const todoItem = {
+              file: configFile,
+              line: index + 1,
+              type: "CONFIG_EXCLUSION_WITHOUT_REASON",
+              text: JSON.stringify(exclusion),
+              priority: 2, // Critical
+              category: "deceptive",
+              severity: "HIGH",
+              source: "exclusion_misuse"
+            }
+            todos.deceptive.push(todoItem)
+            todos.byCategory.deceptive.push(todoItem)
+            todos.critical.push(todoItem)
+          }
+        })
+      }
+    } catch (error) {
+      // Config might not be JSON, skip
+    }
+  }
+  
+  if (totalExclusions > 0) {
+    log(`📊 Exclusion Statistics: ${totalExclusions} total, ${exclusionsWithoutReason} without reason, ${blockerExclusions} blocker patterns, ${broadExclusions} broad patterns`)
   }
 }
 

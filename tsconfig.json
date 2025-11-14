@@ -38,6 +38,7 @@
     "**/*.test.ts",
     "**/*.spec.ts",
     "test",
-    "tests"
+    "tests",
+    "test-projects"
   ]
 }

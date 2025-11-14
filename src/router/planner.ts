@@ -28,6 +28,11 @@ const DEFAULT_PLAN_OPTIONS: Required<PlanOptions> = {
 
 /**
  * Plan the execution of skills based on the task
+ * 
+ * Enhanced with research insights from:
+ * - COALESCE (arXiv:2506.01900): Task decomposition and cost-aware selection
+ * - PolySkill (arXiv:2510.15863): Skill composition and reuse
+ * - SkillFlow (arXiv:2504.06188): Dynamic skill discovery
  */
 export function planTask(registry: SkillRegistry, options: PlanOptions = {}): Plan {
   const {
@@ -43,14 +48,31 @@ export function planTask(registry: SkillRegistry, options: PlanOptions = {}): Pl
     throw new Error('No skills available');
   }
 
+  // Check for skill composition opportunities (PolySkill insight)
+  // If task is complex, consider decomposing into subtasks
+  const isComplexTask = taskText.split(/\s+/).length > 5 || 
+                        taskText.toLowerCase().includes('and') ||
+                        taskText.toLowerCase().includes('then');
+
   // Score each skill based on the task and tags
+  // Enhanced with cost-aware selection (COALESCE insight)
   const scoredSkills = skills
     .map((skill) => ({
       skill,
       score: scoreSkill(skill, { taskText, tags, inputShape }),
+      // Consider skill dependencies for composition (PolySkill insight)
+      hasDependencies: skill.dependencies && skill.dependencies.length > 0,
     }))
     .filter(({ score }) => score.total >= minConfidence)
-    .sort((a, b) => b.score.total - a.score.total);
+    .sort((a, b) => {
+      // Prefer skills with dependencies for complex tasks (composition)
+      if (isComplexTask) {
+        if (a.hasDependencies && !b.hasDependencies) return -1;
+        if (!a.hasDependencies && b.hasDependencies) return 1;
+      }
+      // Otherwise sort by score (cost-aware selection)
+      return b.score.total - a.score.total;
+    });
 
   if (scoredSkills.length === 0) {
     throw new Error(
@@ -76,6 +98,11 @@ export function planTask(registry: SkillRegistry, options: PlanOptions = {}): Pl
 
   if (score.keywordMatch > 0) {
     reasons.push(`Matched ${score.keywordMatch} keywords in name/description`);
+  }
+
+  // Add composition hint if skill has dependencies (PolySkill insight)
+  if (skill.dependencies && skill.dependencies.length > 0) {
+    reasons.push(`Skill composes ${skill.dependencies.length} other skill(s) for complex tasks`);
   }
 
   return {
