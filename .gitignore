@@ -110,6 +110,9 @@ tsconfig.tsbuildinfo
 package-lock.json
 yarn.lock
 
+# Docusaurus build cache
+.docusaurus/
+
 # Environment and local config
 .env.local
 .env.*.local
