@@ -116,6 +116,15 @@ yarn.lock
 *.local
 
 # Archives and compressed files
+archives/
+archive/
+backups/
+backup/
+compressed/
+packages/
+releases/
+
+# Archive file extensions
 *.zip
 *.tar
 *.tar.gz
